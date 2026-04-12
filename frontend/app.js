@@ -40,12 +40,13 @@ let isDrunkTriggered = false;
 let showDrinkFollowup = false;
 
 // 合约地址（部署后填入）
-const CONTRACT_ADDRESS = '0xC665d48FAE84ac0aa7705151D67E8F92ddb7F406'; // BSC Testnet
+const CONTRACT_ADDRESS = '0x9D4e3dfeA5224ee1bAfE1B437adde20e8B480677'; // BSC Testnet
 const CONTRACT_ABI = [
   'function mint() external payable returns (uint256)',
   'function inscribe(uint256 tokenId, uint8 personalityIndex, uint8[15] dimensions, uint8 matchPercent) external',
   'function isInscribed(uint256) view returns (bool)',
   'function totalSupply() view returns (uint256)',
+  'function MAX_SUPPLY() view returns (uint256)',
   'function mintPrice() view returns (uint256)',
   'function tokenURI(uint256) view returns (string)',
   'function balanceOf(address) view returns (uint256)',
@@ -569,7 +570,7 @@ async function mintNFT() {
 
   // 演示模式（无合约时）
   if (CONTRACT_ADDRESS === '0x0000000000000000000000000000000000000000') {
-    currentTokenId = Math.floor(Math.random() * 10000);
+    currentTokenId = Math.floor(Math.random() * 16384);
     showToast(`🎉 Demo模式 — 获得 Soul Card #${currentTokenId}`);
     startTest();
     return;
@@ -638,8 +639,11 @@ async function mintNFT() {
 
     // 更新 supply 显示
     try {
-      const supply = await contract.totalSupply();
-      document.getElementById('supplyInfo').textContent = `已铸造 ${supply} / ∞`;
+      const [supply, maxSupply] = await Promise.all([
+        contract.totalSupply(),
+        contract.MAX_SUPPLY(),
+      ]);
+      document.getElementById('supplyInfo').textContent = `已铸造 ${supply} / ${Number(maxSupply).toLocaleString()}`;
     } catch (e) {}
 
     hideLoading();
@@ -1260,10 +1264,13 @@ window.addEventListener('load', async () => {
   try {
     const rpc = new ethers.JsonRpcProvider('https://bsc-testnet-rpc.publicnode.com');
     const readContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, rpc);
-    const supply = await readContract.totalSupply();
-    document.getElementById('supplyInfo').textContent = `已铸造 ${supply} / ∞`;
+    const [supply, maxSupply] = await Promise.all([
+      readContract.totalSupply(),
+      readContract.MAX_SUPPLY(),
+    ]);
+    document.getElementById('supplyInfo').textContent = `已铸造 ${supply} / ${Number(maxSupply).toLocaleString()}`;
   } catch (e) {
-    document.getElementById('supplyInfo').textContent = '已铸造 0 / ∞';
+    document.getElementById('supplyInfo').textContent = '已铸造 0 / --';
   }
 
   // 默认按钮

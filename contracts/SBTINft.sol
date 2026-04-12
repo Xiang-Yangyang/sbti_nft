@@ -19,8 +19,8 @@ contract SBTINft is ERC721, Ownable {
     event MetadataUpdate(uint256 _tokenId);
 
     // ============ 常量 ============
-    uint256 public constant MAX_SUPPLY = 10000;
-    uint256 public mintPrice = 0.0001 ether;
+    uint256 public constant MAX_SUPPLY = 16384; // 2^14
+    uint256 public mintPrice = 0.015 ether;
 
     // ============ 状态 ============
     uint256 private _nextTokenId;
@@ -266,9 +266,15 @@ contract SBTINft is ERC721, Ownable {
 
         // metadata
         string memory rarity = gold ? "Gold" : "Normal";
+        string memory cardName = gold
+            ? string(abi.encodePacked("SBTI Soul Golden Card #", tokenId.toString()))
+            : string(abi.encodePacked("SBTI Soul Card #", tokenId.toString()));
+        string memory desc = gold
+            ? "A rare golden SBTI soul card awaiting inscription."
+            : "A blank SBTI soul card awaiting inscription.";
         string memory json = string(abi.encodePacked(
-            '{"name":"SBTI Soul Card #', tokenId.toString(),
-            '","description":"An blank SBTI soul card awaiting inscription.",',
+            '{"name":"', cardName,
+            '","description":"', desc, '",',
             '"attributes":[{"trait_type":"Status","value":"Blank"},{"trait_type":"Rarity","value":"', rarity, '"}],',
             '"image":"data:image/svg+xml;base64,', Base64.encode(bytes(svg)), '"}'
         ));
@@ -458,13 +464,19 @@ contract SBTINft is ERC721, Ownable {
 
         string memory svg = _buildSteleSVG(tokenId, pCode, pName, color1, color2, dims, matchPct);
 
+        bool gold = isGoldCard(tokenId);
+        string memory inscribedName = gold
+            ? string(abi.encodePacked("SBTI Golden #", tokenId.toString(), " | ", pCode))
+            : string(abi.encodePacked("SBTI #", tokenId.toString(), " | ", pCode));
+        string memory rarity = gold ? "Gold" : "Normal";
         string memory json = string(abi.encodePacked(
-            '{"name":"SBTI #', tokenId.toString(), ' | ', pCode,
+            '{"name":"', inscribedName,
             '","description":"', pName, ' - SBTI Soul Stele, permanently inscribed on-chain.",',
             '"attributes":[',
                 '{"trait_type":"Personality","value":"', pCode, '"},',
                 '{"trait_type":"Name","value":"', pName, '"},',
                 '{"trait_type":"Match","value":"', uint256(matchPct).toString(), '%"},',
+                '{"trait_type":"Rarity","value":"', rarity, '"},',
                 '{"trait_type":"Status","value":"Inscribed"}',
             '],',
             '"image":"data:image/svg+xml;base64,', Base64.encode(bytes(svg)), '"}'
