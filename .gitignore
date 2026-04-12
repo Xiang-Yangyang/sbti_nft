@@ -8,6 +8,8 @@
 
 # Environment
 .env
+.env.testnet
+.env.mainnet
 
 # Logs
 *.log

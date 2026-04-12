@@ -9,11 +9,13 @@ via_ir = true
 
 [rpc_endpoints]
 bsc_testnet = "https://bsc-testnet-rpc.publicnode.com"
+bsc_mainnet = "https://bsc-dataseed1.binance.org"
 base_sepolia = "https://sepolia.base.org"
 sepolia = "https://ethereum-sepolia-rpc.publicnode.com"
 localhost = "http://127.0.0.1:8545"
 
 [etherscan]
 bsc_testnet = { key = "${BSCSCAN_API_KEY}", url = "https://api-testnet.bscscan.com/api" }
+bsc_mainnet = { key = "${BSCSCAN_API_KEY}", url = "https://api.bscscan.com/api" }
 base = { key = "${BASESCAN_API_KEY}" }
 sepolia = { key = "${ETHERSCAN_API_KEY}" }
