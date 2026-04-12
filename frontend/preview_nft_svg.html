@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SBTI NFT SVG 预览</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a14;
+    color: #ccc;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    background: linear-gradient(135deg, #72efdd, #4cc9f0, #7209b7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 40px;
+  }
+  .preview-section {
+    max-width: 1200px;
+    margin: 0 auto 60px;
+  }
+  .section-title {
+    font-size: 18px;
+    color: #72efdd;
+    margin-bottom: 20px;
+    padding-left: 12px;
+    border-left: 3px solid #72efdd;
+  }
+  .card-row {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .card-wrapper {
+    text-align: center;
+  }
+  .card-wrapper .label {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 10px;
+  }
+  .card-wrapper svg {
+    width: 360px;
+    height: 360px;
+    border-radius: 16px;
+    box-shadow: 0 0 40px rgba(114, 239, 221, 0.15), 0 0 80px rgba(76, 201, 240, 0.08);
+  }
+  .note {
+    text-align: center;
+    color: #555;
+    font-size: 12px;
+    margin-top: 15px;
+  }
+</style>
+</head>
+<body>
+
+<h1>SBTI NFT SVG 预览</h1>
+<p class="subtitle">合约链上 SVG 渲染效果 — 直接从 SBTINft.sol 提取</p>
+
+<!-- ===== 1. 空白卡片 ===== -->
+<div class="preview-section">
+  <div class="section-title">空白灵魂卡 (Blank Soul Card)</div>
+  <div class="card-row">
+    <div class="card-wrapper">
+      <div class="label">🔗 链上 NFT SVG</div>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+        <defs>
+          <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#72efdd"/>
+            <stop offset="50%" style="stop-color:#4cc9f0"/>
+            <stop offset="100%" style="stop-color:#7209b7"/>
+          </linearGradient>
+          <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#4cc9f0;stop-opacity:0.15"/>
+            <stop offset="100%" style="stop-color:#0e0e1a;stop-opacity:0"/>
+          </radialGradient>
+          <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#f6d365"/>
+            <stop offset="50%" style="stop-color:#d4a843"/>
+            <stop offset="100%" style="stop-color:#fda085"/>
+          </linearGradient>
+          <linearGradient id="divider" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#4cc9f0;stop-opacity:0"/>
+            <stop offset="25%" style="stop-color:#72efdd;stop-opacity:0.6"/>
+            <stop offset="50%" style="stop-color:#4cc9f0;stop-opacity:1"/>
+            <stop offset="75%" style="stop-color:#72efdd;stop-opacity:0.6"/>
+            <stop offset="100%" style="stop-color:#4cc9f0;stop-opacity:0"/>
+          </linearGradient>
+          <!-- 卡片背景渐变（匹配 Web UI soul-card-inner） -->
+          <linearGradient id="cardbg" x1="30%" y1="0%" x2="70%" y2="100%">
+            <stop offset="0%" style="stop-color:#0e0e1a"/>
+            <stop offset="40%" style="stop-color:#161625"/>
+            <stop offset="100%" style="stop-color:#1a1a30"/>
+          </linearGradient>
+          <!-- 多彩边框渐变（匹配 Web UI soul-card-border） -->
+          <linearGradient id="border1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#72efdd"/>
+            <stop offset="15%" style="stop-color:#4cc9f0"/>
+            <stop offset="30%" style="stop-color:#4361ee"/>
+            <stop offset="50%" style="stop-color:#7209b7"/>
+            <stop offset="65%" style="stop-color:#b5179e"/>
+            <stop offset="80%" style="stop-color:#f72585"/>
+            <stop offset="90%" style="stop-color:#ff6fff"/>
+            <stop offset="100%" style="stop-color:#72efdd"/>
+          </linearGradient>
+          <!-- 外部光晕滤镜（模拟 Web UI soul-card-glow blur 效果） -->
+          <filter id="glowBlur" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="12" result="blur"/>
+          </filter>
+          <!-- 外部光晕多彩渐变（对角线方向，和边框同色系） -->
+          <linearGradient id="outerGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#72efdd"/>
+            <stop offset="14%" style="stop-color:#4cc9f0"/>
+            <stop offset="28%" style="stop-color:#4361ee"/>
+            <stop offset="43%" style="stop-color:#7209b7"/>
+            <stop offset="57%" style="stop-color:#b5179e"/>
+            <stop offset="71%" style="stop-color:#f72585"/>
+            <stop offset="85%" style="stop-color:#ff6fff"/>
+            <stop offset="100%" style="stop-color:#72efdd"/>
+          </linearGradient>
+        </defs>
+        <!-- 外部底色（Web UI 页面背景色） -->
+        <rect width="400" height="400" fill="#0a0a0f"/>
+        <!-- 外围多彩光晕（匹配 Web UI soul-card-glow，blur + 半透明） -->
+        <rect x="26" y="26" width="348" height="348" rx="20" fill="none" stroke="url(#outerGlow)" stroke-width="10" filter="url(#glowBlur)" opacity="0.9"/>
+        <!-- 卡片背景（边框内区域，匹配 Web UI soul-card-inner） -->
+        <rect x="30" y="30" width="340" height="340" rx="18" fill="url(#cardbg)"/>
+        <!-- 背景光晕 -->
+        <circle cx="200" cy="185" r="125" fill="url(#glow)"/>
+        <!-- 单条渐变边框 -->
+        <rect x="30" y="30" width="340" height="340" rx="18" fill="none" stroke="url(#border1)" stroke-width="2" opacity="0.7"/>
+        <!-- 星形五角星徽章（加粗边框，圆圈下移至视觉重心） -->
+        <polygon points="200,65 214,105 258,105 222,130 234,170 200,148 166,170 178,130 142,105 186,105" fill="none" stroke="url(#g1)" stroke-width="2.5"/>
+        <circle cx="200" cy="125" r="23" fill="none" stroke="url(#g1)" stroke-width="1" opacity="0.6"/>
+        <circle cx="200" cy="125" r="6" fill="#72efdd" opacity="0.9"/>
+        <!-- 粒子光点 -->
+        <circle cx="85" cy="120" r="1.2" fill="#72efdd" opacity="0.5"/>
+        <circle cx="310" cy="135" r="1" fill="#4cc9f0" opacity="0.4"/>
+        <circle cx="120" cy="280" r="1.3" fill="#7209b7" opacity="0.5"/>
+        <circle cx="300" cy="290" r="1" fill="#72efdd" opacity="0.3"/>
+        <circle cx="150" cy="100" r="0.8" fill="#4cc9f0" opacity="0.6"/>
+        <circle cx="270" cy="310" r="1.1" fill="#7209b7" opacity="0.4"/>
+        <!-- SBTI 大标题 -->
+        <text x="200" y="220" text-anchor="middle" fill="url(#g1)" font-size="48" font-family="'Courier New',monospace" font-weight="800" letter-spacing="10">SBTI</text>
+        <!-- Soul Card 副标题 -->
+        <text x="200" y="246" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="14" font-family="sans-serif" font-weight="300" letter-spacing="4" text-transform="uppercase">Soul Card</text>
+        <!-- 分隔线（用 rect 实现渐隐效果） -->
+        <rect x="140" y="261" width="120" height="1.5" rx="1" fill="url(#divider)"/>
+        <!-- 状态文字 + 脉冲圆点 -->
+        <circle cx="155" cy="284" r="3" fill="#72efdd" opacity="0.6">
+          <animate attributeName="opacity" values="0.4;1;0.4" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <text x="210" y="288" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="12" font-family="sans-serif" letter-spacing="2">等待灵魂铭刻</text>
+        <!-- 底部标签 -->
+        <rect x="155" y="306" width="90" height="22" rx="11" fill="none" stroke="rgba(85,85,102,0.5)" stroke-width="1"/>
+        <text x="200" y="321" text-anchor="middle" fill="rgba(114,239,221,0.5)" font-size="10" font-family="monospace" font-weight="600" letter-spacing="2">SBTI NFT</text>
+        <text x="200" y="344" text-anchor="middle" fill="url(#gold)" font-size="11" font-family="monospace" font-weight="bold">#1</text>
+      </svg>
+      <p class="note">tokenId = 1（空白未铭刻状态）</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 2. 灵魂碑（已铭刻）示例 ===== -->
+<div class="preview-section">
+  <div class="section-title">灵魂碑 (Soul Stele) — 已铭刻示例</div>
+  <div class="card-row">
+
+    <!-- CTRL 拿捏者 -->
+    <div class="card-wrapper">
+      <div class="label">🔴 CTRL 拿捏者</div>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">
+        <defs>
+          <linearGradient id="g1a" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#e94560"/><stop offset="100%" style="stop-color:#0f3460"/>
+          </linearGradient>
+          <radialGradient id="glowa" cx="50%" cy="35%" r="45%">
+            <stop offset="0%" style="stop-color:#e94560;stop-opacity:0.12"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="200" cy="140" r="130" fill="url(#glowa)"/>
+        <path d="M55,130 L55,360 L345,360 L345,130 Q345,40 200,40 Q55,40 55,130Z" fill="none" stroke="url(#g1a)" stroke-width="2"/>
+        <text x="200" y="82" text-anchor="middle" fill="#e94560" font-size="16" font-family="serif" letter-spacing="4">SOUL STELE</text>
+        <text x="200" y="145" text-anchor="middle" fill="url(#g1a)" font-size="44" font-family="monospace" font-weight="bold">CTRL</text>
+        <text x="200" y="172" text-anchor="middle" fill="#8888aa" font-size="15" font-family="sans-serif">拿捏者</text>
+        <text x="200" y="196" text-anchor="middle" fill="#555566" font-size="11" font-family="monospace">Match: 87%</text>
+        <line x1="85" y1="208" x2="315" y2="208" stroke="#333344" stroke-width="0.5"/>
+        <!-- 简化的维度条示例 -->
+        <text x="83" y="227" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S1</text>
+        <rect x="88" y="220" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="220" width="78" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="83" y="237" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S2</text>
+        <rect x="88" y="230" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="230" width="52" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="83" y="247" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S3</text>
+        <rect x="88" y="240" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="240" width="26" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="83" y="257" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">E1</text>
+        <rect x="88" y="250" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="250" width="52" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="83" y="267" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">E2</text>
+        <rect x="88" y="260" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="260" width="78" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="83" y="277" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">E3</text>
+        <rect x="88" y="270" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="270" width="26" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="83" y="287" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">A1</text>
+        <rect x="88" y="280" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="280" width="52" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="83" y="297" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">A2</text>
+        <rect x="88" y="290" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="290" width="78" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="83" y="307" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">A3</text>
+        <rect x="88" y="300" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="300" width="26" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="83" y="317" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">Ac1</text>
+        <rect x="88" y="310" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="310" width="52" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="83" y="327" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">Ac2</text>
+        <rect x="88" y="320" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="320" width="78" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="83" y="337" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">Ac3</text>
+        <rect x="88" y="330" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="330" width="26" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="83" y="347" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">So1</text>
+        <rect x="88" y="340" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="340" width="52" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="83" y="357" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">So2</text>
+        <rect x="88" y="350" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="350" width="78" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="83" y="367" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">So3</text>
+        <rect x="88" y="360" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="360" width="26" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="200" y="380" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#42</text>
+      </svg>
+      <p class="note">tokenId = 42, CTRL 拿捏者, Match 87%</p>
+    </div>
+
+    <!-- BOSS 领导者 -->
+    <div class="card-wrapper">
+      <div class="label">🟡 BOSS 领导者</div>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">
+        <defs>
+          <linearGradient id="g1b" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#ffd700"/><stop offset="100%" style="stop-color:#b8860b"/>
+          </linearGradient>
+          <radialGradient id="glowb" cx="50%" cy="35%" r="45%">
+            <stop offset="0%" style="stop-color:#ffd700;stop-opacity:0.12"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="200" cy="140" r="130" fill="url(#glowb)"/>
+        <path d="M55,130 L55,360 L345,360 L345,130 Q345,40 200,40 Q55,40 55,130Z" fill="none" stroke="url(#g1b)" stroke-width="2"/>
+        <text x="200" y="82" text-anchor="middle" fill="#ffd700" font-size="16" font-family="serif" letter-spacing="4">SOUL STELE</text>
+        <text x="200" y="145" text-anchor="middle" fill="url(#g1b)" font-size="44" font-family="monospace" font-weight="bold">BOSS</text>
+        <text x="200" y="172" text-anchor="middle" fill="#8888aa" font-size="15" font-family="sans-serif">领导者</text>
+        <text x="200" y="196" text-anchor="middle" fill="#555566" font-size="11" font-family="monospace">Match: 92%</text>
+        <line x1="85" y1="208" x2="315" y2="208" stroke="#333344" stroke-width="0.5"/>
+        <!-- 简化维度条 -->
+        <text x="83" y="227" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S1</text>
+        <rect x="88" y="220" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="220" width="78" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="83" y="237" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S2</text>
+        <rect x="88" y="230" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="230" width="78" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="83" y="247" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S3</text>
+        <rect x="88" y="240" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="240" width="52" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="83" y="257" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">E1</text>
+        <rect x="88" y="250" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="250" width="78" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="83" y="267" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">E2</text>
+        <rect x="88" y="260" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="260" width="26" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="83" y="277" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">E3</text>
+        <rect x="88" y="270" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="270" width="52" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="83" y="287" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">A1</text>
+        <rect x="88" y="280" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="280" width="78" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="83" y="297" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">A2</text>
+        <rect x="88" y="290" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="290" width="52" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="83" y="307" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">A3</text>
+        <rect x="88" y="300" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="300" width="78" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="83" y="317" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">Ac1</text>
+        <rect x="88" y="310" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="310" width="26" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="83" y="327" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">Ac2</text>
+        <rect x="88" y="320" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="320" width="52" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="83" y="337" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">Ac3</text>
+        <rect x="88" y="330" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="330" width="78" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="83" y="347" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">So1</text>
+        <rect x="88" y="340" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="340" width="52" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="83" y="357" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">So2</text>
+        <rect x="88" y="350" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="350" width="78" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="83" y="367" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">So3</text>
+        <rect x="88" y="360" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="360" width="26" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="200" y="380" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#7</text>
+      </svg>
+      <p class="note">tokenId = 7, BOSS 领导者, Match 92%</p>
+    </div>
+
+    <!-- CRY 哭包 -->
+    <div class="card-wrapper">
+      <div class="label">💜 CRY 哭包</div>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">
+        <defs>
+          <linearGradient id="g1c" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#b388ff"/><stop offset="100%" style="stop-color:#7c4dff"/>
+          </linearGradient>
+          <radialGradient id="glowc" cx="50%" cy="35%" r="45%">
+            <stop offset="0%" style="stop-color:#b388ff;stop-opacity:0.12"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="200" cy="140" r="130" fill="url(#glowc)"/>
+        <path d="M55,130 L55,360 L345,360 L345,130 Q345,40 200,40 Q55,40 55,130Z" fill="none" stroke="url(#g1c)" stroke-width="2"/>
+        <text x="200" y="82" text-anchor="middle" fill="#b388ff" font-size="16" font-family="serif" letter-spacing="4">SOUL STELE</text>
+        <text x="200" y="145" text-anchor="middle" fill="url(#g1c)" font-size="44" font-family="monospace" font-weight="bold">CRY</text>
+        <text x="200" y="172" text-anchor="middle" fill="#8888aa" font-size="15" font-family="sans-serif">哭包</text>
+        <text x="200" y="196" text-anchor="middle" fill="#555566" font-size="11" font-family="monospace">Match: 76%</text>
+        <line x1="85" y1="208" x2="315" y2="208" stroke="#333344" stroke-width="0.5"/>
+        <!-- 简化维度条 -->
+        <text x="83" y="227" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S1</text>
+        <rect x="88" y="220" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="220" width="26" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="83" y="237" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S2</text>
+        <rect x="88" y="230" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="230" width="52" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="83" y="247" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S3</text>
+        <rect x="88" y="240" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="240" width="78" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="83" y="257" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">E1</text>
+        <rect x="88" y="250" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="250" width="26" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="83" y="267" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">E2</text>
+        <rect x="88" y="260" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="260" width="52" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="83" y="277" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">E3</text>
+        <rect x="88" y="270" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="270" width="78" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="83" y="287" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">A1</text>
+        <rect x="88" y="280" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="280" width="52" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="83" y="297" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">A2</text>
+        <rect x="88" y="290" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="290" width="26" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="83" y="307" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">A3</text>
+        <rect x="88" y="300" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="300" width="52" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="83" y="317" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">Ac1</text>
+        <rect x="88" y="310" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="310" width="78" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="83" y="327" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">Ac2</text>
+        <rect x="88" y="320" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="320" width="26" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="83" y="337" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">Ac3</text>
+        <rect x="88" y="330" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="330" width="52" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="83" y="347" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">So1</text>
+        <rect x="88" y="340" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="340" width="78" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="83" y="357" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">So2</text>
+        <rect x="88" y="350" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="350" width="26" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="83" y="367" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">So3</text>
+        <rect x="88" y="360" width="78" height="7" rx="2" fill="#1a1a2e"/>
+        <rect x="88" y="360" width="52" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="200" y="380" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#128</text>
+      </svg>
+      <p class="note">tokenId = 128, CRY 哭包, Match 76%</p>
+    </div>
+
+  </div>
+</div>
+
+<p style="text-align:center; color:#333; font-size:11px; margin-top:40px;">
+  📄 此文件从 SBTINft.sol 合约代码提取生成，仅用于本地预览。<br>
+  修改合约后重新生成此文件即可查看最新效果。
+</p>
+
+<script>
+// 每次加载随机定格：保持 Web UI 有序渐变色（青→蓝→紫→粉→青），
+// 只随机偏移起始位置 + 渐变角度，像定格在 glowShift 动画的某一帧
+(function() {
+  // Web UI 的有序渐变色环（闭环）
+  const RING = ['#72efdd','#4cc9f0','#4361ee','#7209b7','#b5179e','#f72585','#ff6fff','#72efdd'];
+
+  // 随机渐变角度 → x1,y1,x2,y2
+  function randomAngle() {
+    const angle = Math.random() * 360;
+    const rad = angle * Math.PI / 180;
+    return {
+      x1: Math.round(50 - Math.cos(rad) * 50) + '%',
+      y1: Math.round(50 - Math.sin(rad) * 50) + '%',
+      x2: Math.round(50 + Math.cos(rad) * 50) + '%',
+      y2: Math.round(50 + Math.sin(rad) * 50) + '%'
+    };
+  }
+
+  // 循环偏移颜色环（保持顺序，只移动起点）
+  function rotateRing(offset) {
+    // offset: 0~6，从色环的不同位置开始
+    const colors = [];
+    for (let i = 0; i < 7; i++) {
+      colors.push(RING[(i + offset) % 7]);
+    }
+    colors.push(colors[0]); // 闭环
+    return colors;
+  }
+
+  function randomizeGradient(grad) {
+    if (!grad) return;
+    // 随机角度
+    const c = randomAngle();
+    grad.setAttribute('x1', c.x1);
+    grad.setAttribute('y1', c.y1);
+    grad.setAttribute('x2', c.x2);
+    grad.setAttribute('y2', c.y2);
+    // 随机偏移色环起始位置（保持有序渐变）
+    const offset = Math.floor(Math.random() * 7);
+    const colors = rotateRing(offset);
+    const stops = grad.querySelectorAll('stop');
+    stops.forEach((s, i) => {
+      if (i < colors.length) {
+        s.style.stopColor = colors[i];
+      }
+    });
+  }
+
+  // 边框和光晕共享同一套随机参数（颜色对应一致）
+  document.querySelectorAll('svg').forEach(svg => {
+    const border1 = svg.querySelector('#border1');
+    const outerGlow = svg.querySelector('#outerGlow');
+    if (!border1 && !outerGlow) return;
+
+    // 生成一套共享的随机参数
+    const c = randomAngle();
+    const offset = Math.floor(Math.random() * 7);
+    const colors = rotateRing(offset);
+
+    // 边框和光晕用同样的角度和颜色
+    [border1, outerGlow].forEach(grad => {
+      if (!grad) return;
+      grad.setAttribute('x1', c.x1);
+      grad.setAttribute('y1', c.y1);
+      grad.setAttribute('x2', c.x2);
+      grad.setAttribute('y2', c.y2);
+      const stops = grad.querySelectorAll('stop');
+      stops.forEach((s, i) => {
+        if (i < colors.length) {
+          s.style.stopColor = colors[i];
+        }
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

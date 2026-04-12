@@ -581,19 +581,32 @@ body {
 /* 底部标签 */
 .soul-card-footer {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
   margin-top: 12px;
 }
 
-.soul-card-chip {
-  padding: 3px 10px;
-  border-radius: 20px;
+.soul-card-label {
   font-size: 0.65rem;
   font-weight: 600;
+  letter-spacing: 2px;
+  color: rgba(114, 239, 221, 0.5);
+  font-family: monospace;
+  padding: 3px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(85, 85, 102, 0.5);
+}
+
+.soul-card-tokenid {
+  font-size: 0.7rem;
+  font-weight: bold;
   letter-spacing: 1px;
-  border: 1px solid rgba(114, 239, 221, 0.2);
-  color: rgba(114, 239, 221, 0.6);
-  background: rgba(114, 239, 221, 0.05);
+  font-family: monospace;
+  background: linear-gradient(90deg, #f6d365, #d4a843, #fda085);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .mint-panel .price {
