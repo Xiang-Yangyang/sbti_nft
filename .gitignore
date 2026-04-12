@@ -1,0 +1,17 @@
+# Dependencies
+/lib/
+/node_modules/
+
+# Build
+/out/
+/cache/
+
+# Environment
+.env
+
+# Logs
+*.log
+debug.log
+
+# OS
+.DS_Store
