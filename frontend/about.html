@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SBTI × NFT — 了解更多</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a14;
+    color: #ccc;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== 返回按钮 ===== */
+  .back-btn {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    color: rgba(255,255,255,0.5);
+    font-size: 13px;
+    text-decoration: none;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+  }
+  .back-btn:hover {
+    border-color: rgba(114, 239, 221, 0.5);
+    color: #72efdd;
+    background: rgba(114, 239, 221, 0.08);
+  }
+
+  /* ===== Hero 区域 ===== */
+  .hero {
+    text-align: center;
+    padding: 100px 20px 60px;
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; width: 600px; height: 400px;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse, rgba(114,239,221,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero h1 {
+    font-size: 48px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    margin-bottom: 16px;
+  }
+  .hero h1 .star { color: #72efdd; }
+  .hero h1 .sbti {
+    background: linear-gradient(135deg, #72efdd, #4cc9f0, #7209b7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero h1 .x { color: rgba(255,255,255,0.2); margin: 0 8px; }
+  .hero h1 .nft { color: #f72585; }
+  .hero .tagline {
+    font-size: 18px;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+  }
+  .hero .stats {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+  }
+  .hero .stat-item {
+    text-align: center;
+  }
+  .hero .stat-num {
+    font-size: 36px;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(135deg, #72efdd, #4cc9f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero .stat-num.gold {
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero .stat-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  /* ===== 通用 Section ===== */
+  .section {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 60px 24px;
+  }
+  .section-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    position: relative;
+    display: inline-block;
+  }
+  .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0; width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, #72efdd, transparent);
+  }
+  .section-desc {
+    color: rgba(255,255,255,0.6);
+    font-size: 15px;
+    margin-bottom: 40px;
+    line-height: 1.8;
+  }
+
+  /* ===== 流程步骤 ===== */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    margin-bottom: 20px;
+  }
+  .step-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .step-card:hover {
+    border-color: rgba(114,239,221,0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(114,239,221,0.06);
+  }
+  .step-num {
+    font-size: 11px;
+    color: #72efdd;
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+    font-family: monospace;
+  }
+  .step-icon {
+    font-size: 40px;
+    margin-bottom: 16px;
+  }
+  .step-card h4 {
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .step-card p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.35);
+    line-height: 1.6;
+  }
+
+  /* ===== 卡片展示 ===== */
+  .card-showcase {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 40px 0;
+  }
+  .card-wrapper {
+    text-align: center;
+  }
+  .card-wrapper .label {
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+  }
+  .card-wrapper svg {
+    width: 320px;
+    height: 320px;
+    border-radius: 16px;
+    box-shadow: 0 0 40px rgba(114, 239, 221, 0.12), 0 0 80px rgba(76, 201, 240, 0.06);
+    transition: transform 0.3s ease;
+  }
+  .card-wrapper:hover svg {
+    transform: scale(1.03);
+  }
+  #goldCardWrapper svg {
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.15), 0 0 80px rgba(255, 140, 0, 0.08);
+  }
+  #goldCardWrapper:hover svg {
+    box-shadow: 0 0 50px rgba(255, 215, 0, 0.25), 0 0 100px rgba(255, 140, 0, 0.12);
+  }
+  .card-wrapper .card-note {
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    margin-top: 10px;
+  }
+
+  /* ===== 特性网格 ===== */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  .feature-item {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s ease;
+  }
+  .feature-item:hover {
+    border-color: rgba(114,239,221,0.2);
+  }
+  .feature-item .feat-icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  .feature-item h5 {
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .feature-item p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    line-height: 1.5;
+  }
+
+  /* ===== 人格表 ===== */
+  .personality-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .personality-chip {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+  .personality-chip:hover {
+    border-color: rgba(114,239,221,0.3);
+    background: rgba(114,239,221,0.04);
+  }
+  .personality-chip .pcode {
+    font-size: 15px;
+    font-weight: 700;
+    font-family: monospace;
+    letter-spacing: 2px;
+  }
+  .personality-chip .pname {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 3px;
+  }
+
+  /* ===== CTA ===== */
+  .cta-section {
+    text-align: center;
+    padding: 80px 20px;
+    position: relative;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%; width: 500px; height: 300px;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse, rgba(247,37,133,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cta-section h2 {
+    font-size: 28px;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #72efdd, #f72585);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .cta-section p {
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 30px;
+    font-size: 14px;
+  }
+  .cta-btn {
+    display: inline-block;
+    padding: 14px 40px;
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    color: #000;
+    font-weight: 700;
+    font-size: 15px;
+    border-radius: 30px;
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(255,215,0,0.3);
+  }
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(255,215,0,0.4);
+  }
+
+  /* ===== Footer ===== */
+  .about-footer {
+    text-align: center;
+    padding: 40px 20px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.15);
+    font-size: 11px;
+  }
+  .about-footer a {
+    color: rgba(114,239,221,0.4);
+    text-decoration: none;
+  }
+  .about-footer a:hover {
+    color: #72efdd;
+  }
+
+  /* ===== 分隔线 ===== */
+  .divider {
+    max-width: 960px;
+    margin: 0 auto;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  }
+
+  /* ===== 响应式 ===== */
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 32px; }
+    .hero .stats { gap: 24px; }
+    .hero .stat-num { font-size: 28px; }
+    .card-wrapper svg { width: 260px; height: 260px; }
+    .back-btn { top: 12px; left: 12px; padding: 6px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 返回按钮 -->
+<a class="back-btn" href="index.html">← 返回 Mint</a>
+
+<!-- ===== Hero ===== -->
+<div class="hero">
+  <h1>
+    <span class="star">✦</span>
+    <span class="sbti">SBTI</span>
+    <span class="x">×</span>
+    <span class="nft">NFT</span>
+  </h1>
+  <p class="tagline">链上灵魂铭刻 · 不可转让的人格身份</p>
+  <div class="stats">
+    <div class="stat-item">
+      <div class="stat-num">16,384</div>
+      <div class="stat-label">总供应量 (2¹⁴)</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num gold">10%</div>
+      <div class="stat-label">金卡概率</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">27</div>
+      <div class="stat-label">人格类型</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">15</div>
+      <div class="stat-label">维度数据</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ===== 什么是 SBTI ===== -->
+<div class="section">
+  <div class="section-title" style="color: #72efdd;">什么是 SBTI × NFT？</div>
+  <p class="section-desc">
+    SBTI（Soul-Bound Type Indicator）是一个链上灵魂绑定人格 NFT 项目。<br>
+    每张卡片在 Mint 时由智能合约生成唯一的链上随机种子，决定卡片的视觉外观和稀有度。<br>
+    通过完成 27 种人格类型的测试，你可以将自己的人格数据永久铭刻上链 —— 一旦铭刻，不可修改、不可转让。<br>
+    所有图像（SVG）和数据都完全存储在链上，无需依赖任何外部服务器。
+  </p>
+</div>
+
+<div class="divider"></div>
+
+<!-- ===== 流程步骤 ===== -->
+<div class="section">
+  <div class="section-title" style="color: #4cc9f0;">使用流程</div>
+  <p class="section-desc">三步完成你的链上灵魂身份</p>
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num">STEP 01</div>
+      <div class="step-icon">🃏</div>
+      <h4>Mint 灵魂卡片</h4>
+      <p>支付 0.015 BNB 铸造一张空白 Soul Card。每张卡片独一无二，10% 概率获得稀有金卡。</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">STEP 02</div>
+      <div class="step-icon">🧠</div>
+      <h4>完成人格测试</h4>
+      <p>回答 90 道心理测试题，系统将分析你的 15 个维度数据，匹配 27 种人格类型之一。</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">STEP 03</div>
+      <div class="step-icon">⛓️</div>
+      <h4>铭刻灵魂碑</h4>
+      <p>将人格结果永久铭刻到你的 NFT 上。空白卡片变为灵魂碑，从此灵魂绑定、不可转让。</p>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ===== 卡片展示 ===== -->
+<div class="section">
+  <div class="section-title" style="color: #7209b7;">卡片展示</div>
+  <p class="section-desc">所有卡片 SVG 完全由智能合约在链上生成，无需外部存储</p>
+
+  <h4 style="color: rgba(255,255,255,0.75); font-size: 14px; margin-bottom: 20px;">空白灵魂卡 — Blank Soul Card</h4>
+  <div class="card-showcase">
+    <!-- 普通卡 -->
+    <div class="card-wrapper" id="normalCardWrapper">
+      <div class="label">🔗 普通卡</div>
+      <svg id="normalCard" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+        <defs>
+          <linearGradient id="n-g1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#72efdd"/>
+            <stop offset="50%" style="stop-color:#4cc9f0"/>
+            <stop offset="100%" style="stop-color:#7209b7"/>
+          </linearGradient>
+          <radialGradient id="n-glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#4cc9f0;stop-opacity:0.15"/>
+            <stop offset="100%" style="stop-color:#0e0e1a;stop-opacity:0"/>
+          </radialGradient>
+          <linearGradient id="n-tokenId" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#f6d365"/>
+            <stop offset="50%" style="stop-color:#d4a843"/>
+            <stop offset="100%" style="stop-color:#fda085"/>
+          </linearGradient>
+          <linearGradient id="n-divider" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#4cc9f0;stop-opacity:0"/>
+            <stop offset="25%" style="stop-color:#72efdd;stop-opacity:0.6"/>
+            <stop offset="50%" style="stop-color:#4cc9f0;stop-opacity:1"/>
+            <stop offset="75%" style="stop-color:#72efdd;stop-opacity:0.6"/>
+            <stop offset="100%" style="stop-color:#4cc9f0;stop-opacity:0"/>
+          </linearGradient>
+          <linearGradient id="n-cardbg" x1="30%" y1="0%" x2="70%" y2="100%">
+            <stop offset="0%" style="stop-color:#0e0e1a"/>
+            <stop offset="40%" style="stop-color:#161625"/>
+            <stop offset="100%" style="stop-color:#1a1a30"/>
+          </linearGradient>
+          <linearGradient id="n-border1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#72efdd"/>
+            <stop offset="15%" style="stop-color:#4cc9f0"/>
+            <stop offset="30%" style="stop-color:#4361ee"/>
+            <stop offset="50%" style="stop-color:#7209b7"/>
+            <stop offset="65%" style="stop-color:#b5179e"/>
+            <stop offset="80%" style="stop-color:#f72585"/>
+            <stop offset="90%" style="stop-color:#ff6fff"/>
+            <stop offset="100%" style="stop-color:#72efdd"/>
+          </linearGradient>
+          <filter id="n-glowBlur" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="12" result="blur"/>
+          </filter>
+          <linearGradient id="n-outerGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#72efdd"/>
+            <stop offset="14%" style="stop-color:#4cc9f0"/>
+            <stop offset="28%" style="stop-color:#4361ee"/>
+            <stop offset="43%" style="stop-color:#7209b7"/>
+            <stop offset="57%" style="stop-color:#b5179e"/>
+            <stop offset="71%" style="stop-color:#f72585"/>
+            <stop offset="85%" style="stop-color:#ff6fff"/>
+            <stop offset="100%" style="stop-color:#72efdd"/>
+          </linearGradient>
+        </defs>
+        <rect width="400" height="400" fill="#0a0a0f"/>
+        <rect x="26" y="26" width="348" height="348" rx="20" fill="none" stroke="url(#n-outerGlow)" stroke-width="10" filter="url(#n-glowBlur)" opacity="0.9"/>
+        <rect x="30" y="30" width="340" height="340" rx="18" fill="url(#n-cardbg)"/>
+        <circle cx="200" cy="185" r="125" fill="url(#n-glow)"/>
+        <rect x="30" y="30" width="340" height="340" rx="18" fill="none" stroke="url(#n-border1)" stroke-width="2" opacity="0.7"/>
+        <polygon points="200,65 214,105 258,105 222,130 234,170 200,148 166,170 178,130 142,105 186,105" fill="none" stroke="url(#n-g1)" stroke-width="2.5"/>
+        <circle cx="200" cy="125" r="23" fill="none" stroke="url(#n-g1)" stroke-width="1" opacity="0.6"/>
+        <circle cx="200" cy="125" r="6" fill="#72efdd" opacity="0.9"/>
+        <circle cx="85" cy="120" r="1.2" fill="#72efdd" opacity="0.5"/>
+        <circle cx="310" cy="135" r="1" fill="#4cc9f0" opacity="0.4"/>
+        <circle cx="120" cy="280" r="1.3" fill="#7209b7" opacity="0.5"/>
+        <circle cx="300" cy="290" r="1" fill="#72efdd" opacity="0.3"/>
+        <circle cx="150" cy="100" r="0.8" fill="#4cc9f0" opacity="0.6"/>
+        <circle cx="270" cy="310" r="1.1" fill="#7209b7" opacity="0.4"/>
+        <text x="200" y="220" text-anchor="middle" fill="url(#n-g1)" font-size="48" font-family="'Courier New',monospace" font-weight="800" letter-spacing="10">SBTI</text>
+        <text x="200" y="246" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="14" font-family="sans-serif" font-weight="300" letter-spacing="4">Soul Card</text>
+        <rect x="140" y="261" width="120" height="1.5" rx="1" fill="url(#n-divider)"/>
+        <circle cx="155" cy="284" r="3" fill="#72efdd" opacity="0.6">
+          <animate attributeName="opacity" values="0.4;1;0.4" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <text x="210" y="288" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="12" font-family="sans-serif" letter-spacing="2">等待灵魂铭刻</text>
+        <rect x="155" y="306" width="90" height="22" rx="11" fill="none" stroke="rgba(85,85,102,0.5)" stroke-width="1"/>
+        <text x="200" y="321" text-anchor="middle" fill="rgba(114,239,221,0.5)" font-size="10" font-family="monospace" font-weight="600" letter-spacing="2">SBTI NFT</text>
+        <text x="200" y="344" text-anchor="middle" fill="url(#n-tokenId)" font-size="11" font-family="monospace" font-weight="bold">#1</text>
+      </svg>
+      <p class="card-note">每张卡片都有唯一随机种子决定渐变角度与色彩</p>
+    </div>
+
+    <!-- 金卡 -->
+    <div class="card-wrapper" id="goldCardWrapper">
+      <div class="label" style="color:#ffd700;">✨ 金卡 · 10% 稀有</div>
+      <svg id="goldCard" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+        <defs>
+          <linearGradient id="gd-g1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#ffd700"/>
+            <stop offset="50%" style="stop-color:#ffb800"/>
+            <stop offset="100%" style="stop-color:#ff8c00"/>
+          </linearGradient>
+          <radialGradient id="gd-glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#ffd700;stop-opacity:0.15"/>
+            <stop offset="100%" style="stop-color:#0e0e1a;stop-opacity:0"/>
+          </radialGradient>
+          <linearGradient id="gd-tokenId" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#ffd700"/>
+            <stop offset="50%" style="stop-color:#ffe066"/>
+            <stop offset="100%" style="stop-color:#ff8c00"/>
+          </linearGradient>
+          <linearGradient id="gd-divider" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#ffd700;stop-opacity:0"/>
+            <stop offset="25%" style="stop-color:#ffb800;stop-opacity:0.6"/>
+            <stop offset="50%" style="stop-color:#ffe066;stop-opacity:1"/>
+            <stop offset="75%" style="stop-color:#ffb800;stop-opacity:0.6"/>
+            <stop offset="100%" style="stop-color:#ffd700;stop-opacity:0"/>
+          </linearGradient>
+          <linearGradient id="gd-cardbg" x1="30%" y1="0%" x2="70%" y2="100%">
+            <stop offset="0%" style="stop-color:#1a1408"/>
+            <stop offset="40%" style="stop-color:#1c1a0e"/>
+            <stop offset="100%" style="stop-color:#201c10"/>
+          </linearGradient>
+          <linearGradient id="gd-border1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#ffd700"/>
+            <stop offset="15%" style="stop-color:#ffb800"/>
+            <stop offset="30%" style="stop-color:#ff8c00"/>
+            <stop offset="50%" style="stop-color:#ffa500"/>
+            <stop offset="65%" style="stop-color:#ffe066"/>
+            <stop offset="80%" style="stop-color:#ffd700"/>
+            <stop offset="90%" style="stop-color:#ff9500"/>
+            <stop offset="100%" style="stop-color:#ffb800"/>
+          </linearGradient>
+          <filter id="gd-glowBlur" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="12" result="blur"/>
+          </filter>
+          <linearGradient id="gd-outerGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#ffd700"/>
+            <stop offset="14%" style="stop-color:#ffb800"/>
+            <stop offset="28%" style="stop-color:#ff8c00"/>
+            <stop offset="43%" style="stop-color:#ffa500"/>
+            <stop offset="57%" style="stop-color:#ffe066"/>
+            <stop offset="71%" style="stop-color:#ffd700"/>
+            <stop offset="85%" style="stop-color:#ff9500"/>
+            <stop offset="100%" style="stop-color:#ffb800"/>
+          </linearGradient>
+        </defs>
+        <rect width="400" height="400" fill="#0a0a0f"/>
+        <rect x="26" y="26" width="348" height="348" rx="20" fill="none" stroke="url(#gd-outerGlow)" stroke-width="10" filter="url(#gd-glowBlur)" opacity="0.9"/>
+        <rect x="30" y="30" width="340" height="340" rx="18" fill="url(#gd-cardbg)"/>
+        <circle cx="200" cy="185" r="125" fill="url(#gd-glow)"/>
+        <rect x="30" y="30" width="340" height="340" rx="18" fill="none" stroke="url(#gd-border1)" stroke-width="2.5" opacity="0.7"/>
+        <polygon points="200,65 214,105 258,105 222,130 234,170 200,148 166,170 178,130 142,105 186,105" fill="none" stroke="url(#gd-g1)" stroke-width="2.5"/>
+        <circle cx="200" cy="125" r="23" fill="none" stroke="url(#gd-g1)" stroke-width="1" opacity="0.6"/>
+        <circle cx="200" cy="125" r="6" fill="#ffd700" opacity="0.9"/>
+        <circle cx="85" cy="120" r="1.2" fill="#ffd700" opacity="0.5"/>
+        <circle cx="310" cy="135" r="1" fill="#ffb800" opacity="0.4"/>
+        <circle cx="120" cy="280" r="1.3" fill="#ff9500" opacity="0.5"/>
+        <circle cx="300" cy="290" r="1" fill="#ffd700" opacity="0.3"/>
+        <circle cx="150" cy="100" r="0.8" fill="#ffb800" opacity="0.6"/>
+        <circle cx="270" cy="310" r="1.1" fill="#ff9500" opacity="0.4"/>
+        <text x="200" y="220" text-anchor="middle" fill="url(#gd-g1)" font-size="48" font-family="'Courier New',monospace" font-weight="800" letter-spacing="10">SBTI</text>
+        <text x="200" y="246" text-anchor="middle" fill="rgba(255,215,0,0.5)" font-size="14" font-family="sans-serif" font-weight="300" letter-spacing="4">Golden Card</text>
+        <rect x="140" y="261" width="120" height="1.5" rx="1" fill="url(#gd-divider)"/>
+        <circle cx="155" cy="284" r="3" fill="#ffd700" opacity="0.6">
+          <animate attributeName="opacity" values="0.4;1;0.4" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <text x="210" y="288" text-anchor="middle" fill="rgba(255,215,0,0.4)" font-size="12" font-family="sans-serif" letter-spacing="2">等待灵魂铭刻</text>
+        <rect x="155" y="306" width="90" height="22" rx="11" fill="none" stroke="rgba(180,150,50,0.5)" stroke-width="1"/>
+        <text x="200" y="321" text-anchor="middle" fill="rgba(255,215,0,0.5)" font-size="10" font-family="monospace" font-weight="600" letter-spacing="2">SBTI NFT</text>
+        <text x="200" y="344" text-anchor="middle" fill="url(#gd-tokenId)" font-size="11" font-family="monospace" font-weight="bold">#8</text>
+      </svg>
+      <p class="card-note" style="color:rgba(255,215,0,0.6);">10% 概率铸造，全套金色视觉 · 稀有度更高</p>
+    </div>
+  </div>
+  <p style="text-align:center; color:rgba(255,255,255,0.55); font-size:13px; margin-top:10px; letter-spacing:1px;">🔄 刷新页面试试 — 每次加载都会随机生成不同的渐变角度与配色</p>
+
+  <h4 style="color: rgba(255,255,255,0.75); font-size: 14px; margin: 40px 0 20px;">灵魂碑 — Soul Stele（铭刻后）</h4>
+  <div class="card-showcase">
+    <!-- CTRL -->
+    <div class="card-wrapper">
+      <div class="label">🔴 CTRL 拿捏者</div>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">
+        <defs>
+          <linearGradient id="g1a" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#e94560"/><stop offset="100%" style="stop-color:#0f3460"/>
+          </linearGradient>
+          <radialGradient id="glowa" cx="50%" cy="35%" r="45%">
+            <stop offset="0%" style="stop-color:#e94560;stop-opacity:0.12"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="200" cy="140" r="130" fill="url(#glowa)"/>
+        <path d="M55,130 L55,360 L345,360 L345,130 Q345,40 200,40 Q55,40 55,130Z" fill="none" stroke="url(#g1a)" stroke-width="2"/>
+        <text x="200" y="82" text-anchor="middle" fill="#e94560" font-size="16" font-family="serif" letter-spacing="4">SOUL STELE</text>
+        <text x="200" y="145" text-anchor="middle" fill="url(#g1a)" font-size="44" font-family="monospace" font-weight="bold">CTRL</text>
+        <text x="200" y="172" text-anchor="middle" fill="#8888aa" font-size="15" font-family="sans-serif">拿捏者</text>
+        <text x="200" y="196" text-anchor="middle" fill="#555566" font-size="11" font-family="monospace">Match: 87%</text>
+        <line x1="85" y1="208" x2="315" y2="208" stroke="#333344" stroke-width="0.5"/>
+        <text x="83" y="227" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S1</text>
+        <rect x="88" y="220" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="220" width="78" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="83" y="243" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">E1</text>
+        <rect x="88" y="236" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="236" width="52" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="83" y="259" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">A1</text>
+        <rect x="88" y="252" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="252" width="26" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="83" y="275" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">Ac</text>
+        <rect x="88" y="268" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="268" width="65" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="83" y="291" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">So</text>
+        <rect x="88" y="284" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="284" width="52" height="7" rx="2" fill="#e94560" opacity="0.7"/>
+        <text x="200" y="320" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#42</text>
+      </svg>
+      <p class="card-note">Match 87% · 5维度展示</p>
+    </div>
+
+    <!-- BOSS -->
+    <div class="card-wrapper">
+      <div class="label">🟡 BOSS 领导者</div>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">
+        <defs>
+          <linearGradient id="g1b" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#ffd700"/><stop offset="100%" style="stop-color:#b8860b"/>
+          </linearGradient>
+          <radialGradient id="glowb" cx="50%" cy="35%" r="45%">
+            <stop offset="0%" style="stop-color:#ffd700;stop-opacity:0.12"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="200" cy="140" r="130" fill="url(#glowb)"/>
+        <path d="M55,130 L55,360 L345,360 L345,130 Q345,40 200,40 Q55,40 55,130Z" fill="none" stroke="url(#g1b)" stroke-width="2"/>
+        <text x="200" y="82" text-anchor="middle" fill="#ffd700" font-size="16" font-family="serif" letter-spacing="4">SOUL STELE</text>
+        <text x="200" y="145" text-anchor="middle" fill="url(#g1b)" font-size="44" font-family="monospace" font-weight="bold">BOSS</text>
+        <text x="200" y="172" text-anchor="middle" fill="#8888aa" font-size="15" font-family="sans-serif">领导者</text>
+        <text x="200" y="196" text-anchor="middle" fill="#555566" font-size="11" font-family="monospace">Match: 92%</text>
+        <line x1="85" y1="208" x2="315" y2="208" stroke="#333344" stroke-width="0.5"/>
+        <text x="83" y="227" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S1</text>
+        <rect x="88" y="220" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="220" width="78" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="83" y="243" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">E1</text>
+        <rect x="88" y="236" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="236" width="65" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="83" y="259" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">A1</text>
+        <rect x="88" y="252" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="252" width="78" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="83" y="275" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">Ac</text>
+        <rect x="88" y="268" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="268" width="26" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="83" y="291" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">So</text>
+        <rect x="88" y="284" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="284" width="52" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
+        <text x="200" y="320" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#7</text>
+      </svg>
+      <p class="card-note">Match 92% · 5维度展示</p>
+    </div>
+
+    <!-- CRY -->
+    <div class="card-wrapper">
+      <div class="label">💜 CRY 哭包</div>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">
+        <defs>
+          <linearGradient id="g1c" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#b388ff"/><stop offset="100%" style="stop-color:#7c4dff"/>
+          </linearGradient>
+          <radialGradient id="glowc" cx="50%" cy="35%" r="45%">
+            <stop offset="0%" style="stop-color:#b388ff;stop-opacity:0.12"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="200" cy="140" r="130" fill="url(#glowc)"/>
+        <path d="M55,130 L55,360 L345,360 L345,130 Q345,40 200,40 Q55,40 55,130Z" fill="none" stroke="url(#g1c)" stroke-width="2"/>
+        <text x="200" y="82" text-anchor="middle" fill="#b388ff" font-size="16" font-family="serif" letter-spacing="4">SOUL STELE</text>
+        <text x="200" y="145" text-anchor="middle" fill="url(#g1c)" font-size="44" font-family="monospace" font-weight="bold">CRY</text>
+        <text x="200" y="172" text-anchor="middle" fill="#8888aa" font-size="15" font-family="sans-serif">哭包</text>
+        <text x="200" y="196" text-anchor="middle" fill="#555566" font-size="11" font-family="monospace">Match: 76%</text>
+        <line x1="85" y1="208" x2="315" y2="208" stroke="#333344" stroke-width="0.5"/>
+        <text x="83" y="227" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S1</text>
+        <rect x="88" y="220" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="220" width="26" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="83" y="243" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">E1</text>
+        <rect x="88" y="236" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="236" width="52" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="83" y="259" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">A1</text>
+        <rect x="88" y="252" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="252" width="78" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="83" y="275" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">Ac</text>
+        <rect x="88" y="268" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="268" width="52" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="83" y="291" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">So</text>
+        <rect x="88" y="284" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="284" width="65" height="7" rx="2" fill="#b388ff" opacity="0.7"/>
+        <text x="200" y="320" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#128</text>
+      </svg>
+      <p class="card-note">Match 76% · 5维度展示</p>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ===== 技术特性 ===== -->
+<div class="section">
+  <div class="section-title" style="color: #f72585;">技术特性</div>
+  <p class="section-desc">100% 链上存储，无外部依赖</p>
+  <div class="features">
+    <div class="feature-item">
+      <div class="feat-icon">🎨</div>
+      <h5>链上 SVG 渲染</h5>
+      <p>所有卡片图像由智能合约直接生成 SVG，无需 IPFS 或外部服务器存储。</p>
+    </div>
+    <div class="feature-item">
+      <div class="feat-icon">🎲</div>
+      <h5>链上随机种子</h5>
+      <p>Mint 时 keccak256 生成唯一种子，决定渐变角度、颜色偏移和金卡概率。</p>
+    </div>
+    <div class="feature-item">
+      <div class="feat-icon">🏆</div>
+      <h5>10% 金卡稀有度</h5>
+      <p>每次 Mint 有 10% 概率获得稀有金卡，全套金色视觉效果。</p>
+    </div>
+    <div class="feature-item">
+      <div class="feat-icon">🔒</div>
+      <h5>灵魂绑定 (SBT)</h5>
+      <p>铭刻后 NFT 灵魂绑定到持有者钱包，不可转让、不可交易。</p>
+    </div>
+    <div class="feature-item">
+      <div class="feat-icon">📊</div>
+      <h5>15 维度人格数据</h5>
+      <p>基于 Big Five + 扩展模型的 15 个心理维度，全部永久上链。</p>
+    </div>
+    <div class="feature-item">
+      <div class="feat-icon">⛓️</div>
+      <h5>BSC 低成本</h5>
+      <p>部署在 BNB Smart Chain，Mint + 铭刻全流程 Gas 费约 $0.36。</p>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ===== 27种人格 ===== -->
+<div class="section">
+  <div class="section-title" style="color: #ffd700;">27 种人格类型</div>
+  <p class="section-desc">每种人格都有独特的代号、名称和配色</p>
+  <div class="personality-grid">
+    <div class="personality-chip"><div class="pcode" style="color:#e94560">CTRL</div><div class="pname">拿捏者</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#ffd700">BOSS</div><div class="pname">领导者</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#4cc9f0">INTJ</div><div class="pname">架构师</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#ff6b6b">FIRE</div><div class="pname">火焰</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#72efdd">SAGE</div><div class="pname">贤者</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#b388ff">CRY</div><div class="pname">哭包</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#69db7c">HEAL</div><div class="pname">治愈者</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#ffa94d">SOLO</div><div class="pname">独行侠</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#ff8787">LOVE</div><div class="pname">恋爱脑</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#748ffc">NERD</div><div class="pname">学霸</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#da77f2">WILD</div><div class="pname">野性</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#fcc419">SUN</div><div class="pname">小太阳</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#495057">VOID</div><div class="pname">虚无</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#20c997">ZEN</div><div class="pname">佛系</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#f06595">CUTE</div><div class="pname">萌系</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#845ef7">DARK</div><div class="pname">暗黑</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#339af0">ICE</div><div class="pname">冰山</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#ff922b">HYPE</div><div class="pname">炒作王</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#94d82d">CHILL</div><div class="pname">躺平</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#e64980">DRAMA</div><div class="pname">戏精</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#15aabf">THINK</div><div class="pname">思考者</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#fab005">LUCK</div><div class="pname">锦鲤</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#fd7e14">RAGE</div><div class="pname">暴躁</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#7950f2">DREAM</div><div class="pname">白日梦</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#12b886">TANK</div><div class="pname">肉盾</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#e03131">GHOST</div><div class="pname">幽灵</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#ae3ec9">DRUNK</div><div class="pname">酒鬼</div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ===== CTA ===== -->
+<div class="cta-section">
+  <h2>准备好铸造你的灵魂了吗？</h2>
+  <p>每张卡片都是独一无二的链上身份，一旦铭刻，永远属于你。</p>
+  <a class="cta-btn" href="index.html">🃏 开始 Mint</a>
+</div>
+
+<!-- Footer -->
+<div class="about-footer">
+  <p>SBTI × NFT · Built on BNB Smart Chain · 100% On-Chain SVG</p>
+  <p style="margin-top:8px;">
+    <a href="https://testnet.bscscan.com/address/0x9D4e3dfeA5224ee1bAfE1B437adde20e8B480677" target="_blank">查看合约 ↗</a>
+  </p>
+</div>
+
+<script>
+// 普通卡 & 金卡独立随机化
+(function() {
+  const NORMAL_RING = ['#72efdd','#4cc9f0','#4361ee','#7209b7','#b5179e','#f72585','#ff6fff','#72efdd'];
+  const GOLD_RING   = ['#ffd700','#ffb800','#ff8c00','#ffa500','#ffe066','#ffd700','#ff9500','#ffb800'];
+
+  function randomAngle() {
+    const angle = Math.random() * 360;
+    const rad = angle * Math.PI / 180;
+    return {
+      x1: Math.round(50 - Math.cos(rad) * 50) + '%',
+      y1: Math.round(50 - Math.sin(rad) * 50) + '%',
+      x2: Math.round(50 + Math.cos(rad) * 50) + '%',
+      y2: Math.round(50 + Math.sin(rad) * 50) + '%'
+    };
+  }
+  function rotateRing(ring, offset) {
+    const len = ring.length - 1;
+    const colors = [];
+    for (let i = 0; i < len; i++) colors.push(ring[(i + offset) % len]);
+    colors.push(colors[0]);
+    return colors;
+  }
+  function randomizeCard(svg, prefix, ring) {
+    const border1  = svg.querySelector('#' + prefix + '-border1');
+    const outerGlow = svg.querySelector('#' + prefix + '-outerGlow');
+    if (!border1 && !outerGlow) return;
+    const c = randomAngle();
+    const offset = Math.floor(Math.random() * (ring.length - 1));
+    const colors = rotateRing(ring, offset);
+    [border1, outerGlow].forEach(grad => {
+      if (!grad) return;
+      grad.setAttribute('x1', c.x1);
+      grad.setAttribute('y1', c.y1);
+      grad.setAttribute('x2', c.x2);
+      grad.setAttribute('y2', c.y2);
+      const stops = grad.querySelectorAll('stop');
+      stops.forEach((s, i) => { if (i < colors.length) s.style.stopColor = colors[i]; });
+    });
+  }
+
+  // 普通卡随机化（独立角度 + 色偏）
+  const normalSvg = document.getElementById('normalCard');
+  if (normalSvg) randomizeCard(normalSvg, 'n', NORMAL_RING);
+
+  // 金卡随机化（独立角度 + 色偏）
+  const goldSvg = document.getElementById('goldCard');
+  if (goldSvg) randomizeCard(goldSvg, 'gd', GOLD_RING);
+})();
+</script>
+
+</body>
+</html>

@@ -157,6 +157,29 @@ body {
   50% { opacity: 1; }
 }
 
+/* ---- 了解更多按钮 ---- */
+.about-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+  padding: 6px 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.78rem;
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+.about-link:hover {
+  border-color: rgba(114, 239, 221, 0.4);
+  color: #72efdd;
+  background: rgba(114, 239, 221, 0.06);
+  box-shadow: 0 0 16px rgba(114, 239, 221, 0.08);
+}
+
 /* ---- 钱包状态 ---- */
 .wallet-bar {
   display: flex;
