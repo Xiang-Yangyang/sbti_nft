@@ -421,7 +421,7 @@ function renderMintPanel() {
             <span class="mini-code" style="color: ${color};">${nft.code}</span>
           </div>
           <div class="nft-select-info">
-            <span class="nft-select-title" style="color: ${color};">Soul Card #${nft.tokenId}</span>
+            <span class="nft-select-title" style="color: ${color};">Soul Stele #${nft.tokenId}</span>
             <span class="nft-select-status inscribed-status">${nft.code} · ${nft.name} · ${nft.matchPercent}%</span>
           </div>
           <span class="inscribed-badge-small">✦ 已铭刻</span>
@@ -800,7 +800,7 @@ function renderStelePreview(result) {
         <stop offset="0%" style="stop-color:${color}"/><stop offset="100%" style="stop-color:${color2}"/>
       </linearGradient></defs>
       <path d="M60,160 L60,500 L340,500 L340,160 Q340,60 200,60 Q60,60 60,160Z" fill="none" stroke="url(#tg)" stroke-width="2.5"/>
-      <text x="200" y="120" text-anchor="middle" fill="${color}" font-size="20" font-family="serif" letter-spacing="4">SOUL INSCRIBED</text>
+      <text x="200" y="120" text-anchor="middle" fill="${color}" font-size="20" font-family="serif" letter-spacing="4">SOUL STELE</text>
       <text x="200" y="195" text-anchor="middle" fill="url(#tg)" font-size="52" font-family="monospace" font-weight="bold">${result.code}</text>
       <text x="200" y="230" text-anchor="middle" fill="#8888aa" font-size="18" font-family="sans-serif">${result.name}</text>
       <text x="200" y="262" text-anchor="middle" fill="#555566" font-size="13" font-family="monospace">Match: ${result.similarity}%</text>
@@ -854,7 +854,7 @@ function showSteleModal(nft) {
   document.getElementById('steleModalBody').innerHTML = svg;
   document.getElementById('steleModalInfo').innerHTML = `
     <div class="stele-modal-meta">
-      <span style="color: ${color};">Soul Card #${nft.tokenId}</span>
+      <span style="color: ${color};">Soul Stele #${nft.tokenId}</span>
       <span>铭刻日期: ${inscribeDate}</span>
     </div>
   `;

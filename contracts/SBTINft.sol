@@ -251,7 +251,7 @@ contract SBTINft is ERC721, Ownable {
             // 灵魂碑外框
             '<path d="M60,160 L60,500 L340,500 L340,160 Q340,60 200,60 Q60,60 60,160Z" fill="none" stroke="url(#g1)" stroke-width="2.5"/>',
             // SOUL INSCRIBED
-            '<text x="200" y="120" text-anchor="middle" fill="', color1, '" font-size="20" font-family="serif" letter-spacing="4">SOUL INSCRIBED</text>',
+            '<text x="200" y="120" text-anchor="middle" fill="', color1, '" font-size="20" font-family="serif" letter-spacing="4">SOUL STELE</text>',
             // 人格代码（大字）
             '<text x="200" y="195" text-anchor="middle" fill="url(#g1)" font-size="52" font-family="monospace" font-weight="bold">', pCode, '</text>',
             // 人格名称
