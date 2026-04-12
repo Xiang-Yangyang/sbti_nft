@@ -40,7 +40,7 @@ let isDrunkTriggered = false;
 let showDrinkFollowup = false;
 
 // 合约地址（部署后填入）
-const CONTRACT_ADDRESS = '0x3A1EfA877F5f36D7e54C182C859324Dc9bAd1a74'; // BSC Testnet
+const CONTRACT_ADDRESS = '0x3D5a6E667404D85f9D95FdF2a70b32924983b2CE'; // BSC Testnet
 const CONTRACT_ABI = [
   'function mint() external payable returns (uint256)',
   'function inscribe(uint256 tokenId, uint8 personalityIndex, uint8[15] dimensions, uint8 matchPercent) external',
@@ -555,6 +555,13 @@ function getNetworkName(chainId) {
 
 // ============ Mint NFT ============
 async function mintNFT() {
+  // 点击 Mint 后自动滚动到页面最底部
+  setTimeout(() => {
+    document.documentElement.scrollTop = document.documentElement.scrollHeight;
+    document.body.scrollTop = document.body.scrollHeight; // Safari 兼容
+    window.scrollTo(0, Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));
+  }, 50);
+
   // 演示模式（无合约时）
   if (CONTRACT_ADDRESS === '0x0000000000000000000000000000000000000000') {
     currentTokenId = Math.floor(Math.random() * 10000);
@@ -783,30 +790,36 @@ function renderStelePreview(result) {
   const color = getPersonalityColor(result.index);
   const color2 = getPersonalityColor2(result.index);
   
-  // 维度柱状图
+  // 维度柱状图（紧凑版，适配 400×400）
   let bars = '';
   const dimLabels = ['S1','S2','S3','E1','E2','E3','A1','A2','A3','Ac1','Ac2','Ac3','So1','So2','So3'];
   result.dimensions.forEach((val, i) => {
     const barWidth = val * 26;
-    const y = 295 + i * 12;
-    bars += `<text x="88" y="${y+9}" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">${dimLabels[i]}</text>`;
-    bars += `<rect x="94" y="${y}" width="78" height="8" rx="2" fill="#1a1a2e"/>`;
-    bars += `<rect x="94" y="${y}" width="${barWidth}" height="8" rx="2" fill="${color}" opacity="0.7"/>`;
+    const y = 220 + i * 10;
+    bars += `<text x="83" y="${y+7}" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">${dimLabels[i]}</text>`;
+    bars += `<rect x="88" y="${y}" width="78" height="7" rx="2" fill="#1a1a2e"/>`;
+    bars += `<rect x="88" y="${y}" width="${barWidth}" height="7" rx="2" fill="${color}" opacity="0.7"/>`;
   });
 
   const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 560" style="background:#0a0a0f">
-      <defs><linearGradient id="tg" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style="stop-color:${color}"/><stop offset="100%" style="stop-color:${color2}"/>
-      </linearGradient></defs>
-      <path d="M60,160 L60,500 L340,500 L340,160 Q340,60 200,60 Q60,60 60,160Z" fill="none" stroke="url(#tg)" stroke-width="2.5"/>
-      <text x="200" y="120" text-anchor="middle" fill="${color}" font-size="20" font-family="serif" letter-spacing="4">SOUL STELE</text>
-      <text x="200" y="195" text-anchor="middle" fill="url(#tg)" font-size="52" font-family="monospace" font-weight="bold">${result.code}</text>
-      <text x="200" y="230" text-anchor="middle" fill="#8888aa" font-size="18" font-family="sans-serif">${result.name}</text>
-      <text x="200" y="262" text-anchor="middle" fill="#555566" font-size="13" font-family="monospace">Match: ${result.similarity}%</text>
-      <line x1="90" y1="278" x2="310" y2="278" stroke="#333344" stroke-width="0.5"/>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">
+      <defs>
+        <linearGradient id="tg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:${color}"/><stop offset="100%" style="stop-color:${color2}"/>
+        </linearGradient>
+        <radialGradient id="tglow" cx="50%" cy="35%" r="45%">
+          <stop offset="0%" style="stop-color:${color};stop-opacity:0.12"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>
+        </radialGradient>
+      </defs>
+      <circle cx="200" cy="140" r="130" fill="url(#tglow)"/>
+      <path d="M55,130 L55,360 L345,360 L345,130 Q345,40 200,40 Q55,40 55,130Z" fill="none" stroke="url(#tg)" stroke-width="2"/>
+      <text x="200" y="82" text-anchor="middle" fill="${color}" font-size="16" font-family="serif" letter-spacing="4">SOUL STELE</text>
+      <text x="200" y="145" text-anchor="middle" fill="url(#tg)" font-size="44" font-family="monospace" font-weight="bold">${result.code}</text>
+      <text x="200" y="172" text-anchor="middle" fill="#8888aa" font-size="15" font-family="sans-serif">${result.name}</text>
+      <text x="200" y="196" text-anchor="middle" fill="#555566" font-size="11" font-family="monospace">Match: ${result.similarity}%</text>
+      <line x1="85" y1="208" x2="315" y2="208" stroke="#333344" stroke-width="0.5"/>
       ${bars}
-      <text x="200" y="490" text-anchor="middle" fill="#333344" font-size="11" font-family="monospace">#${currentTokenId || '???'}</text>
+      <text x="200" y="380" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#${currentTokenId || '???'}</text>
     </svg>
   `;
 
@@ -818,16 +831,16 @@ function showSteleModal(nft) {
   const color = getPersonalityColor(nft.personalityIndex || 0);
   const color2 = getPersonalityColor2(nft.personalityIndex || 0);
 
-  // 维度柱状图
+  // 维度柱状图（紧凑版，适配 400×400）
   let bars = '';
   const dimLabels = ['S1','S2','S3','E1','E2','E3','A1','A2','A3','Ac1','Ac2','Ac3','So1','So2','So3'];
   if (nft.dimensions && nft.dimensions.length === 15) {
     nft.dimensions.forEach((val, i) => {
       const barWidth = val * 26;
-      const y = 295 + i * 12;
-      bars += `<text x="88" y="${y+9}" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">${dimLabels[i]}</text>`;
-      bars += `<rect x="94" y="${y}" width="78" height="8" rx="2" fill="#1a1a2e"/>`;
-      bars += `<rect x="94" y="${y}" width="${barWidth}" height="8" rx="2" fill="${color}" opacity="0.7"/>`;
+      const y = 220 + i * 10;
+      bars += `<text x="83" y="${y+7}" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">${dimLabels[i]}</text>`;
+      bars += `<rect x="88" y="${y}" width="78" height="7" rx="2" fill="#1a1a2e"/>`;
+      bars += `<rect x="88" y="${y}" width="${barWidth}" height="7" rx="2" fill="${color}" opacity="0.7"/>`;
     });
   }
 
@@ -836,18 +849,24 @@ function showSteleModal(nft) {
     : '未知';
 
   const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 560" style="background:#0a0a0f">
-      <defs><linearGradient id="mtg" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style="stop-color:${color}"/><stop offset="100%" style="stop-color:${color2}"/>
-      </linearGradient></defs>
-      <path d="M60,160 L60,500 L340,500 L340,160 Q340,60 200,60 Q60,60 60,160Z" fill="none" stroke="url(#mtg)" stroke-width="2.5"/>
-      <text x="200" y="120" text-anchor="middle" fill="${color}" font-size="20" font-family="serif" letter-spacing="4">SOUL INSCRIBED</text>
-      <text x="200" y="195" text-anchor="middle" fill="url(#mtg)" font-size="52" font-family="monospace" font-weight="bold">${nft.code}</text>
-      <text x="200" y="230" text-anchor="middle" fill="#8888aa" font-size="18" font-family="sans-serif">${nft.name}</text>
-      <text x="200" y="262" text-anchor="middle" fill="#555566" font-size="13" font-family="monospace">Match: ${nft.matchPercent}%</text>
-      <line x1="90" y1="278" x2="310" y2="278" stroke="#333344" stroke-width="0.5"/>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">
+      <defs>
+        <linearGradient id="mtg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:${color}"/><stop offset="100%" style="stop-color:${color2}"/>
+        </linearGradient>
+        <radialGradient id="mglow" cx="50%" cy="35%" r="45%">
+          <stop offset="0%" style="stop-color:${color};stop-opacity:0.12"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>
+        </radialGradient>
+      </defs>
+      <circle cx="200" cy="140" r="130" fill="url(#mglow)"/>
+      <path d="M55,130 L55,360 L345,360 L345,130 Q345,40 200,40 Q55,40 55,130Z" fill="none" stroke="url(#mtg)" stroke-width="2"/>
+      <text x="200" y="82" text-anchor="middle" fill="${color}" font-size="16" font-family="serif" letter-spacing="4">SOUL STELE</text>
+      <text x="200" y="145" text-anchor="middle" fill="url(#mtg)" font-size="44" font-family="monospace" font-weight="bold">${nft.code}</text>
+      <text x="200" y="172" text-anchor="middle" fill="#8888aa" font-size="15" font-family="sans-serif">${nft.name}</text>
+      <text x="200" y="196" text-anchor="middle" fill="#555566" font-size="11" font-family="monospace">Match: ${nft.matchPercent}%</text>
+      <line x1="85" y1="208" x2="315" y2="208" stroke="#333344" stroke-width="0.5"/>
       ${bars}
-      <text x="200" y="490" text-anchor="middle" fill="#333344" font-size="11" font-family="monospace">#${nft.tokenId}</text>
+      <text x="200" y="380" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#${nft.tokenId}</text>
     </svg>
   `;
 

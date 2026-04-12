@@ -111,7 +111,7 @@ Binance Web3 Wallet 内置支持 BSC Testnet，在网络列表中搜索 "BNB Sma
 
 | 合约 | 地址 | 验证状态 |
 |------|------|----------|
-| **SBTINft** | [`0x3A1EfA877F5f36D7e54C182C859324Dc9bAd1a74`](https://testnet.bscscan.com/address/0x3A1EfA877F5f36D7e54C182C859324Dc9bAd1a74) | - |
+| **SBTINft** | [`0x3D5a6E667404D85f9D95FdF2a70b32924983b2CE`](https://testnet.bscscan.com/address/0x3D5a6E667404D85f9D95FdF2a70b32924983b2CE) | - |
 
 ### 合约参数
 
@@ -179,7 +179,7 @@ bsc_testnet = { key = "${BSCSCAN_API_KEY}", url = "https://api-testnet.bscscan.c
 
 ```javascript
 // 合约地址
-const CONTRACT_ADDRESS = '0x3A1EfA877F5f36D7e54C182C859324Dc9bAd1a74';
+const CONTRACT_ADDRESS = '0x3D5a6E667404D85f9D95FdF2a70b32924983b2CE';
 
 // 链 ID 校验
 const EXPECTED_CHAIN_ID = 97;
@@ -259,8 +259,8 @@ forge script script/Deploy.s.sol:DeploySBTI \
   --broadcast
 
 # 查询合约（用 cast）
-cast call 0x3A1EfA877F5f36D7e54C182C859324Dc9bAd1a74 "totalSupply()" --rpc-url https://bsc-testnet-rpc.publicnode.com
-cast call 0x3A1EfA877F5f36D7e54C182C859324Dc9bAd1a74 "mintPrice()" --rpc-url https://bsc-testnet-rpc.publicnode.com
+cast call 0x3D5a6E667404D85f9D95FdF2a70b32924983b2CE "totalSupply()" --rpc-url https://bsc-testnet-rpc.publicnode.com
+cast call 0x3D5a6E667404D85f9D95FdF2a70b32924983b2CE "mintPrice()" --rpc-url https://bsc-testnet-rpc.publicnode.com
 
 # 启动前端
 cd frontend && python3 -m http.server 8080

@@ -165,25 +165,62 @@ contract SBTINft is ERC721, Ownable {
         }
     }
 
-    // 空白卡片 URI（未做测试）
+    // 空白卡片 URI（未做测试）— 400×400 正方形，匹配 Web UI 风格
     function _blankCardURI(uint256 tokenId) internal pure returns (string memory) {
         string memory svg = string(abi.encodePacked(
-            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" style="background:#1a1a2e">',
-            '<defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">',
-            '<stop offset="0%" style="stop-color:#e94560"/><stop offset="100%" style="stop-color:#0f3460"/>',
-            '</linearGradient></defs>',
-            '<rect x="40" y="40" width="320" height="420" rx="20" fill="none" stroke="url(#g1)" stroke-width="3"/>',
-            '<text x="200" y="200" text-anchor="middle" fill="#e94560" font-size="48" font-family="monospace">SBTI</text>',
-            '<text x="200" y="250" text-anchor="middle" fill="#8888aa" font-size="16" font-family="sans-serif">Soul Card #',
-            tokenId.toString(),
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a14">',
+            // 渐变定义
+            '<defs>'
+            '<linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">'
+            '<stop offset="0%" style="stop-color:#72efdd"/><stop offset="50%" style="stop-color:#4cc9f0"/><stop offset="100%" style="stop-color:#7209b7"/>'
+            '</linearGradient>'
+            '<radialGradient id="glow" cx="50%" cy="50%" r="50%">'
+            '<stop offset="0%" style="stop-color:#4cc9f0;stop-opacity:0.15"/><stop offset="100%" style="stop-color:#0a0a14;stop-opacity:0"/>'
+            '</radialGradient>'
+            '</defs>',
+            // 背景光晕
+            '<circle cx="200" cy="185" r="140" fill="url(#glow)"/>',
+            // 霓虹边框（双层发光效果）
+            '<rect x="30" y="30" width="340" height="340" rx="24" fill="none" stroke="url(#g1)" stroke-width="2" opacity="0.4"/>'
+            '<rect x="35" y="35" width="330" height="330" rx="20" fill="none" stroke="url(#g1)" stroke-width="1.5"/>',
+            // 角落装饰光点
+            '<circle cx="52" cy="52" r="2" fill="#72efdd" opacity="0.8"/>'
+            '<circle cx="348" cy="52" r="2" fill="#4cc9f0" opacity="0.8"/>'
+            '<circle cx="52" cy="348" r="2" fill="#4cc9f0" opacity="0.8"/>'
+            '<circle cx="348" cy="348" r="2" fill="#7209b7" opacity="0.8"/>',
+            // 星形五角星徽章
+            '<polygon points="200,110 210,138 240,138 216,154 224,182 200,166 176,182 184,154 160,138 190,138" fill="none" stroke="url(#g1)" stroke-width="1.5"/>'
+            '<circle cx="200" cy="148" r="14" fill="none" stroke="url(#g1)" stroke-width="1" opacity="0.6"/>'
+            '<circle cx="200" cy="148" r="4" fill="#72efdd" opacity="0.9"/>'
+        ));
+        svg = string(abi.encodePacked(svg,
+            // 粒子光点（静态散布）
+            '<circle cx="85" cy="120" r="1.2" fill="#72efdd" opacity="0.5"/>'
+            '<circle cx="310" cy="135" r="1" fill="#4cc9f0" opacity="0.4"/>'
+            '<circle cx="120" cy="280" r="1.3" fill="#7209b7" opacity="0.5"/>'
+            '<circle cx="300" cy="290" r="1" fill="#72efdd" opacity="0.3"/>'
+            '<circle cx="150" cy="100" r="0.8" fill="#4cc9f0" opacity="0.6"/>'
+            '<circle cx="270" cy="310" r="1.1" fill="#7209b7" opacity="0.4"/>',
+            // SBTI 大标题
+            '<text x="200" y="228" text-anchor="middle" fill="url(#g1)" font-size="42" font-family="monospace" font-weight="bold" letter-spacing="6">SBTI</text>',
+            // Soul Card 副标题
+            '<text x="200" y="256" text-anchor="middle" fill="#8888aa" font-size="14" font-family="sans-serif" letter-spacing="3">Soul Card</text>',
+            // 分隔线
+            '<line x1="140" y1="272" x2="260" y2="272" stroke="url(#g1)" stroke-width="0.5" opacity="0.4"/>',
+            // 状态文字 + 脉冲圆点
+            '<circle cx="168" cy="296" r="3" fill="#72efdd" opacity="0.8">'
+            '<animate attributeName="opacity" values="0.4;1;0.4" dur="2s" repeatCount="indefinite"/>'
+            '</circle>'
+            '<text x="205" y="300" text-anchor="middle" fill="#555577" font-size="12" font-family="sans-serif">',
+            unicode'等待灵魂铭刻',
             '</text>',
-            '<text x="200" y="310" text-anchor="middle" fill="#555577" font-size="14" font-family="sans-serif">',
-            unicode'[ 等待灵魂铭刻 ]',
-            '</text>',
-            '<circle cx="200" cy="380" r="20" fill="none" stroke="#e94560" stroke-width="1" opacity="0.5">',
-            '<animate attributeName="r" values="15;25;15" dur="2s" repeatCount="indefinite"/>',
-            '<animate attributeName="opacity" values="0.3;0.8;0.3" dur="2s" repeatCount="indefinite"/>',
-            '</circle>',
+            // 底部标签
+            '<rect x="152" y="322" width="40" height="18" rx="9" fill="none" stroke="#555566" stroke-width="0.8"/>'
+            '<text x="172" y="334" text-anchor="middle" fill="#555566" font-size="9" font-family="monospace">SBTI</text>'
+            '<rect x="202" y="322" width="40" height="18" rx="9" fill="none" stroke="#555566" stroke-width="0.8"/>'
+            '<text x="222" y="334" text-anchor="middle" fill="#555566" font-size="9" font-family="monospace">NFT</text>',
+            // Token ID
+            '<text x="200" y="368" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#', tokenId.toString(), '</text>',
             '</svg>'
         ));
 
@@ -240,32 +277,49 @@ contract SBTINft is ERC721, Ownable {
         uint8[15] memory dims,
         uint8 matchPct
     ) internal pure returns (string memory) {
-        // 维度柱状图
+        // 维度柱状图（紧凑版，适配 400×400）
         string memory bars = _buildDimensionBars(dims, color1);
 
-        return string(abi.encodePacked(
-            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 560" style="background:#0a0a0f">',
-            '<defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">',
-            '<stop offset="0%" style="stop-color:', color1, '"/><stop offset="100%" style="stop-color:', color2, '"/>',
-            '</linearGradient></defs>',
-            // 灵魂碑外框
-            '<path d="M60,160 L60,500 L340,500 L340,160 Q340,60 200,60 Q60,60 60,160Z" fill="none" stroke="url(#g1)" stroke-width="2.5"/>',
-            // SOUL INSCRIBED
-            '<text x="200" y="120" text-anchor="middle" fill="', color1, '" font-size="20" font-family="serif" letter-spacing="4">SOUL STELE</text>',
+        // Part 1: SVG 头部 + 装饰
+        string memory part1 = string(abi.encodePacked(
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">',
+            '<defs>'
+            '<linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">'
+            '<stop offset="0%" style="stop-color:', color1, '"/><stop offset="100%" style="stop-color:', color2, '"/>'
+            '</linearGradient>'
+            '<radialGradient id="glow" cx="50%" cy="35%" r="45%">'
+            '<stop offset="0%" style="stop-color:', color1, ';stop-opacity:0.12"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>'
+            '</radialGradient>'
+            '</defs>',
+            // 背景光晕
+            '<circle cx="200" cy="140" r="130" fill="url(#glow)"/>',
+            // 拱门形灵魂碑外框（缩放适配 400×400）
+            '<path d="M55,130 L55,360 L345,360 L345,130 Q345,40 200,40 Q55,40 55,130Z" fill="none" stroke="url(#g1)" stroke-width="2"/>'
+        ));
+
+        // Part 2: 文字内容
+        string memory part2 = string(abi.encodePacked(
+            // SOUL STELE 标题
+            '<text x="200" y="82" text-anchor="middle" fill="', color1, '" font-size="16" font-family="serif" letter-spacing="4">SOUL STELE</text>',
             // 人格代码（大字）
-            '<text x="200" y="195" text-anchor="middle" fill="url(#g1)" font-size="52" font-family="monospace" font-weight="bold">', pCode, '</text>',
+            '<text x="200" y="145" text-anchor="middle" fill="url(#g1)" font-size="44" font-family="monospace" font-weight="bold">', pCode, '</text>',
             // 人格名称
-            '<text x="200" y="230" text-anchor="middle" fill="#8888aa" font-size="18" font-family="sans-serif">', pName, '</text>',
+            '<text x="200" y="172" text-anchor="middle" fill="#8888aa" font-size="15" font-family="sans-serif">', pName, '</text>',
             // 匹配度
-            '<text x="200" y="262" text-anchor="middle" fill="#555566" font-size="13" font-family="monospace">Match: ', uint256(matchPct).toString(), '%</text>',
+            '<text x="200" y="196" text-anchor="middle" fill="#555566" font-size="11" font-family="monospace">Match: ', uint256(matchPct).toString(), '%</text>',
             // 分隔线
-            '<line x1="90" y1="278" x2="310" y2="278" stroke="#333344" stroke-width="0.5"/>',
-            // 维度柱状图
+            '<line x1="85" y1="208" x2="315" y2="208" stroke="#333344" stroke-width="0.5"/>'
+        ));
+
+        // Part 3: 维度条 + Token ID
+        string memory part3 = string(abi.encodePacked(
             bars,
             // Token ID
-            '<text x="200" y="490" text-anchor="middle" fill="#333344" font-size="11" font-family="monospace">#', tokenId.toString(), '</text>',
+            '<text x="200" y="380" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#', tokenId.toString(), '</text>',
             '</svg>'
         ));
+
+        return string(abi.encodePacked(part1, part2, part3));
     }
 
     function _buildDimensionBars(uint8[15] memory dims, string memory color) internal pure returns (string memory) {
@@ -276,19 +330,19 @@ contract SBTINft is ERC721, Ownable {
         bytes memory result = "";
         for (uint8 i = 0; i < 15; i++) {
             uint256 barWidth = uint256(dims[i]) * 26; // L=26, M=52, H=78
-            uint256 yPos = 295 + uint256(i) * 12;
+            uint256 yPos = 220 + uint256(i) * 10;     // 起始 y=220，间隔 10px（更紧凑）
             
             // 维度标签
             result = abi.encodePacked(result,
-                '<text x="88" y="', (yPos + 9).toString(), '" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">', labels[i], '</text>'
+                '<text x="83" y="', (yPos + 7).toString(), '" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">', labels[i], '</text>'
             );
             // 背景条
             result = abi.encodePacked(result,
-                '<rect x="94" y="', yPos.toString(), '" width="78" height="8" rx="2" fill="#1a1a2e"/>'
+                '<rect x="88" y="', yPos.toString(), '" width="78" height="7" rx="2" fill="#1a1a2e"/>'
             );
             // 数值条
             result = abi.encodePacked(result,
-                '<rect x="94" y="', yPos.toString(), '" width="', barWidth.toString(), '" height="8" rx="2" fill="', color, '" opacity="0.7"/>'
+                '<rect x="88" y="', yPos.toString(), '" width="', barWidth.toString(), '" height="7" rx="2" fill="', color, '" opacity="0.7"/>'
             );
         }
         return string(result);
