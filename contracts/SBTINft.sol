@@ -478,16 +478,25 @@ contract SBTINft is ERC721, Ownable {
         // 格式化铭刻时间为 YYYY-MM-DD
         string memory timeStr = _formatTimestamp(inscribeTime);
 
-        string memory svg = _buildSteleSVG(tokenId, pCode, pName, color1, color2, dims, matchPct, username, timeStr);
-
+        // 继承 Card 的渐变参数（种子 → 角度 + 色环偏移）
         bool gold = isGoldCard(tokenId);
+        uint256 seed = cardSeed[tokenId];
+        uint256 colorOffset = (seed >> 16) % 7;
+        (string memory gx1, string memory gy1, string memory gx2, string memory gy2) = _gradientCoords(seed);
+
+        string memory svg = _buildSteleSVG(tokenId, pCode, pName, color1, color2, dims, matchPct, username, timeStr, gold, colorOffset, gx1, gy1, gx2, gy2);
+
+        // 金碑: SBTI Golden Stele #xx | CODE, 普通碑: SBTI Stele #xx | CODE
         string memory inscribedName = gold
-            ? string(abi.encodePacked("SBTI Golden #", tokenId.toString(), " | ", pCode))
-            : string(abi.encodePacked("SBTI #", tokenId.toString(), " | ", pCode));
+            ? string(abi.encodePacked("SBTI Golden Stele #", tokenId.toString(), " | ", pCode))
+            : string(abi.encodePacked("SBTI Stele #", tokenId.toString(), " | ", pCode));
         string memory rarity = gold ? "Gold" : "Normal";
+        string memory desc = string(abi.encodePacked(
+            username, ' is ', pName, ' (SBTI) - SBTI Soul Stele, permanently inscribed on-chain on ', timeStr, '.'
+        ));
         string memory json = string(abi.encodePacked(
             '{"name":"', inscribedName,
-            '","description":"', pName, ' - SBTI Soul Stele, permanently inscribed on-chain.",',
+            '","description":"', desc, '",',
             '"attributes":[',
                 '{"trait_type":"Personality","value":"', pCode, '"},',
                 '{"trait_type":"Name","value":"', pName, '"},',
@@ -511,55 +520,139 @@ contract SBTINft is ERC721, Ownable {
         uint8[15] memory dims,
         uint8 matchPct,
         string memory username,
-        string memory timeStr
+        string memory timeStr,
+        bool gold,
+        uint256 colorOffset,
+        string memory gx1, string memory gy1, string memory gx2, string memory gy2
     ) internal pure returns (string memory) {
-        // 维度柱状图（紧凑版，适配 400×400）
-        string memory bars = _buildDimensionBars(dims, color1);
+        string memory svg = _stelePart1(color1, color2, gold, colorOffset, gx1, gy1, gx2, gy2);
+        svg = string(abi.encodePacked(svg, _stelePart2(color1, gold, colorOffset, gx1, gy1, gx2, gy2)));
+        svg = string(abi.encodePacked(svg, _stelePart3(pCode, pName, color1, username, matchPct)));
+        svg = string(abi.encodePacked(svg, _stelePart4(dims, color1, timeStr, tokenId)));
+        return svg;
+    }
 
-        // Part 1: SVG 头部 + 装饰
-        string memory part1 = string(abi.encodePacked(
+    // Stele Part1: SVG 头 + defs（人格渐变 + 光晕 + 分隔线 + cardbg）
+    function _stelePart1(
+        string memory color1,
+        string memory color2,
+        bool,            // gold (reserved)
+        uint256,         // colorOffset (reserved)
+        string memory,   // gx1 (reserved)
+        string memory,   // gy1 (reserved)
+        string memory,   // gx2 (reserved)
+        string memory    // gy2 (reserved)
+    ) internal pure returns (string memory) {
+        // 分隔线渐变
+        return string(abi.encodePacked(
             '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">',
             '<defs>'
+            // g1: 人格代号/文字渐变
             '<linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">'
             '<stop offset="0%" style="stop-color:', color1, '"/><stop offset="100%" style="stop-color:', color2, '"/>'
             '</linearGradient>'
-            '<radialGradient id="glow" cx="50%" cy="35%" r="45%">'
-            '<stop offset="0%" style="stop-color:', color1, ';stop-opacity:0.12"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>'
+            // glow: 顶部径向光晕
+            '<radialGradient id="glow" cx="50%" cy="30%" r="45%">'
+            '<stop offset="0%" style="stop-color:', color1, ';stop-opacity:0.15"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>'
             '</radialGradient>'
+            // divider: 分隔线渐变
+            '<linearGradient id="div" x1="0%" y1="0%" x2="100%" y2="0%">'
+            '<stop offset="0%" style="stop-color:', color1, ';stop-opacity:0"/><stop offset="50%" style="stop-color:', color1, ';stop-opacity:0.5"/><stop offset="100%" style="stop-color:', color1, ';stop-opacity:0"/>'
+            '</linearGradient>'
+            // cardbg: 碑体背景（与 Card 一致的三色对角线渐变）
+            '<linearGradient id="cardbg" x1="30%" y1="0%" x2="70%" y2="100%">'
+            '<stop offset="0%" style="stop-color:#0e0e1a"/>'
+            '<stop offset="40%" style="stop-color:#161625"/>'
+            '<stop offset="100%" style="stop-color:#1a1a30"/>'
+            '</linearGradient>'
+        ));
+    }
+
+    // Stele Part2: 边框/外发光渐变 + 碑体结构
+    function _stelePart2(
+        string memory color1,
+        bool gold,
+        uint256 colorOffset,
+        string memory gx1, string memory gy1, string memory gx2, string memory gy2
+    ) internal pure returns (string memory) {
+        // 8色边框渐变（继承 Card 的色环 + 随机角度）
+        string memory borderStops = _buildGradientStops(colorOffset, gold);
+
+        return string(abi.encodePacked(
+            // outerGlow: 外发光渐变（同 border 色彩）
+            '<linearGradient id="oGlow" x1="', gx1, '" y1="', gy1, '" x2="', gx2, '" y2="', gy2, '">',
+            borderStops,
+            '</linearGradient>'
+            // border: 碑体边框渐变
+            '<linearGradient id="bdr" x1="', gx1, '" y1="', gy1, '" x2="', gx2, '" y2="', gy2, '">',
+            borderStops,
+            '</linearGradient>'
+            // glowBlur 滤镜
+            '<filter id="gBlur" x="-30%" y="-30%" width="160%" height="160%">'
+            '<feGaussianBlur stdDeviation="12" result="blur"/>'
+            '</filter>'
             '</defs>',
+            // 外发光（碑形 path + 模糊）
+            '<path d="M26,85 L26,354 Q26,374 48,374 L352,374 Q374,374 374,354 L374,85 Q374,11 200,11 Q26,11 26,85Z" fill="none" stroke="url(#oGlow)" stroke-width="10" filter="url(#gBlur)" opacity="0.9"/>',
             // 背景光晕
-            '<circle cx="200" cy="140" r="130" fill="url(#glow)"/>',
-            // 拱门形灵魂碑外框（缩放适配 400×400）
-            '<path d="M55,130 L55,360 L345,360 L345,130 Q345,40 200,40 Q55,40 55,130Z" fill="none" stroke="url(#g1)" stroke-width="2"/>'
+            '<circle cx="200" cy="120" r="130" fill="url(#glow)"/>',
+            // 碑体主体（cardbg 填充 + 彩虹边框）
+            '<path d="M30,85 L30,352 Q30,370 48,370 L352,370 Q370,370 370,352 L370,85 Q370,15 200,15 Q30,15 30,85Z" fill="url(#cardbg)" stroke="url(#bdr)" stroke-width="2" opacity="0.7"/>',
+            // 星尘粒子
+            '<circle cx="90" cy="82" r="1" fill="', color1, '" opacity="0.4"/>'
+            '<circle cx="310" cy="75" r="0.8" fill="', color1, '" opacity="0.5"/>'
+            '<circle cx="120" cy="52" r="1.2" fill="', color1, '" opacity="0.3"/>'
+            '<circle cx="280" cy="60" r="0.7" fill="', color1, '" opacity="0.4"/>'
         ));
+    }
 
-        // Part 2: 文字内容（含 username 和时间）
-        string memory part2 = string(abi.encodePacked(
-            // SOUL STELE 标题
-            '<text x="200" y="75" text-anchor="middle" fill="', color1, '" font-size="14" font-family="serif" letter-spacing="4">SOUL STELE</text>',
-            // username 显示
-            '<text x="200" y="98" text-anchor="middle" fill="#8888aa" font-size="11" font-family="sans-serif" letter-spacing="1">', username, '</text>',
+    // Stele Part3: 文字内容（标题 + 用户名 + 人格代号 + 名称 + 匹配度进度条 + 分隔线）
+    function _stelePart3(
+        string memory pCode,
+        string memory pName,
+        string memory color1,
+        string memory username,
+        uint8 matchPct
+    ) internal pure returns (string memory) {
+        // 进度条宽度: matchPct * 80 / 100
+        uint256 barW = uint256(matchPct) * 80 / 100;
+
+        return string(abi.encodePacked(
+            // SBTI STELE 标题
+            '<text x="200" y="60" text-anchor="middle" fill="', color1, '" font-size="11" font-family="monospace" letter-spacing="5" opacity="0.9">SBTI STELE</text>',
+            // username
+            '<text x="200" y="78" text-anchor="middle" fill="#6a6a88" font-size="9" font-family="monospace" letter-spacing="2">', username, '</text>',
             // 人格代码（大字）
-            '<text x="200" y="140" text-anchor="middle" fill="url(#g1)" font-size="42" font-family="monospace" font-weight="bold">', pCode, '</text>',
+            '<text x="200" y="118" text-anchor="middle" fill="url(#g1)" font-size="44" font-family="monospace" font-weight="800" letter-spacing="8">', pCode, '</text>',
             // 人格名称
-            '<text x="200" y="164" text-anchor="middle" fill="#8888aa" font-size="14" font-family="sans-serif">', pName, '</text>',
-            // 匹配度
-            '<text x="200" y="184" text-anchor="middle" fill="#555566" font-size="10" font-family="monospace">Match: ', uint256(matchPct).toString(), '%</text>',
+            '<text x="200" y="138" text-anchor="middle" fill="#8888aa" font-size="14" font-family="sans-serif" font-weight="300" letter-spacing="4">', pName, '</text>',
+            // 匹配度进度条
+            '<text x="155" y="155" text-anchor="end" fill="', color1, '" font-size="9" font-family="monospace" font-weight="bold">', uint256(matchPct).toString(), '%</text>'
+            '<rect x="160" y="149" width="80" height="5" rx="2.5" fill="#1a1a2e"/>'
+            '<rect x="160" y="149" width="', barW.toString(), '" height="5" rx="2.5" fill="', color1, '" opacity="0.8"/>',
             // 分隔线
-            '<line x1="85" y1="194" x2="315" y2="194" stroke="#333344" stroke-width="0.5"/>'
+            '<rect x="60" y="166" width="280" height="1" rx="0.5" fill="url(#div)"/>'
         ));
+    }
 
-        // Part 3: 维度条 + 铭刻时间 + Token ID
-        string memory part3 = string(abi.encodePacked(
+    // Stele Part4: 维度柱状图 + 底部分隔 + 时间 + Token ID
+    function _stelePart4(
+        uint8[15] memory dims,
+        string memory color,
+        string memory timeStr,
+        uint256 tokenId
+    ) internal pure returns (string memory) {
+        string memory bars = _buildDimensionBars(dims, color);
+        return string(abi.encodePacked(
             bars,
+            // 底部分隔线
+            '<rect x="60" y="332" width="280" height="1" rx="0.5" fill="url(#div)"/>',
             // 铭刻时间
-            '<text x="200" y="368" text-anchor="middle" fill="#444455" font-size="9" font-family="monospace">', timeStr, '</text>',
+            '<text x="200" y="345" text-anchor="middle" fill="#444455" font-size="9" font-family="monospace" letter-spacing="1">', timeStr, '</text>',
             // Token ID
-            '<text x="200" y="384" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#', tokenId.toString(), '</text>',
+            '<text x="200" y="358" text-anchor="middle" fill="#555566" font-size="10" font-family="monospace" font-weight="bold">#', tokenId.toString(), '</text>',
             '</svg>'
         ));
-
-        return string(abi.encodePacked(part1, part2, part3));
     }
 
     function _buildDimensionBars(uint8[15] memory dims, string memory color) internal pure returns (string memory) {
@@ -570,7 +663,7 @@ contract SBTINft is ERC721, Ownable {
         bytes memory result = "";
         for (uint8 i = 0; i < 15; i++) {
             uint256 barWidth = uint256(dims[i]) * 26; // L=26, M=52, H=78
-            uint256 yPos = 206 + uint256(i) * 10;     // 起始 y=206，间隔 10px（更紧凑）
+            uint256 yPos = 178 + uint256(i) * 10;     // 起始 y=178（上移适配新布局），间隔 10px
             
             // 维度标签
             result = abi.encodePacked(result,

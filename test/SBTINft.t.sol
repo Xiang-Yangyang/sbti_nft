@@ -7,16 +7,18 @@ import "../contracts/SBTINft.sol";
 contract SBTINftGasTest is Test {
     SBTINft public nft;
     address public user = address(0xBEEF);
+    uint256 public mintCost;
 
     function setUp() public {
         nft = new SBTINft();
-        vm.deal(user, 10 ether);
+        mintCost = nft.mintPrice();
+        vm.deal(user, 100 ether);
     }
 
     // ============ Gas 测试: mint ============
     function test_gas_mint() public {
         vm.prank(user);
-        uint256 tokenId = nft.mint{value: 0.0001 ether}();
+        uint256 tokenId = nft.mint{value: mintCost}();
         assertEq(tokenId, 0);
         assertEq(nft.ownerOf(0), user);
         // cardSeed 应该被设置
@@ -30,7 +32,7 @@ contract SBTINftGasTest is Test {
         bool found = false;
         for (uint256 i = 0; i < 50; i++) {
             vm.prank(user);
-            tokenId = nft.mint{value: 0.0001 ether}();
+            tokenId = nft.mint{value: mintCost}();
             if (!nft.isGoldCard(tokenId)) {
                 found = true;
                 break;
@@ -50,7 +52,7 @@ contract SBTINftGasTest is Test {
         bool found = false;
         for (uint256 i = 0; i < 200; i++) {
             vm.prank(user);
-            tokenId = nft.mint{value: 0.0001 ether}();
+            tokenId = nft.mint{value: mintCost}();
             if (nft.isGoldCard(tokenId)) {
                 found = true;
                 break;
@@ -65,7 +67,7 @@ contract SBTINftGasTest is Test {
     // ============ Gas 测试: inscribe 铭刻 ============
     function test_gas_inscribe() public {
         vm.prank(user);
-        uint256 tokenId = nft.mint{value: 0.0001 ether}();
+        uint256 tokenId = nft.mint{value: mintCost}();
 
         // 铭刻参数: personalityIndex=5(ENFJ), 15个维度, matchPercent=85
         uint8[15] memory dims = [
@@ -81,7 +83,7 @@ contract SBTINftGasTest is Test {
     // ============ Gas 测试: tokenURI (inscribed card, 铭刻后) ============
     function test_gas_tokenURI_inscribed() public {
         vm.prank(user);
-        uint256 tokenId = nft.mint{value: 0.0001 ether}();
+        uint256 tokenId = nft.mint{value: mintCost}();
 
         uint8[15] memory dims = [
             uint8(3), 2, 1, 3, 2, 1, 3, 2, 1, 3, 2, 1, 3, 2, 1
@@ -99,7 +101,7 @@ contract SBTINftGasTest is Test {
     function test_gas_full_flow() public {
         // Step 1: Mint
         vm.prank(user);
-        uint256 tokenId = nft.mint{value: 0.0001 ether}();
+        uint256 tokenId = nft.mint{value: mintCost}();
 
         // Step 2: 查看空白卡 tokenURI
         string memory blankURI = nft.tokenURI(tokenId);
@@ -126,7 +128,7 @@ contract SBTINftGasTest is Test {
     // ============ Gas 测试: isGoldCard 查询 ============
     function test_gas_isGoldCard() public {
         vm.prank(user);
-        uint256 tokenId = nft.mint{value: 0.0001 ether}();
+        uint256 tokenId = nft.mint{value: mintCost}();
         // 查询是否金卡（view 调用）
         nft.isGoldCard(tokenId);
     }
@@ -135,7 +137,7 @@ contract SBTINftGasTest is Test {
     function test_gas_mint_5x() public {
         for (uint256 i = 0; i < 5; i++) {
             vm.prank(user);
-            nft.mint{value: 0.0001 ether}();
+            nft.mint{value: mintCost}();
         }
         assertEq(nft.totalSupply(), 5);
     }
