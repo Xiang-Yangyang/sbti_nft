@@ -139,6 +139,17 @@
       <div class="dimensions-grid" id="dimensionsGrid"></div>
 
       <div class="inscribe-section">
+        <div class="username-input-section">
+          <label for="inscribeUsername" style="color: rgba(255,255,255,0.6); font-size: 0.85rem; display: block; margin-bottom: 8px;">
+            ✏️ 刻上你的名字（将永久铭刻在灵魂碑上）
+          </label>
+          <input type="text" id="inscribeUsername" maxlength="20" placeholder="输入昵称 / Username"
+            oninput="if(window.sbtiResult) renderStelePreview(window.sbtiResult)"
+            style="width: 100%; max-width: 280px; padding: 10px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; color: #fff; font-size: 0.95rem; font-family: inherit; text-align: center; outline: none; transition: border-color 0.3s;"
+            onfocus="this.style.borderColor='rgba(233,69,96,0.6)'" onblur="this.style.borderColor='rgba(255,255,255,0.15)'"
+          >
+          <p style="color: rgba(255,255,255,0.25); font-size: 0.72rem; margin-top: 6px;">最长 20 字节（约 6 个中文或 20 个英文字符）</p>
+        </div>
         <p>⚠️ 铭刻后不可更改，你的灵魂将永久刻在区块链上</p>
         <button class="btn btn-primary" id="inscribeBtn" onclick="inscribeNFT()">
           ✦ 铭刻到链上

@@ -36,6 +36,9 @@ contract SBTINft is ERC721, Ownable {
     // NFT 是否已铭刻（做完测试）
     mapping(uint256 => bool) public isInscribed;
 
+    // 铭刻者用户名（链上存储）
+    mapping(uint256 => string) public inscribedUsername;
+
     // ============ 视觉随机种子 ============
     // mint 时生成，决定渐变角度、颜色偏移、是否金卡
     mapping(uint256 => uint256) public cardSeed;
@@ -111,17 +114,20 @@ contract SBTINft is ERC721, Ownable {
      * @param personalityIndex 人格编号 (0-26)
      * @param dimensions 15个维度值，每个 1=L, 2=M, 3=H
      * @param matchPercent 匹配度百分比 (0-100)
+     * @param username 铭刻者用户名（最长 20 字节）
      */
     function inscribe(
         uint256 tokenId,
         uint8 personalityIndex,
         uint8[15] calldata dimensions,
-        uint8 matchPercent
+        uint8 matchPercent,
+        string calldata username
     ) external {
         require(ownerOf(tokenId) == msg.sender, "Not your NFT");
         require(!isInscribed[tokenId], "Already inscribed");
         require(personalityIndex <= 26, "Invalid personality");
         require(matchPercent <= 100, "Invalid match percent");
+        require(bytes(username).length > 0 && bytes(username).length <= 20, "Username 1-20 bytes");
 
         // 打包数据到 uint256
         uint256 packed = 0;
@@ -142,6 +148,7 @@ contract SBTINft is ERC721, Ownable {
         packed |= uint256(matchPercent) << 67;
 
         steleData[tokenId] = packed;
+        inscribedUsername[tokenId] = username;
         isInscribed[tokenId] = true;
 
         emit Inscribed(tokenId, personalityIndex, matchPercent);
@@ -167,6 +174,11 @@ contract SBTINft is ERC721, Ownable {
         
         inscribeTime = uint32((packed >> 35) & 0xFFFFFFFF);
         matchPercent = uint8((packed >> 67) & 0x7F);
+    }
+
+    function getUsername(uint256 tokenId) public view returns (string memory) {
+        require(isInscribed[tokenId], "Not inscribed yet");
+        return inscribedUsername[tokenId];
     }
 
     // ============ 动态 tokenURI（链上 SVG） ============
@@ -456,13 +468,17 @@ contract SBTINft is ERC721, Ownable {
 
         string memory pCode = personalityCodes[pIndex];
         string memory pName = personalityNames[pIndex];
+        string memory username = inscribedUsername[tokenId];
         
         // 根据人格类型选择配色
         string memory color1;
         string memory color2;
         (color1, color2) = _getPersonalityColors(pIndex);
 
-        string memory svg = _buildSteleSVG(tokenId, pCode, pName, color1, color2, dims, matchPct);
+        // 格式化铭刻时间为 YYYY-MM-DD
+        string memory timeStr = _formatTimestamp(inscribeTime);
+
+        string memory svg = _buildSteleSVG(tokenId, pCode, pName, color1, color2, dims, matchPct, username, timeStr);
 
         bool gold = isGoldCard(tokenId);
         string memory inscribedName = gold
@@ -477,6 +493,7 @@ contract SBTINft is ERC721, Ownable {
                 '{"trait_type":"Name","value":"', pName, '"},',
                 '{"trait_type":"Match","value":"', uint256(matchPct).toString(), '%"},',
                 '{"trait_type":"Rarity","value":"', rarity, '"},',
+                '{"trait_type":"Username","value":"', username, '"},',
                 '{"trait_type":"Status","value":"Inscribed"}',
             '],',
             '"image":"data:image/svg+xml;base64,', Base64.encode(bytes(svg)), '"}'
@@ -492,7 +509,9 @@ contract SBTINft is ERC721, Ownable {
         string memory color1,
         string memory color2,
         uint8[15] memory dims,
-        uint8 matchPct
+        uint8 matchPct,
+        string memory username,
+        string memory timeStr
     ) internal pure returns (string memory) {
         // 维度柱状图（紧凑版，适配 400×400）
         string memory bars = _buildDimensionBars(dims, color1);
@@ -514,25 +533,29 @@ contract SBTINft is ERC721, Ownable {
             '<path d="M55,130 L55,360 L345,360 L345,130 Q345,40 200,40 Q55,40 55,130Z" fill="none" stroke="url(#g1)" stroke-width="2"/>'
         ));
 
-        // Part 2: 文字内容
+        // Part 2: 文字内容（含 username 和时间）
         string memory part2 = string(abi.encodePacked(
             // SOUL STELE 标题
-            '<text x="200" y="82" text-anchor="middle" fill="', color1, '" font-size="16" font-family="serif" letter-spacing="4">SOUL STELE</text>',
+            '<text x="200" y="75" text-anchor="middle" fill="', color1, '" font-size="14" font-family="serif" letter-spacing="4">SOUL STELE</text>',
+            // username 显示
+            '<text x="200" y="98" text-anchor="middle" fill="#8888aa" font-size="11" font-family="sans-serif" letter-spacing="1">', username, '</text>',
             // 人格代码（大字）
-            '<text x="200" y="145" text-anchor="middle" fill="url(#g1)" font-size="44" font-family="monospace" font-weight="bold">', pCode, '</text>',
+            '<text x="200" y="140" text-anchor="middle" fill="url(#g1)" font-size="42" font-family="monospace" font-weight="bold">', pCode, '</text>',
             // 人格名称
-            '<text x="200" y="172" text-anchor="middle" fill="#8888aa" font-size="15" font-family="sans-serif">', pName, '</text>',
+            '<text x="200" y="164" text-anchor="middle" fill="#8888aa" font-size="14" font-family="sans-serif">', pName, '</text>',
             // 匹配度
-            '<text x="200" y="196" text-anchor="middle" fill="#555566" font-size="11" font-family="monospace">Match: ', uint256(matchPct).toString(), '%</text>',
+            '<text x="200" y="184" text-anchor="middle" fill="#555566" font-size="10" font-family="monospace">Match: ', uint256(matchPct).toString(), '%</text>',
             // 分隔线
-            '<line x1="85" y1="208" x2="315" y2="208" stroke="#333344" stroke-width="0.5"/>'
+            '<line x1="85" y1="194" x2="315" y2="194" stroke="#333344" stroke-width="0.5"/>'
         ));
 
-        // Part 3: 维度条 + Token ID
+        // Part 3: 维度条 + 铭刻时间 + Token ID
         string memory part3 = string(abi.encodePacked(
             bars,
+            // 铭刻时间
+            '<text x="200" y="368" text-anchor="middle" fill="#444455" font-size="9" font-family="monospace">', timeStr, '</text>',
             // Token ID
-            '<text x="200" y="380" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#', tokenId.toString(), '</text>',
+            '<text x="200" y="384" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#', tokenId.toString(), '</text>',
             '</svg>'
         ));
 
@@ -547,7 +570,7 @@ contract SBTINft is ERC721, Ownable {
         bytes memory result = "";
         for (uint8 i = 0; i < 15; i++) {
             uint256 barWidth = uint256(dims[i]) * 26; // L=26, M=52, H=78
-            uint256 yPos = 220 + uint256(i) * 10;     // 起始 y=220，间隔 10px（更紧凑）
+            uint256 yPos = 206 + uint256(i) * 10;     // 起始 y=206，间隔 10px（更紧凑）
             
             // 维度标签
             result = abi.encodePacked(result,
@@ -563,6 +586,27 @@ contract SBTINft is ERC721, Ownable {
             );
         }
         return string(result);
+    }
+
+    // ============ 时间戳格式化 ============
+    function _formatTimestamp(uint32 ts) internal pure returns (string memory) {
+        // 简化的 Unix 时间戳 → "YYYY-MM-DD" 转换
+        uint256 z = uint256(ts) / 86400 + 719468;
+        uint256 era = z / 146097;
+        uint256 doe = z - era * 146097;
+        uint256 yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+        uint256 y = yoe + era * 400;
+        uint256 doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+        uint256 mp = (5 * doy + 2) / 153;
+        uint256 d = doy - (153 * mp + 2) / 5 + 1;
+        uint256 m = mp < 10 ? mp + 3 : mp - 9;
+        if (m <= 2) y += 1;
+        
+        return string(abi.encodePacked(
+            y.toString(), "-",
+            m < 10 ? "0" : "", m.toString(), "-",
+            d < 10 ? "0" : "", d.toString()
+        ));
     }
 
     function _getPersonalityColors(uint8 pIndex) internal pure returns (string memory, string memory) {

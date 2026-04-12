@@ -40,10 +40,10 @@ let isDrunkTriggered = false;
 let showDrinkFollowup = false;
 
 // 合约地址（部署后填入）
-const CONTRACT_ADDRESS = '0x9D4e3dfeA5224ee1bAfE1B437adde20e8B480677'; // BSC Testnet
+const CONTRACT_ADDRESS = '0x1d67Cf5CF69fe3E5706C33320E6b4E2301Dc9E34'; // BSC Testnet
 const CONTRACT_ABI = [
   'function mint() external payable returns (uint256)',
-  'function inscribe(uint256 tokenId, uint8 personalityIndex, uint8[15] dimensions, uint8 matchPercent) external',
+  'function inscribe(uint256 tokenId, uint8 personalityIndex, uint8[15] dimensions, uint8 matchPercent, string username) external',
   'function isInscribed(uint256) view returns (bool)',
   'function totalSupply() view returns (uint256)',
   'function MAX_SUPPLY() view returns (uint256)',
@@ -52,6 +52,8 @@ const CONTRACT_ABI = [
   'function balanceOf(address) view returns (uint256)',
   'function ownerOf(uint256) view returns (address)',
   'function getSoulStele(uint256) view returns (uint8 personalityIndex, uint8[15] dimensions, uint32 inscribeTime, uint8 matchPercent)',
+  'function getUsername(uint256) view returns (string)',
+  'function inscribedUsername(uint256) view returns (string)',
   'function personalityCodes(uint256) view returns (string)',
   'function personalityNames(uint256) view returns (string)',
   'function isGoldCard(uint256) view returns (bool)',
@@ -349,6 +351,8 @@ async function scanUserNFTs() {
                     const pIndex = Number(tomb.personalityIndex);
                     const pCode = await contract.personalityCodes(pIndex);
                     const pName = await contract.personalityNames(pIndex);
+                    let username = '';
+                    try { username = await contract.inscribedUsername(id); } catch(e) {}
                     userInscribedNFTs.push({
                       tokenId: id,
                       personalityIndex: pIndex,
@@ -357,6 +361,7 @@ async function scanUserNFTs() {
                       matchPercent: Number(tomb.matchPercent),
                       dimensions: tomb.dimensions.map(Number),
                       inscribeTime: Number(tomb.inscribeTime),
+                      username: username,
                     });
                   } catch (tombErr) {
                     debugLog(`Token #${id}: 读取灵魂碑数据失败`, tombErr.message);
@@ -800,12 +805,20 @@ function renderStelePreview(result) {
   const color = getPersonalityColor(result.index);
   const color2 = getPersonalityColor2(result.index);
   
+  // 获取用户名
+  const usernameInput = document.getElementById('inscribeUsername');
+  const username = usernameInput ? usernameInput.value.trim() || 'Anonymous' : 'Anonymous';
+  
+  // 当前时间格式化
+  const now = new Date();
+  const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+
   // 维度柱状图（紧凑版，适配 400×400）
   let bars = '';
   const dimLabels = ['S1','S2','S3','E1','E2','E3','A1','A2','A3','Ac1','Ac2','Ac3','So1','So2','So3'];
   result.dimensions.forEach((val, i) => {
     const barWidth = val * 26;
-    const y = 220 + i * 10;
+    const y = 206 + i * 10;
     bars += `<text x="83" y="${y+7}" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">${dimLabels[i]}</text>`;
     bars += `<rect x="88" y="${y}" width="78" height="7" rx="2" fill="#1a1a2e"/>`;
     bars += `<rect x="88" y="${y}" width="${barWidth}" height="7" rx="2" fill="${color}" opacity="0.7"/>`;
@@ -823,13 +836,15 @@ function renderStelePreview(result) {
       </defs>
       <circle cx="200" cy="140" r="130" fill="url(#tglow)"/>
       <path d="M55,130 L55,360 L345,360 L345,130 Q345,40 200,40 Q55,40 55,130Z" fill="none" stroke="url(#tg)" stroke-width="2"/>
-      <text x="200" y="82" text-anchor="middle" fill="${color}" font-size="16" font-family="serif" letter-spacing="4">SOUL STELE</text>
-      <text x="200" y="145" text-anchor="middle" fill="url(#tg)" font-size="44" font-family="monospace" font-weight="bold">${result.code}</text>
-      <text x="200" y="172" text-anchor="middle" fill="#8888aa" font-size="15" font-family="sans-serif">${result.name}</text>
-      <text x="200" y="196" text-anchor="middle" fill="#555566" font-size="11" font-family="monospace">Match: ${result.similarity}%</text>
-      <line x1="85" y1="208" x2="315" y2="208" stroke="#333344" stroke-width="0.5"/>
+      <text x="200" y="75" text-anchor="middle" fill="${color}" font-size="14" font-family="serif" letter-spacing="4">SOUL STELE</text>
+      <text x="200" y="98" text-anchor="middle" fill="#8888aa" font-size="11" font-family="sans-serif" letter-spacing="1">${username}</text>
+      <text x="200" y="140" text-anchor="middle" fill="url(#tg)" font-size="42" font-family="monospace" font-weight="bold">${result.code}</text>
+      <text x="200" y="164" text-anchor="middle" fill="#8888aa" font-size="14" font-family="sans-serif">${result.name}</text>
+      <text x="200" y="184" text-anchor="middle" fill="#555566" font-size="10" font-family="monospace">Match: ${result.similarity}%</text>
+      <line x1="85" y1="194" x2="315" y2="194" stroke="#333344" stroke-width="0.5"/>
       ${bars}
-      <text x="200" y="380" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#${currentTokenId || '???'}</text>
+      <text x="200" y="368" text-anchor="middle" fill="#444455" font-size="9" font-family="monospace">${timeStr}</text>
+      <text x="200" y="384" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#${currentTokenId || '???'}</text>
     </svg>
   `;
 
@@ -847,7 +862,7 @@ function showSteleModal(nft) {
   if (nft.dimensions && nft.dimensions.length === 15) {
     nft.dimensions.forEach((val, i) => {
       const barWidth = val * 26;
-      const y = 220 + i * 10;
+      const y = 206 + i * 10;
       bars += `<text x="83" y="${y+7}" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">${dimLabels[i]}</text>`;
       bars += `<rect x="88" y="${y}" width="78" height="7" rx="2" fill="#1a1a2e"/>`;
       bars += `<rect x="88" y="${y}" width="${barWidth}" height="7" rx="2" fill="${color}" opacity="0.7"/>`;
@@ -855,8 +870,9 @@ function showSteleModal(nft) {
   }
 
   const inscribeDate = nft.inscribeTime
-    ? new Date(nft.inscribeTime * 1000).toLocaleDateString('zh-CN')
+    ? new Date(nft.inscribeTime * 1000).toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')
     : '未知';
+  const usernameDisplay = nft.username || 'Anonymous';
 
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">
@@ -870,13 +886,15 @@ function showSteleModal(nft) {
       </defs>
       <circle cx="200" cy="140" r="130" fill="url(#mglow)"/>
       <path d="M55,130 L55,360 L345,360 L345,130 Q345,40 200,40 Q55,40 55,130Z" fill="none" stroke="url(#mtg)" stroke-width="2"/>
-      <text x="200" y="82" text-anchor="middle" fill="${color}" font-size="16" font-family="serif" letter-spacing="4">SOUL STELE</text>
-      <text x="200" y="145" text-anchor="middle" fill="url(#mtg)" font-size="44" font-family="monospace" font-weight="bold">${nft.code}</text>
-      <text x="200" y="172" text-anchor="middle" fill="#8888aa" font-size="15" font-family="sans-serif">${nft.name}</text>
-      <text x="200" y="196" text-anchor="middle" fill="#555566" font-size="11" font-family="monospace">Match: ${nft.matchPercent}%</text>
-      <line x1="85" y1="208" x2="315" y2="208" stroke="#333344" stroke-width="0.5"/>
+      <text x="200" y="75" text-anchor="middle" fill="${color}" font-size="14" font-family="serif" letter-spacing="4">SOUL STELE</text>
+      <text x="200" y="98" text-anchor="middle" fill="#8888aa" font-size="11" font-family="sans-serif" letter-spacing="1">${usernameDisplay}</text>
+      <text x="200" y="140" text-anchor="middle" fill="url(#mtg)" font-size="42" font-family="monospace" font-weight="bold">${nft.code}</text>
+      <text x="200" y="164" text-anchor="middle" fill="#8888aa" font-size="14" font-family="sans-serif">${nft.name}</text>
+      <text x="200" y="184" text-anchor="middle" fill="#555566" font-size="10" font-family="monospace">Match: ${nft.matchPercent}%</text>
+      <line x1="85" y1="194" x2="315" y2="194" stroke="#333344" stroke-width="0.5"/>
       ${bars}
-      <text x="200" y="380" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#${nft.tokenId}</text>
+      <text x="200" y="368" text-anchor="middle" fill="#444455" font-size="9" font-family="monospace">${inscribeDate}</text>
+      <text x="200" y="384" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#${nft.tokenId}</text>
     </svg>
   `;
 
@@ -983,6 +1001,19 @@ async function inscribeNFT() {
   const result = window.sbtiResult;
   if (!result) return;
 
+  // 获取用户名
+  const usernameInput = document.getElementById('inscribeUsername');
+  const username = usernameInput ? usernameInput.value.trim() : '';
+  if (!username) {
+    showToast('⚠️ 请输入你的名字/昵称');
+    if (usernameInput) usernameInput.focus();
+    return;
+  }
+  if (new TextEncoder().encode(username).length > 20) {
+    showToast('⚠️ 名字最长 20 字节（约 6 个中文或 20 个英文字符）');
+    return;
+  }
+
   // 演示模式
   if (CONTRACT_ADDRESS === '0x0000000000000000000000000000000000000000') {
     showToast('✦ 铭刻成功！(Demo模式)');
@@ -1000,11 +1031,12 @@ async function inscribeNFT() {
         result.index,
         result.dimensions,
         result.similarity,
+        username,
       ]);
       return signer.sendTransaction({
         to: CONTRACT_ADDRESS,
         data: inscribeData,
-        gasLimit: 150000n,
+        gasLimit: 250000n,
       });
     })();
 
@@ -1024,6 +1056,7 @@ async function inscribeNFT() {
       matchPercent: result.similarity,
       dimensions: result.dimensions,
       inscribeTime: Math.floor(Date.now() / 1000),
+      username: username,
     });
 
     // 尝试通知钱包刷新 NFT 元数据

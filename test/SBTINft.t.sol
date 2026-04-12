@@ -73,7 +73,7 @@ contract SBTINftGasTest is Test {
         ];
 
         vm.prank(user);
-        nft.inscribe(tokenId, 5, dims, 85);
+        nft.inscribe(tokenId, 5, dims, 85, "TestUser");
 
         assertTrue(nft.isInscribed(tokenId));
     }
@@ -88,7 +88,7 @@ contract SBTINftGasTest is Test {
         ];
 
         vm.prank(user);
-        nft.inscribe(tokenId, 5, dims, 85);
+        nft.inscribe(tokenId, 5, dims, 85, "TestUser");
 
         // 铭刻后的 tokenURI
         string memory uri = nft.tokenURI(tokenId);
@@ -110,7 +110,7 @@ contract SBTINftGasTest is Test {
             uint8(3), 2, 1, 3, 2, 1, 3, 2, 1, 3, 2, 1, 3, 2, 1
         ];
         vm.prank(user);
-        nft.inscribe(tokenId, 5, dims, 85);
+        nft.inscribe(tokenId, 5, dims, 85, "TestUser");
 
         // Step 4: 查看铭刻后 tokenURI
         string memory inscribedURI = nft.tokenURI(tokenId);
