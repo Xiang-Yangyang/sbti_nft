@@ -466,7 +466,10 @@ function renderMintPanel() {
           <span class="nft-select-title">Soul Card #${tokenId}</span>
           <span class="nft-select-status">空白 · 未铭刻</span>
         </div>
-        <button class="btn btn-sm btn-primary" onclick="selectBlankNFT(${tokenId})">选择铭刻</button>
+        <div class="nft-select-actions">
+          <button class="btn btn-sm btn-ghost" onclick="showBlankCardModal(${tokenId})">查看</button>
+          <button class="btn btn-sm btn-primary" onclick="selectBlankNFT(${tokenId})">选择铭刻</button>
+        </div>
       `;
       listContainer.appendChild(card);
     });
@@ -890,6 +893,84 @@ function closeSteleModal(event) {
   const modal = document.getElementById('steleModal');
   modal.classList.remove('show');
   document.body.style.overflow = '';
+}
+
+// ============ 查看空白卡片 SVG（从链上 tokenURI 读取） ============
+async function showBlankCardModal(tokenId) {
+  const modalBody = document.getElementById('steleModalBody');
+  const modalInfo = document.getElementById('steleModalInfo');
+  const modal = document.getElementById('steleModal');
+
+  // 先显示 loading 状态
+  modalBody.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:center;height:380px;background:#0a0a14;border-radius:16px;">
+      <div style="text-align:center;">
+        <div class="spinner" style="margin:0 auto 16px;"></div>
+        <p style="color:rgba(255,255,255,0.4);font-size:0.85rem;">正在从链上读取 Soul Card #${tokenId}...</p>
+      </div>
+    </div>
+  `;
+  modalInfo.innerHTML = `
+    <div class="stele-modal-meta">
+      <span style="color: #72efdd;">Soul Card #${tokenId}</span>
+      <span style="color: var(--text-dim);">空白 · 未铭刻</span>
+    </div>
+  `;
+  modal.classList.add('show');
+  document.body.style.overflow = 'hidden';
+
+  try {
+    // 用独立 RPC 读取，避免依赖钱包连接状态
+    const rpc = new ethers.JsonRpcProvider('https://bsc-testnet-rpc.publicnode.com');
+    const readContract = new ethers.Contract(CONTRACT_ADDRESS, [
+      'function tokenURI(uint256) view returns (string)',
+      'function isGoldCard(uint256) view returns (bool)',
+    ], rpc);
+
+    const [uri, isGold] = await Promise.all([
+      readContract.tokenURI(tokenId),
+      readContract.isGoldCard(tokenId),
+    ]);
+
+    // tokenURI 是 data:application/json;base64,... 格式
+    // 解析出 JSON → 取 image 字段（data:image/svg+xml;base64,...）
+    let svgContent = '';
+    if (uri.startsWith('data:application/json;base64,')) {
+      const jsonStr = atob(uri.replace('data:application/json;base64,', ''));
+      const metadata = JSON.parse(jsonStr);
+      if (metadata.image && metadata.image.startsWith('data:image/svg+xml;base64,')) {
+        svgContent = atob(metadata.image.replace('data:image/svg+xml;base64,', ''));
+      }
+    }
+
+    if (svgContent) {
+      modalBody.innerHTML = svgContent;
+    } else {
+      modalBody.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:center;height:380px;background:#0a0a14;border-radius:16px;">
+          <p style="color:rgba(255,255,255,0.4);font-size:0.85rem;">无法解析卡片图片</p>
+        </div>
+      `;
+    }
+
+    // 更新底部信息
+    const rarityColor = isGold ? '#ffd700' : '#72efdd';
+    const rarityLabel = isGold ? '✦ 金卡' : '普通';
+    modalInfo.innerHTML = `
+      <div class="stele-modal-meta">
+        <span style="color: ${rarityColor};">Soul Card #${tokenId}</span>
+        <span style="color: ${rarityColor};">${rarityLabel}</span>
+      </div>
+    `;
+
+  } catch (err) {
+    console.error('读取 tokenURI 失败:', err);
+    modalBody.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;height:380px;background:#0a0a14;border-radius:16px;">
+        <p style="color:rgba(255,100,100,0.6);font-size:0.85rem;">读取失败：${err.message || '网络错误'}</p>
+      </div>
+    `;
+  }
 }
 
 // ============ 铭刻上链 ============
