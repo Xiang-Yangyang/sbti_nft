@@ -411,7 +411,7 @@
       <div class="step-num">STEP 01</div>
       <div class="step-icon">🃏</div>
       <h4>Mint 灵魂卡片</h4>
-      <p>支付 0.015 BNB 铸造一张空白 Soul Card。每张卡片独一无二，10% 概率获得稀有金卡。</p>
+      <p>支付 <span id="aboutMintPrice">--</span> BNB 铸造一张空白 Soul Card。每张卡片独一无二，10% 概率获得稀有金卡。</p>
     </div>
     <div class="step-card">
       <div class="step-num">STEP 02</div>
@@ -860,6 +860,18 @@
   const goldSvg = document.getElementById('goldCard');
   if (goldSvg) randomizeCard(goldSvg, 'gd', GOLD_RING);
 })();
+</script>
+
+<script type="module">
+// 从链上读取 mint 价格
+import { ethers } from 'https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.min.js';
+try {
+  const rpc = new ethers.JsonRpcProvider('https://bsc-testnet-rpc.publicnode.com');
+  const c = new ethers.Contract('0x1d67Cf5CF69fe3E5706C33320E6b4E2301Dc9E34', ['function mintPrice() view returns (uint256)'], rpc);
+  const price = await c.mintPrice();
+  const el = document.getElementById('aboutMintPrice');
+  if (el) el.textContent = ethers.formatEther(price);
+} catch (e) {}
 </script>
 
 </body>

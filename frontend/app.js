@@ -653,13 +653,18 @@ async function mintNFT() {
       }
     }
 
-    // 更新 supply 显示
+    // 更新 supply 和 price 显示
     try {
-      const [supply, maxSupply] = await Promise.all([
+      const [supply, maxSupply, price] = await Promise.all([
         contract.totalSupply(),
         contract.MAX_SUPPLY(),
+        contract.mintPrice(),
       ]);
       document.getElementById('supplyInfo').textContent = `已铸造 ${supply} / ${Number(maxSupply).toLocaleString()}`;
+      const priceEl = document.getElementById('mintPriceDisplay');
+      if (priceEl) {
+        priceEl.textContent = `${ethers.formatEther(price)} BNB`;
+      }
     } catch (e) {}
 
     hideLoading();
@@ -1311,15 +1316,21 @@ window.addEventListener('load', async () => {
   // 显示合约地址
   initContractAddressDisplay();
 
-  // 读取 supply（不需要钱包，用公共 RPC）
+  // 读取 supply 和 price（不需要钱包，用公共 RPC）
   try {
     const rpc = new ethers.JsonRpcProvider('https://bsc-testnet-rpc.publicnode.com');
     const readContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, rpc);
-    const [supply, maxSupply] = await Promise.all([
+    const [supply, maxSupply, price] = await Promise.all([
       readContract.totalSupply(),
       readContract.MAX_SUPPLY(),
+      readContract.mintPrice(),
     ]);
     document.getElementById('supplyInfo').textContent = `已铸造 ${supply} / ${Number(maxSupply).toLocaleString()}`;
+    // 更新价格显示
+    const priceEl = document.getElementById('mintPriceDisplay');
+    if (priceEl) {
+      priceEl.textContent = `${ethers.formatEther(price)} BNB`;
+    }
   } catch (e) {
     document.getElementById('supplyInfo').textContent = '已铸造 0 / --';
   }
