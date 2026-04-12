@@ -315,6 +315,7 @@ async function scanUserNFTs() {
       userBlankNFTs = [];
       userInscribedNFTs = [];
       renderMintPanel();
+      showToast('💡 你还没有 Soul Card，快去 Mint 一张吧！', 3000);
       return;
     }
 
