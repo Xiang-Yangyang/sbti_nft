@@ -40,7 +40,7 @@ let isDrunkTriggered = false;
 let showDrinkFollowup = false;
 
 // 合约地址（部署后填入）
-const CONTRACT_ADDRESS = '0x3D5a6E667404D85f9D95FdF2a70b32924983b2CE'; // BSC Testnet
+const CONTRACT_ADDRESS = '0xC665d48FAE84ac0aa7705151D67E8F92ddb7F406'; // BSC Testnet
 const CONTRACT_ABI = [
   'function mint() external payable returns (uint256)',
   'function inscribe(uint256 tokenId, uint8 personalityIndex, uint8[15] dimensions, uint8 matchPercent) external',
@@ -53,6 +53,8 @@ const CONTRACT_ABI = [
   'function getSoulStele(uint256) view returns (uint8 personalityIndex, uint8[15] dimensions, uint32 inscribeTime, uint8 matchPercent)',
   'function personalityCodes(uint256) view returns (string)',
   'function personalityNames(uint256) view returns (string)',
+  'function isGoldCard(uint256) view returns (bool)',
+  'function cardSeed(uint256) view returns (uint256)',
   'event Minted(address indexed owner, uint256 indexed tokenId)',
   'event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)',
   'event Inscribed(uint256 indexed tokenId, uint8 personalityIndex, uint8 matchPercent)',

@@ -36,6 +36,11 @@ contract SBTINft is ERC721, Ownable {
     // NFT 是否已铭刻（做完测试）
     mapping(uint256 => bool) public isInscribed;
 
+    // ============ 视觉随机种子 ============
+    // mint 时生成，决定渐变角度、颜色偏移、是否金卡
+    mapping(uint256 => uint256) public cardSeed;
+    uint256 public constant GOLD_CHANCE = 10; // 10% 金卡概率
+
     // 人格名称映射
     string[27] public personalityNames;
     string[27] public personalityCodes;
@@ -85,8 +90,18 @@ contract SBTINft is ERC721, Ownable {
         uint256 tokenId = _nextTokenId++;
         _safeMint(msg.sender, tokenId);
 
+        // 链上随机种子：决定渐变角度、颜色偏移、是否金卡
+        cardSeed[tokenId] = uint256(keccak256(abi.encodePacked(
+            block.timestamp, block.prevrandao, tokenId, msg.sender
+        )));
+
         emit Minted(msg.sender, tokenId);
         return tokenId;
+    }
+
+    // ============ 种子查询 ============
+    function isGoldCard(uint256 tokenId) public view returns (bool) {
+        return (cardSeed[tokenId] % 100) < GOLD_CHANCE;
     }
 
     // ============ 铭刻灵魂碑（写入测试结果） ============
@@ -165,73 +180,263 @@ contract SBTINft is ERC721, Ownable {
         }
     }
 
-    // 空白卡片 URI（未做测试）— 400×400 正方形，匹配 Web UI 风格
-    function _blankCardURI(uint256 tokenId) internal pure returns (string memory) {
-        string memory svg = string(abi.encodePacked(
-            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a14">',
-            // 渐变定义
-            '<defs>'
-            '<linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">'
-            '<stop offset="0%" style="stop-color:#72efdd"/><stop offset="50%" style="stop-color:#4cc9f0"/><stop offset="100%" style="stop-color:#7209b7"/>'
-            '</linearGradient>'
-            '<radialGradient id="glow" cx="50%" cy="50%" r="50%">'
-            '<stop offset="0%" style="stop-color:#4cc9f0;stop-opacity:0.15"/><stop offset="100%" style="stop-color:#0a0a14;stop-opacity:0"/>'
-            '</radialGradient>'
-            '</defs>',
-            // 背景光晕
-            '<circle cx="200" cy="185" r="140" fill="url(#glow)"/>',
-            // 霓虹边框（双层发光效果）
-            '<rect x="30" y="30" width="340" height="340" rx="24" fill="none" stroke="url(#g1)" stroke-width="2" opacity="0.4"/>'
-            '<rect x="35" y="35" width="330" height="330" rx="20" fill="none" stroke="url(#g1)" stroke-width="1.5"/>',
-            // 角落装饰光点
-            '<circle cx="52" cy="52" r="2" fill="#72efdd" opacity="0.8"/>'
-            '<circle cx="348" cy="52" r="2" fill="#4cc9f0" opacity="0.8"/>'
-            '<circle cx="52" cy="348" r="2" fill="#4cc9f0" opacity="0.8"/>'
-            '<circle cx="348" cy="348" r="2" fill="#7209b7" opacity="0.8"/>',
-            // 星形五角星徽章
-            '<polygon points="200,110 210,138 240,138 216,154 224,182 200,166 176,182 184,154 160,138 190,138" fill="none" stroke="url(#g1)" stroke-width="1.5"/>'
-            '<circle cx="200" cy="148" r="14" fill="none" stroke="url(#g1)" stroke-width="1" opacity="0.6"/>'
-            '<circle cx="200" cy="148" r="4" fill="#72efdd" opacity="0.9"/>'
-        ));
-        svg = string(abi.encodePacked(svg,
-            // 粒子光点（静态散布）
-            '<circle cx="85" cy="120" r="1.2" fill="#72efdd" opacity="0.5"/>'
-            '<circle cx="310" cy="135" r="1" fill="#4cc9f0" opacity="0.4"/>'
-            '<circle cx="120" cy="280" r="1.3" fill="#7209b7" opacity="0.5"/>'
-            '<circle cx="300" cy="290" r="1" fill="#72efdd" opacity="0.3"/>'
-            '<circle cx="150" cy="100" r="0.8" fill="#4cc9f0" opacity="0.6"/>'
-            '<circle cx="270" cy="310" r="1.1" fill="#7209b7" opacity="0.4"/>',
-            // SBTI 大标题
-            '<text x="200" y="228" text-anchor="middle" fill="url(#g1)" font-size="42" font-family="monospace" font-weight="bold" letter-spacing="6">SBTI</text>',
-            // Soul Card 副标题
-            '<text x="200" y="256" text-anchor="middle" fill="#8888aa" font-size="14" font-family="sans-serif" letter-spacing="3">Soul Card</text>',
-            // 分隔线
-            '<line x1="140" y1="272" x2="260" y2="272" stroke="url(#g1)" stroke-width="0.5" opacity="0.4"/>',
-            // 状态文字 + 脉冲圆点
-            '<circle cx="168" cy="296" r="3" fill="#72efdd" opacity="0.8">'
-            '<animate attributeName="opacity" values="0.4;1;0.4" dur="2s" repeatCount="indefinite"/>'
-            '</circle>'
-            '<text x="205" y="300" text-anchor="middle" fill="#555577" font-size="12" font-family="sans-serif">',
-            unicode'等待灵魂铭刻',
-            '</text>',
-            // 底部标签
-            '<rect x="152" y="322" width="40" height="18" rx="9" fill="none" stroke="#555566" stroke-width="0.8"/>'
-            '<text x="172" y="334" text-anchor="middle" fill="#555566" font-size="9" font-family="monospace">SBTI</text>'
-            '<rect x="202" y="322" width="40" height="18" rx="9" fill="none" stroke="#555566" stroke-width="0.8"/>'
-            '<text x="222" y="334" text-anchor="middle" fill="#555566" font-size="9" font-family="monospace">NFT</text>',
-            // Token ID
-            '<text x="200" y="368" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#', tokenId.toString(), '</text>',
-            '</svg>'
-        ));
+    // ============ 颜色环（与 preview_nft_svg.html 完全一致） ============
+    // 普通卡 8色环（闭环，最后一个 = 第一个）
+    function _normalRing(uint256 idx) internal pure returns (string memory) {
+        if (idx == 0) return "#72efdd";
+        if (idx == 1) return "#4cc9f0";
+        if (idx == 2) return "#4361ee";
+        if (idx == 3) return "#7209b7";
+        if (idx == 4) return "#b5179e";
+        if (idx == 5) return "#f72585";
+        if (idx == 6) return "#ff6fff";
+        return "#72efdd"; // idx == 7, 闭环
+    }
+    // 金卡 8色环（闭环）
+    function _goldRing(uint256 idx) internal pure returns (string memory) {
+        if (idx == 0) return "#ffd700";
+        if (idx == 1) return "#ffb800";
+        if (idx == 2) return "#ff8c00";
+        if (idx == 3) return "#ffa500";
+        if (idx == 4) return "#ffe066";
+        if (idx == 5) return "#ffd700";
+        if (idx == 6) return "#ff9500";
+        return "#ffb800"; // idx == 7, 闭环
+    }
 
+    // 从种子获取渐变角度坐标 (模拟 JS randomAngle)
+    // 返回 x1,y1,x2,y2 百分比字符串
+    function _gradientCoords(uint256 seed) internal pure returns (
+        string memory x1, string memory y1, string memory x2, string memory y2
+    ) {
+        // 用 seed 的一部分取 0-359 度角
+        uint256 angle = (seed >> 8) % 360;
+        // 简化三角函数：用查表法（每30度一档，12档）
+        // cos/sin 查表 × 50，结果 = 50 ± lookup
+        uint256 sector = angle / 30; // 0-11
+        uint256 cx; uint256 cy;
+        // cos*50 和 sin*50 的近似值（12个扇区）
+        if (sector == 0)  { cx = 50; cy = 0;  }
+        else if (sector == 1)  { cx = 43; cy = 25; }
+        else if (sector == 2)  { cx = 25; cy = 43; }
+        else if (sector == 3)  { cx = 0;  cy = 50; }
+        else if (sector == 4)  { cx = 25; cy = 43; } // cos负 → 50-25=25
+        else if (sector == 5)  { cx = 43; cy = 25; }
+        else if (sector == 6)  { cx = 50; cy = 0;  }
+        else if (sector == 7)  { cx = 43; cy = 25; }
+        else if (sector == 8)  { cx = 25; cy = 43; }
+        else if (sector == 9)  { cx = 0;  cy = 50; }
+        else if (sector == 10) { cx = 25; cy = 43; }
+        else                   { cx = 43; cy = 25; }
+
+        // 根据象限决定加减
+        uint256 x1v; uint256 y1v; uint256 x2v; uint256 y2v;
+        if (angle < 90) {
+            x1v = 50 - cx; y1v = 50 - cy; x2v = 50 + cx; y2v = 50 + cy;
+        } else if (angle < 180) {
+            x1v = 50 + cy; y1v = 50 - cx; x2v = 50 > cy ? 50 - cy : 0; y2v = 50 + cx;
+        } else if (angle < 270) {
+            x1v = 50 + cx; y1v = 50 + cy; x2v = 50 > cx ? 50 - cx : 0; y2v = 50 > cy ? 50 - cy : 0;
+        } else {
+            x1v = 50 > cy ? 50 - cy : 0; y1v = 50 + cx; x2v = 50 + cy; y2v = 50 > cx ? 50 - cx : 0;
+        }
+
+        x1 = string(abi.encodePacked(x1v.toString(), "%"));
+        y1 = string(abi.encodePacked(y1v.toString(), "%"));
+        x2 = string(abi.encodePacked(x2v.toString(), "%"));
+        y2 = string(abi.encodePacked(y2v.toString(), "%"));
+    }
+
+    // 根据种子和 offset 获取旋转后色环中的颜色
+    function _getRingColor(uint256 offset, uint256 idx, bool gold) internal pure returns (string memory) {
+        uint256 mapped = (idx + offset) % 7; // 7色（去掉闭环尾）
+        return gold ? _goldRing(mapped) : _normalRing(mapped);
+    }
+
+    // 空白卡片 URI（1:1 复刻 preview_nft_svg.html，含随机 + 金卡）
+    function _blankCardURI(uint256 tokenId) internal view returns (string memory) {
+        uint256 seed = cardSeed[tokenId];
+        bool gold = (seed % 100) < GOLD_CHANCE;
+        uint256 colorOffset = (seed >> 16) % 7;
+
+        // 渐变坐标
+        (string memory gx1, string memory gy1, string memory gx2, string memory gy2) = _gradientCoords(seed);
+
+        string memory svg = _buildBlankSVG(tokenId, gold, colorOffset, gx1, gy1, gx2, gy2);
+
+        // metadata
+        string memory rarity = gold ? "Gold" : "Normal";
         string memory json = string(abi.encodePacked(
             '{"name":"SBTI Soul Card #', tokenId.toString(),
             '","description":"An blank SBTI soul card awaiting inscription.",',
-            '"attributes":[{"trait_type":"Status","value":"Blank"}],',
+            '"attributes":[{"trait_type":"Status","value":"Blank"},{"trait_type":"Rarity","value":"', rarity, '"}],',
             '"image":"data:image/svg+xml;base64,', Base64.encode(bytes(svg)), '"}'
         ));
 
         return string(abi.encodePacked("data:application/json;base64,", Base64.encode(bytes(json))));
+    }
+
+    function _buildBlankSVG(
+        uint256 tokenId,
+        bool gold,
+        uint256 colorOffset,
+        string memory gx1, string memory gy1, string memory gx2, string memory gy2
+    ) internal pure returns (string memory) {
+        string memory svg = _blankPart1(gold);
+        svg = string(abi.encodePacked(svg, _blankPart2(gold, colorOffset, gx1, gy1, gx2, gy2)));
+        svg = string(abi.encodePacked(svg, _blankPart3(gold)));
+        svg = string(abi.encodePacked(svg, _blankPart4(tokenId, gold)));
+        return svg;
+    }
+
+    // Part1: SVG头 + defs（渐变定义）
+    function _blankPart1(
+        bool gold
+    ) internal pure returns (string memory) {
+        // g1: SBTI标题渐变（金卡→金色系，普通→青蓝紫）
+        string memory g1c0 = gold ? "#ffd700" : "#72efdd";
+        string memory g1c1 = gold ? "#ffb800" : "#4cc9f0";
+        string memory g1c2 = gold ? "#ff8c00" : "#7209b7";
+        // glow: 背景光晕（金卡→暖金，普通→青蓝）
+        string memory glowColor = gold ? "#ffd700" : "#4cc9f0";
+        string memory glowOpacity = gold ? "0.15" : "0.15";
+
+        return string(abi.encodePacked(
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">',
+            '<defs>',
+            // g1: 标题/五角星渐变
+            '<linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">'
+            '<stop offset="0%" style="stop-color:', g1c0, '"/>'
+            '<stop offset="50%" style="stop-color:', g1c1, '"/>'
+            '<stop offset="100%" style="stop-color:', g1c2, '"/>'
+            '</linearGradient>',
+            // glow: 背景径向光晕
+            '<radialGradient id="glow" cx="50%" cy="50%" r="50%">'
+            '<stop offset="0%" style="stop-color:', glowColor, ';stop-opacity:', glowOpacity, '"/>'
+            '<stop offset="100%" style="stop-color:#0e0e1a;stop-opacity:0"/>'
+            '</radialGradient>'
+        ));
+    }
+
+    // Part2: 更多 defs + 背景 + 光晕 + 边框
+    function _blankPart2(
+        bool gold, uint256 colorOffset,
+        string memory gx1, string memory gy1, string memory gx2, string memory gy2
+    ) internal pure returns (string memory) {
+        // gold渐变（tokenId 编号用）
+        // divider 分隔线渐变
+        string memory dc0 = gold ? "#ffd700" : "#4cc9f0";
+        string memory dc1 = gold ? "#ffb800" : "#72efdd";
+        string memory dc2 = gold ? "#ffe066" : "#4cc9f0";
+
+        // 8色边框/光晕 stop
+        string memory borderStops = _buildGradientStops(colorOffset, gold);
+
+        return string(abi.encodePacked(
+            // gold 渐变（编号用）
+            '<linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="0%">'
+            '<stop offset="0%" style="stop-color:#f6d365"/><stop offset="50%" style="stop-color:#d4a843"/><stop offset="100%" style="stop-color:#fda085"/>'
+            '</linearGradient>',
+            // divider 分隔线渐变
+            '<linearGradient id="divider" x1="0%" y1="0%" x2="100%" y2="0%">'
+            '<stop offset="0%" style="stop-color:', dc0, ';stop-opacity:0"/>'
+            '<stop offset="25%" style="stop-color:', dc1, ';stop-opacity:0.6"/>'
+            '<stop offset="50%" style="stop-color:', dc2, ';stop-opacity:1"/>'
+            '<stop offset="75%" style="stop-color:', dc1, ';stop-opacity:0.6"/>'
+            '<stop offset="100%" style="stop-color:', dc0, ';stop-opacity:0"/>'
+            '</linearGradient>',
+            // cardbg 卡片背景
+            '<linearGradient id="cardbg" x1="30%" y1="0%" x2="70%" y2="100%">'
+            '<stop offset="0%" style="stop-color:#0e0e1a"/>'
+            '<stop offset="40%" style="stop-color:#161625"/>'
+            '<stop offset="100%" style="stop-color:#1a1a30"/>'
+            '</linearGradient>',
+            // border1: 多彩/金色边框渐变（随机角度 + 随机偏移色环）
+            '<linearGradient id="border1" x1="', gx1, '" y1="', gy1, '" x2="', gx2, '" y2="', gy2, '">',
+            borderStops,
+            '</linearGradient>'
+        ));
+    }
+
+    // 构建 8 色渐变 stops（边框和外围光晕共用）
+    function _buildGradientStops(uint256 colorOffset, bool gold) internal pure returns (string memory) {
+        return string(abi.encodePacked(
+            '<stop offset="0%" style="stop-color:', _getRingColor(colorOffset, 0, gold), '"/>'
+            '<stop offset="15%" style="stop-color:', _getRingColor(colorOffset, 1, gold), '"/>'
+            '<stop offset="30%" style="stop-color:', _getRingColor(colorOffset, 2, gold), '"/>'
+            '<stop offset="50%" style="stop-color:', _getRingColor(colorOffset, 3, gold), '"/>',
+            '<stop offset="65%" style="stop-color:', _getRingColor(colorOffset, 4, gold), '"/>'
+            '<stop offset="80%" style="stop-color:', _getRingColor(colorOffset, 5, gold), '"/>'
+            '<stop offset="90%" style="stop-color:', _getRingColor(colorOffset, 6, gold), '"/>'
+            '<stop offset="100%" style="stop-color:', _getRingColor(colorOffset, 0, gold), '"/>'
+        ));
+    }
+
+    // Part3: 外围光晕 + 卡片背景 + 背景光晕 + 边框 + 五角星 + 粒子
+    function _blankPart3(bool gold) internal pure returns (string memory) {
+        // 五角星中心点颜色
+        string memory centerDotColor = gold ? "#ffd700" : "#72efdd";
+        // 粒子颜色
+        string memory p1 = gold ? "#ffd700" : "#72efdd";
+        string memory p2 = gold ? "#ffb800" : "#4cc9f0";
+        string memory p3 = gold ? "#ff9500" : "#7209b7";
+        // 边框宽度
+        string memory borderWidth = gold ? "2.5" : "2";
+
+        return string(abi.encodePacked(
+            // 外围光晕滤镜 + 渐变（复用 border1 色彩）
+            '<filter id="glowBlur" x="-30%" y="-30%" width="160%" height="160%">'
+            '<feGaussianBlur stdDeviation="12" result="blur"/>'
+            '</filter>'
+            '</defs>',
+            // 外部底色
+            '<rect width="400" height="400" fill="#0a0a0f"/>',
+            // 外围光晕（用 border1 渐变 + blur）
+            '<rect x="26" y="26" width="348" height="348" rx="20" fill="none" stroke="url(#border1)" stroke-width="10" filter="url(#glowBlur)" opacity="0.9"/>',
+            // 卡片背景
+            '<rect x="30" y="30" width="340" height="340" rx="18" fill="url(#cardbg)"/>',
+            // 背景光晕
+            '<circle cx="200" cy="185" r="125" fill="url(#glow)"/>',
+            // 边框
+            '<rect x="30" y="30" width="340" height="340" rx="18" fill="none" stroke="url(#border1)" stroke-width="', borderWidth, '" opacity="0.7"/>',
+            // 五角星
+            '<polygon points="200,65 214,105 258,105 222,130 234,170 200,148 166,170 178,130 142,105 186,105" fill="none" stroke="url(#g1)" stroke-width="2.5"/>'
+            '<circle cx="200" cy="125" r="23" fill="none" stroke="url(#g1)" stroke-width="1" opacity="0.6"/>'
+            '<circle cx="200" cy="125" r="6" fill="', centerDotColor, '" opacity="0.9"/>',
+            // 粒子光点
+            '<circle cx="85" cy="120" r="1.2" fill="', p1, '" opacity="0.5"/>'
+            '<circle cx="310" cy="135" r="1" fill="', p2, '" opacity="0.4"/>'
+            '<circle cx="120" cy="280" r="1.3" fill="', p3, '" opacity="0.5"/>'
+            '<circle cx="300" cy="290" r="1" fill="', p1, '" opacity="0.3"/>'
+            '<circle cx="150" cy="100" r="0.8" fill="', p2, '" opacity="0.6"/>'
+            '<circle cx="270" cy="310" r="1.1" fill="', p3, '" opacity="0.4"/>'
+        ));
+    }
+
+    // Part4: 文字内容 + 底部标签
+    function _blankPart4(uint256 tokenId, bool gold) internal pure returns (string memory) {
+        string memory pulseColor = gold ? "#ffd700" : "#72efdd";
+
+        return string(abi.encodePacked(
+            // SBTI 大标题
+            '<text x="200" y="220" text-anchor="middle" fill="url(#g1)" font-size="48" font-family="\'Courier New\',monospace" font-weight="800" letter-spacing="10">SBTI</text>',
+            // Soul Card 副标题
+            '<text x="200" y="246" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="14" font-family="sans-serif" font-weight="300" letter-spacing="4">Soul Card</text>',
+            // 分隔线
+            '<rect x="140" y="261" width="120" height="1.5" rx="1" fill="url(#divider)"/>',
+            // 脉冲圆点 + 状态文字
+            '<circle cx="155" cy="284" r="3" fill="', pulseColor, '" opacity="0.6">'
+            '<animate attributeName="opacity" values="0.4;1;0.4" dur="2s" repeatCount="indefinite"/>'
+            '</circle>'
+            '<text x="210" y="288" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="12" font-family="sans-serif" letter-spacing="2">',
+            unicode'等待灵魂铭刻',
+            '</text>',
+            // 底部标签
+            '<rect x="155" y="306" width="90" height="22" rx="11" fill="none" stroke="rgba(85,85,102,0.5)" stroke-width="1"/>'
+            '<text x="200" y="321" text-anchor="middle" fill="rgba(114,239,221,0.5)" font-size="10" font-family="monospace" font-weight="600" letter-spacing="2">SBTI NFT</text>'
+            '<text x="200" y="344" text-anchor="middle" fill="url(#gold)" font-size="11" font-family="monospace" font-weight="bold">#', tokenId.toString(), '</text>'
+            '</svg>'
+        ));
     }
 
     // 灵魂碑 URI（已完成测试）
