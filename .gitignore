@@ -15,3 +15,14 @@ debug.log
 
 # OS
 .DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Forge broadcast (部署记录含私钥相关信息)
+/broadcast/
+
+# Docs 中的敏感文件（成本分析报告保留）
+# docs/ 目录是公开的，不 ignore

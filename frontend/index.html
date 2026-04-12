@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SBTI × NFT — 灵魂碑</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 头部 -->
+  <div class="header">
+    <h1><span class="title-star">✦</span> SBTI <span class="title-x">×</span> NFT</h1>
+    <p>购买灵魂卡片 · 完成人格测试 · 铭刻链上灵魂碑</p>
+    <div class="contract-address-bar" id="contractAddressBar">
+      <span class="contract-label">合约地址</span>
+      <a id="contractLink" class="contract-link" target="_blank" rel="noopener">
+        <span id="contractAddrText"></span>
+      </a>
+      <button class="copy-btn" id="copyContractBtn" onclick="copyContractAddress()" title="复制地址">📋</button>
+    </div>
+    <div class="test-status-bar" id="testStatusBar">
+      <span class="status-dot"></span>
+      <span>BSC Testnet · 测试阶段</span>
+    </div>
+  </div>
+
+  <!-- 钱包栏 -->
+  <div class="wallet-bar">
+    <button id="connectBtn" class="btn btn-secondary" onclick="showWalletModal()">🔗 连接钱包</button>
+    <span id="walletAddress" class="address" style="display:none"></span>
+    <span id="walletNetwork" style="display:none; color: var(--text-dim); font-size: 0.8rem;"></span>
+  </div>
+
+  <div class="container">
+
+    <!-- ====== 阶段1: Mint ====== -->
+    <div id="mintPanel" class="panel active mint-panel">
+      <h2 style="color: var(--text-dim); margin-bottom: 8px;">Step 1 / 3</h2>
+      <h3 style="font-size: 1.3rem; margin-bottom: 4px;">获取你的灵魂卡片</h3>
+      <p style="color: var(--text-dim); font-size: 0.85rem;">Mint 一张空白 NFT，开启灵魂铭刻之旅</p>
+
+      <!-- 用户已有的空白 NFT 列表 -->
+      <div id="nftListSection" class="nft-list-section" style="display:none;">
+        <h4 class="nft-list-title">🃏 你的空白卡片</h4>
+        <p class="nft-list-desc">选择一张空白卡片，消耗它来铭刻灵魂</p>
+        <div id="nftListCards" class="nft-list-cards"></div>
+        <div class="nft-list-divider" id="nftListDivider">
+          <span>或者购买</span>
+        </div>
+      </div>
+
+      <!-- 用户已铭刻的 NFT 列表 -->
+      <div id="inscribedListSection" class="nft-list-section inscribed-list-section" style="display:none;">
+        <h4 class="nft-list-title">✦ 已铭刻的灵魂碑</h4>
+        <p class="nft-list-desc">这些卡片已永久刻上灵魂印记</p>
+        <div id="inscribedListCards" class="nft-list-cards inscribed-cards"></div>
+      </div>
+
+      <div class="nft-preview" id="blankPreview">
+        <div class="soul-card">
+          <div class="soul-card-glow"></div>
+          <div class="soul-card-inner">
+            <div class="soul-card-particles">
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span>
+            </div>
+            <div class="soul-card-emblem">
+              <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="emblemGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#72efdd"/>
+                    <stop offset="50%" stop-color="#4cc9f0"/>
+                    <stop offset="100%" stop-color="#7209b7"/>
+                  </linearGradient>
+                </defs>
+                <polygon points="40,8 50,30 74,30 55,46 62,70 40,56 18,70 25,46 6,30 30,30" fill="none" stroke="url(#emblemGrad)" stroke-width="1.5"/>
+                <circle cx="40" cy="40" r="16" fill="none" stroke="url(#emblemGrad)" stroke-width="1" opacity="0.6"/>
+                <circle cx="40" cy="40" r="4" fill="#72efdd" opacity="0.8"/>
+              </svg>
+            </div>
+            <div class="soul-card-title">SBTI</div>
+            <div class="soul-card-subtitle">Soul Card</div>
+            <div class="soul-card-divider"></div>
+            <div class="soul-card-status">
+              <span class="soul-card-pulse"></span>
+              等待灵魂铭刻
+            </div>
+            <div class="soul-card-footer">
+              <span class="soul-card-chip">SBT</span>
+              <span class="soul-card-chip">BSC</span>
+            </div>
+          </div>
+          <div class="soul-card-border"></div>
+        </div>
+      </div>
+
+      <div class="price">0.0001 BNB</div>
+      <div class="supply" id="supplyInfo">Loading supply...</div>
+
+      <button class="btn btn-gold mint-btn-fixed" id="mintBtn" onclick="mintNFT()">
+        Mint 灵魂卡片
+      </button>
+      <p class="mint-subtext" id="mintSubtext"></p>
+    </div>
+
+    <!-- ====== 阶段2: 测试 ====== -->
+    <div id="testPanel" class="panel test-panel">
+      <div class="test-nav">
+        <button class="test-nav-btn" id="backHomeBtn" onclick="confirmGoHome()" title="返回首页">
+          <span class="nav-icon">🏠</span> 首页
+        </button>
+        <button class="test-nav-btn" id="prevQuestionBtn" onclick="goToPrevQuestion()" title="上一题" disabled>
+          <span class="nav-icon">←</span> 上一题
+        </button>
+      </div>
+
+      <div class="progress-bar">
+        <div class="fill" id="progressFill" style="width: 0%"></div>
+      </div>
+
+      <div class="question-number" id="questionNumber">Q1 / 31</div>
+      <div class="question-text" id="questionText"></div>
+      <div class="options" id="optionsContainer"></div>
+    </div>
+
+    <!-- ====== 阶段3: 结果 ====== -->
+    <div id="resultPanel" class="panel result-panel">
+      <h2 style="color: var(--text-dim); margin-bottom: 20px;">你的灵魂碑</h2>
+
+      <div class="stele-display" id="stelePreview"></div>
+
+      <div class="result-personality" id="resultCode"></div>
+      <div class="result-name" id="resultName"></div>
+      <div class="result-match" id="resultMatch"></div>
+
+      <div class="dimensions-grid" id="dimensionsGrid"></div>
+
+      <div class="inscribe-section">
+        <p>⚠️ 铭刻后不可更改，你的灵魂将永久刻在区块链上</p>
+        <button class="btn btn-primary" id="inscribeBtn" onclick="inscribeNFT()">
+          ✦ 铭刻到链上
+        </button>
+      </div>
+    </div>
+
+    <!-- ====== 铭刻完成 ====== -->
+    <div id="donePanel" class="panel inscribed-panel">
+      <div class="inscribed-badge">✅ 已永久铭刻</div>
+      <div class="stele-display" id="finalStele"></div>
+      <div class="result-personality" id="finalCode"></div>
+      <div class="result-name" id="finalName"></div>
+      <p style="color: var(--text-dim); margin-top: 20px; font-size: 0.85rem;">
+        你的灵魂已永久刻在区块链上。<br>
+        可以在 OpenSea / OKX Wallet 查看你的灵魂碑 NFT。
+      </p>
+      <div style="margin-top: 24px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn btn-gold" onclick="goBackToMint()">🃏 继续铭刻其他卡片</button>
+        <button class="btn btn-secondary" onclick="window.open('https://opensea.io', '_blank')">在 OpenSea 查看</button>
+        <button class="btn btn-secondary" onclick="shareResult()">📤 分享结果</button>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loadingPanel" class="panel" style="display:none;">
+      <div class="loading">
+        <div class="spinner"></div>
+        <p id="loadingText" style="color: var(--text-dim);">处理中...</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 钱包选择弹窗 -->
+  <div id="walletModal" class="wallet-modal" style="display:none;" onclick="closeWalletModal(event)">
+    <div class="wallet-modal-content">
+      <div class="wallet-modal-header">
+        <h3>选择钱包</h3>
+        <button class="wallet-modal-close" onclick="closeWalletModal()">&times;</button>
+      </div>
+      <div class="wallet-modal-list">
+        <button class="wallet-option" onclick="connectWithWallet('metamask')">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask" class="wallet-icon">
+          <div class="wallet-option-info">
+            <span class="wallet-option-name">MetaMask</span>
+            <span class="wallet-option-desc">最流行的浏览器钱包</span>
+          </div>
+          <span class="wallet-arrow">→</span>
+        </button>
+        <button class="wallet-option" onclick="connectWithWallet('okx')">
+          <img src="images/okx.png" alt="OKX" class="wallet-icon">
+          <div class="wallet-option-info">
+            <span class="wallet-option-name">OKX Wallet</span>
+            <span class="wallet-option-desc">OKX 交易所钱包</span>
+          </div>
+          <span class="wallet-arrow">→</span>
+        </button>
+        <button class="wallet-option" onclick="connectWithWallet('binance')">
+          <img src="https://public.bnbstatic.com/static/images/common/favicon.ico" alt="Binance" class="wallet-icon">
+          <div class="wallet-option-info">
+            <span class="wallet-option-name">Binance Wallet</span>
+            <span class="wallet-option-desc">币安 Web3 钱包</span>
+          </div>
+          <span class="wallet-arrow">→</span>
+        </button>
+        <button class="wallet-option" onclick="connectWithWallet('bitget')">
+          <img src="images/bitget.png" alt="Bitget" class="wallet-icon">
+          <div class="wallet-option-info">
+            <span class="wallet-option-name">Bitget Wallet</span>
+            <span class="wallet-option-desc">Bitget 交易所钱包</span>
+          </div>
+          <span class="wallet-arrow">→</span>
+        </button>
+      </div>
+      <p class="wallet-modal-hint">请确保已安装对应钱包浏览器插件</p>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- 灵魂碑查看弹窗 -->
+  <div id="steleModal" class="stele-modal" onclick="closeSteleModal(event)">
+    <div class="stele-modal-content">
+      <button class="stele-modal-close" onclick="closeSteleModal()">&times;</button>
+      <div id="steleModalBody" class="stele-modal-body"></div>
+      <div id="steleModalInfo" class="stele-modal-info"></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+  <script src="sbti-engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

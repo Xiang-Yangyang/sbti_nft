@@ -1,0 +1,1313 @@
+/* ============ SBTI × NFT 样式 ============ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #0a0a0f;
+  --card-bg: #12121a;
+  --border: #1e1e2e;
+  --text: #e0e0e0;
+  --text-dim: #666680;
+  --accent: #e94560;
+  --accent2: #0f3460;
+  --gold: #ffd700;
+  --success: #00ff88;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ---- 头部 ---- */
+.header {
+  text-align: center;
+  padding: 40px 20px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.header h1 {
+  font-size: 3.5rem;
+  font-weight: 900;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 8px;
+  background: linear-gradient(
+    270deg,
+    #ff6b9d, #c471ed, #a855f7,
+    #6366f1, #38bdf8, #5eead4,
+    #ff6b9d
+  );
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: titleGradientFlow 6s ease infinite;
+  filter: drop-shadow(0 0 25px rgba(94, 234, 212, 0.5))
+         drop-shadow(0 0 50px rgba(99, 102, 241, 0.35))
+         drop-shadow(0 0 80px rgba(168, 85, 247, 0.2));
+}
+
+@keyframes titleGradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.title-star {
+  display: inline-block;
+  -webkit-text-fill-color: #72efdd;
+  animation: starPulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(114, 239, 221, 0.6));
+}
+
+@keyframes starPulse {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.7; }
+  50% { transform: scale(1.2) rotate(15deg); opacity: 1; }
+}
+
+.title-x {
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.25);
+  font-weight: 300;
+}
+
+.header p {
+  color: var(--text-dim);
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+
+/* ---- 合约地址展示栏 ---- */
+.contract-address-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-family: monospace;
+  max-width: 95%;
+  word-break: break-all;
+}
+
+.contract-label {
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  font-family: inherit;
+}
+
+.contract-link {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.contract-link:hover {
+  color: var(--gold);
+  text-decoration: underline;
+}
+
+.copy-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.copy-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ---- 测试状态标识 ---- */
+.test-status-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 4px 12px;
+  background: rgba(255, 165, 0, 0.08);
+  border: 1px solid rgba(255, 165, 0, 0.25);
+  border-radius: 12px;
+  font-size: 0.72rem;
+  color: #ffa500;
+}
+
+.test-status-bar .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffa500;
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* ---- 钱包状态 ---- */
+.wallet-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.wallet-bar .address {
+  font-family: monospace;
+  color: var(--accent);
+  font-size: 0.85rem;
+}
+
+/* ---- 按钮 ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #c23152);
+  color: white;
+  box-shadow: 0 4px 20px rgba(233, 69, 96, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(233, 69, 96, 0.5);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent);
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold), #ff8c00);
+  color: #000;
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
+}
+
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(255, 215, 0, 0.5);
+}
+
+/* Mint 按钮固定金色样式（不随连接状态改变） */
+.mint-btn-fixed {
+  background: linear-gradient(135deg, var(--gold), #ff8c00) !important;
+  color: #000 !important;
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3) !important;
+  border: none !important;
+}
+
+.mint-btn-fixed:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(255, 215, 0, 0.5) !important;
+}
+
+/* ---- 页面容器 ---- */
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ---- 各阶段面板 ---- */
+.panel {
+  display: none;
+  animation: fadeIn 0.5s ease;
+}
+
+.panel.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Mint 面板 ---- */
+.mint-panel {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.mint-panel .nft-preview {
+  width: 280px;
+  height: 380px;
+  margin: 30px auto;
+  border-radius: 20px;
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+}
+
+/* ---- Soul Card 炫酷样式 ---- */
+.soul-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  transform-style: preserve-3d;
+  animation: card3dBreathe 5s ease-in-out infinite;
+  cursor: grab;
+  user-select: none;
+}
+
+/* hover 时卡片呼吸放大一次（幅度小） */
+.soul-card:hover:not(.dragging) {
+  animation: card3dBreathe 5s ease-in-out infinite, cardHoverPulse 0.7s ease-in-out;
+}
+
+@keyframes cardHoverPulse {
+  0% { transform: rotateX(0deg) rotateY(0deg) scale(1); }
+  45% { transform: rotateX(0deg) rotateY(0deg) scale(1.035); }
+  100% { transform: rotateX(0deg) rotateY(0deg) scale(1); }
+}
+
+/* 金色发散光用伪元素，底层渐变光始终可见 */
+.soul-card-glow {
+  overflow: visible;
+}
+
+.soul-card-glow::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 24px;
+  background: radial-gradient(ellipse at center, #ffd700, #ff8c00, #ffa500, transparent 70%);
+  opacity: 0;
+  filter: blur(12px);
+  z-index: 1;
+  pointer-events: none;
+  transition: none;
+}
+
+/* hover 时金色光一次性向外发散 */
+.soul-card:hover:not(.dragging) .soul-card-glow::after {
+  animation: glowGoldBurst 1.6s ease-out forwards;
+}
+
+@keyframes glowGoldBurst {
+  0% {
+    opacity: 0;
+    inset: -4px;
+    filter: blur(8px);
+  }
+  12% {
+    opacity: 1;
+    inset: -12px;
+    filter: blur(14px);
+  }
+  35% {
+    opacity: 0.75;
+    inset: -30px;
+    filter: blur(24px);
+  }
+  65% {
+    opacity: 0.35;
+    inset: -45px;
+    filter: blur(32px);
+  }
+  100% {
+    opacity: 0;
+    inset: -55px;
+    filter: blur(38px);
+  }
+}
+
+.soul-card.dragging {
+  animation: none !important;
+  cursor: grabbing;
+  transition: none;
+}
+
+@keyframes card3dBreathe {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg) scale(1);
+  }
+  15% {
+    transform: rotateX(4deg) rotateY(-3deg) scale(1.02);
+  }
+  30% {
+    transform: rotateX(-2deg) rotateY(5deg) scale(1.035);
+  }
+  50% {
+    transform: rotateX(3deg) rotateY(4deg) scale(1.04);
+  }
+  65% {
+    transform: rotateX(-4deg) rotateY(-2deg) scale(1.025);
+  }
+  80% {
+    transform: rotateX(2deg) rotateY(-5deg) scale(1.015);
+  }
+  100% {
+    transform: rotateX(0deg) rotateY(0deg) scale(1);
+  }
+}
+
+/* 外部呼吸渐变光晕 */
+.soul-card-glow {
+  position: absolute;
+  inset: -4px;
+  border-radius: 24px;
+  background: linear-gradient(
+    135deg,
+    #72efdd, #4cc9f0, #4361ee, #7209b7,
+    #b5179e, #f72585, #ff6fff, #72efdd
+  );
+  background-size: 400% 400%;
+  animation: glowBreathe 5s ease-in-out infinite, glowShift 8s ease infinite;
+  filter: blur(8px);
+  opacity: 0.5;
+  z-index: 0;
+  transform: translateZ(-1px);
+}
+
+@keyframes glowBreathe {
+  0%, 100% {
+    inset: -4px;
+    opacity: 0.35;
+    filter: blur(8px);
+  }
+  30% {
+    inset: -12px;
+    opacity: 0.8;
+    filter: blur(16px);
+  }
+  50% {
+    inset: -8px;
+    opacity: 0.6;
+    filter: blur(12px);
+  }
+  70% {
+    inset: -14px;
+    opacity: 0.85;
+    filter: blur(18px);
+  }
+}
+
+@keyframes glowShift {
+  0%, 100% { background-position: 0% 50%; }
+  25% { background-position: 100% 0%; }
+  50% { background-position: 100% 100%; }
+  75% { background-position: 0% 100%; }
+}
+
+/* 呼吸渐变边框 */
+.soul-card-border {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 2px;
+  background: linear-gradient(
+    135deg,
+    #72efdd, #4cc9f0, #4361ee, #7209b7,
+    #b5179e, #f72585, #ff6fff, #72efdd
+  );
+  background-size: 400% 400%;
+  animation: glowShift 8s ease infinite, borderBreathe 5s ease-in-out infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: 2;
+  pointer-events: none;
+}
+
+@keyframes borderBreathe {
+  0%, 100% { opacity: 0.5; }
+  30% { opacity: 1; }
+  70% { opacity: 0.9; }
+}
+
+/* 内部内容区 */
+.soul-card-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(160deg, #0e0e1a 0%, #161625 40%, #1a1a30 100%);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px 20px;
+  overflow: hidden;
+}
+
+/* 卡片内部微粒子 */
+.soul-card-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.soul-card-particles span {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #72efdd;
+  border-radius: 50%;
+  opacity: 0;
+  animation: particleFloat 6s ease-in-out infinite;
+}
+
+.soul-card-particles span:nth-child(1) { left: 15%; animation-delay: 0s; }
+.soul-card-particles span:nth-child(2) { left: 30%; animation-delay: 0.8s; }
+.soul-card-particles span:nth-child(3) { left: 50%; animation-delay: 1.6s; }
+.soul-card-particles span:nth-child(4) { left: 70%; animation-delay: 2.4s; }
+.soul-card-particles span:nth-child(5) { left: 85%; animation-delay: 3.2s; }
+.soul-card-particles span:nth-child(6) { left: 25%; animation-delay: 4s; width: 2px; height: 2px; background: #4cc9f0; }
+.soul-card-particles span:nth-child(7) { left: 60%; animation-delay: 4.8s; width: 2px; height: 2px; background: #b5179e; }
+.soul-card-particles span:nth-child(8) { left: 45%; animation-delay: 5.5s; width: 4px; height: 4px; background: #4361ee; }
+
+@keyframes particleFloat {
+  0% { bottom: -5%; opacity: 0; transform: translateX(0); }
+  20% { opacity: 0.8; }
+  80% { opacity: 0.3; }
+  100% { bottom: 105%; opacity: 0; transform: translateX(20px); }
+}
+
+/* 中心图腾 */
+.soul-card-emblem {
+  width: 70px;
+  height: 70px;
+  margin-bottom: 6px;
+  animation: emblemPulse 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 12px rgba(114, 239, 221, 0.4));
+}
+
+@keyframes emblemPulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(114, 239, 221, 0.3)); }
+  50% { transform: scale(1.1); filter: drop-shadow(0 0 28px rgba(114, 239, 221, 0.8)) drop-shadow(0 0 50px rgba(76, 201, 240, 0.3)); }
+}
+
+.soul-card-emblem svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* 标题 */
+.soul-card-title {
+  font-size: 2.4rem;
+  font-weight: 800;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 10px;
+  background: linear-gradient(135deg, #72efdd, #4cc9f0, #7209b7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 0 10px rgba(114, 239, 221, 0.3));
+}
+
+.soul-card-subtitle {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  font-weight: 300;
+}
+
+/* 分割线 */
+.soul-card-divider {
+  width: 60%;
+  height: 1px;
+  margin: 12px 0;
+  background: linear-gradient(90deg, transparent, rgba(114, 239, 221, 0.3), #4cc9f0, rgba(114, 239, 221, 0.3), transparent);
+}
+
+/* 状态指示 */
+.soul-card-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 2px;
+}
+
+.soul-card-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #72efdd;
+  animation: statusPulse 2s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(114, 239, 221, 0.6);
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* 底部标签 */
+.soul-card-footer {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.soul-card-chip {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  border: 1px solid rgba(114, 239, 221, 0.2);
+  color: rgba(114, 239, 221, 0.6);
+  background: rgba(114, 239, 221, 0.05);
+}
+
+.mint-panel .price {
+  font-size: 1.5rem;
+  color: var(--gold);
+  margin: 16px 0;
+  font-family: monospace;
+}
+
+.mint-panel .supply {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  margin-bottom: 24px;
+}
+
+/* ---- 测试面板 ---- */
+.test-panel {
+  padding: 40px 0;
+}
+
+/* 测试导航栏 */
+.test-nav {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.test-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+
+.test-nav-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--text);
+  background: rgba(233, 69, 96, 0.08);
+}
+
+.test-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.test-nav-btn .nav-icon {
+  font-size: 0.9rem;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin-bottom: 30px;
+  overflow: hidden;
+}
+
+.progress-bar .fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.question-number {
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-family: monospace;
+  margin-bottom: 8px;
+}
+
+.question-text {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  margin-bottom: 28px;
+  color: var(--text);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option-btn {
+  display: block;
+  width: 100%;
+  padding: 16px 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.option-btn:hover {
+  border-color: var(--accent);
+  background: rgba(233, 69, 96, 0.08);
+  transform: translateX(4px);
+}
+
+.option-btn:active {
+  transform: translateX(2px) scale(0.99);
+}
+
+/* ---- 结果面板 ---- */
+.result-panel {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.stele-display {
+  width: 300px;
+  margin: 0 auto 30px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 60px rgba(233, 69, 96, 0.15);
+}
+
+.stele-display svg {
+  width: 100%;
+  height: auto;
+}
+
+.result-personality {
+  font-size: 2rem;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.result-name {
+  font-size: 1.2rem;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.result-match {
+  font-size: 0.9rem;
+  color: var(--accent);
+  font-family: monospace;
+  margin-bottom: 30px;
+}
+
+/* 维度雷达 */
+.dimensions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 20px 0 30px;
+  text-align: left;
+}
+
+.dim-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--card-bg);
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+.dim-item .dim-code {
+  color: var(--accent);
+  font-family: monospace;
+  font-weight: bold;
+  min-width: 28px;
+}
+
+.dim-item .dim-level {
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-weight: bold;
+  font-size: 0.75rem;
+}
+
+.dim-item .dim-level.L { background: #1a2a1a; color: #44aa44; }
+.dim-item .dim-level.M { background: #2a2a1a; color: #aaaa44; }
+.dim-item .dim-level.H { background: #2a1a1a; color: #e94560; }
+
+/* 铭刻按钮区 */
+.inscribe-section {
+  margin-top: 20px;
+  padding: 20px;
+  background: var(--card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.inscribe-section p {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+}
+
+/* ---- 已铭刻展示 ---- */
+.inscribed-panel {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.inscribed-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  background: linear-gradient(135deg, var(--success), #009955);
+  color: #000;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* ---- Loading ---- */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---- Toast 提示 ---- */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  padding: 12px 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 0.9rem;
+  z-index: 999;
+  transition: transform 0.3s ease;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ---- 按钮抖动效果 ---- */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.shake {
+  animation: shake 0.6s ease;
+}
+
+/* ---- 连接按钮高亮脉冲 ---- */
+@keyframes highlight-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+  50% { box-shadow: 0 0 20px 10px rgba(255, 215, 0, 0.4); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+}
+
+.highlight-pulse {
+  animation: highlight-pulse 0.7s ease 3;
+  border-color: #ffd700 !important;
+}
+
+/* ---- 空白 NFT 列表 ---- */
+.nft-list-section {
+  margin: 16px 0;
+  padding: 16px;
+  border: 1px solid rgba(233, 69, 96, 0.3);
+  border-radius: 16px;
+  background: rgba(233, 69, 96, 0.05);
+}
+
+.nft-list-title {
+  font-size: 1.1rem;
+  color: var(--accent);
+  margin: 0 0 4px 0;
+}
+
+.nft-list-desc {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin: 0 0 12px 0;
+}
+
+.nft-list-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.nft-select-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.nft-select-card:hover {
+  border-color: var(--accent);
+  background: rgba(233, 69, 96, 0.08);
+}
+
+.nft-select-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.nft-select-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.nft-select-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: monospace;
+  color: var(--text);
+}
+
+.nft-select-status {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.btn-sm {
+  padding: 6px 14px !important;
+  font-size: 0.8rem !important;
+  min-width: auto !important;
+}
+
+.nft-list-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 8px;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+
+.nft-list-divider::before,
+.nft-list-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mint-subtext {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* ---- 已铭刻 NFT 列表 ---- */
+.inscribed-list-section {
+  border-color: rgba(0, 255, 136, 0.3) !important;
+  background: rgba(0, 255, 136, 0.03) !important;
+  margin-top: 12px;
+}
+
+.inscribed-list-section .nft-list-title {
+  color: var(--success);
+}
+
+.inscribed-card {
+  border-color: rgba(0, 255, 136, 0.15) !important;
+  background: rgba(0, 255, 136, 0.03) !important;
+  cursor: default;
+}
+
+.inscribed-card:hover {
+  border-color: rgba(0, 255, 136, 0.3) !important;
+  background: rgba(0, 255, 136, 0.06) !important;
+}
+
+/* 迷你灵魂碑图标 */
+.nft-inscribed-mini-stele {
+  width: 44px;
+  height: 52px;
+  border: 1.5px solid var(--accent);
+  border-radius: 12px 12px 4px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 15, 0.8);
+  flex-shrink: 0;
+}
+
+.nft-inscribed-mini-stele .mini-label {
+  font-size: 0.5rem;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+.nft-inscribed-mini-stele .mini-code {
+  font-size: 0.55rem;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+/* 已铭刻状态文字 */
+.inscribed-status {
+  color: var(--text-dim) !important;
+  font-size: 0.72rem !important;
+}
+
+/* 已铭刻小徽章 */
+.inscribed-badge-small {
+  font-size: 0.7rem;
+  color: var(--success);
+  white-space: nowrap;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+/* ---- 灵魂碑查看弹窗 ---- */
+.stele-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
+  pointer-events: none;
+  transition: all 0.35s ease;
+}
+
+.stele-modal.show {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(12px);
+  pointer-events: all;
+}
+
+.stele-modal-content {
+  position: relative;
+  max-width: 380px;
+  width: 90%;
+  opacity: 0;
+  transform: scale(0.85) translateY(30px);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.stele-modal.show .stele-modal-content {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.stele-modal-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.stele-modal-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.stele-modal-body {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow:
+    0 0 30px rgba(114, 239, 221, 0.15),
+    0 20px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stele-modal-body svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.stele-modal-info {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.stele-modal-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-family: monospace;
+}
+
+/* 已铭刻卡片 hover 提示可点击 */
+.inscribed-card {
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.inscribed-card:hover {
+  transform: translateX(4px);
+}
+
+/* ---- 响应式 ---- */
+@media (max-width: 600px) {
+  .header h1 { font-size: 2.8rem; letter-spacing: 6px; }
+  .dimensions-grid { grid-template-columns: repeat(2, 1fr); }
+  .mint-panel .nft-preview { width: 240px; height: 330px; }
+  .wallet-modal-content { margin: 20px; max-width: none; }
+}
+
+/* ---- 钱包选择弹窗 ---- */
+.wallet-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  animation: modalFadeIn 0.25s ease;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.wallet-modal-content {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  animation: modalSlideUp 0.3s ease;
+}
+
+@keyframes modalSlideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.wallet-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.wallet-modal-header h3 {
+  font-size: 1.2rem;
+  color: var(--text);
+}
+
+.wallet-modal-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-dim);
+  font-size: 1.3rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.wallet-modal-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text);
+}
+
+.wallet-modal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wallet-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+  width: 100%;
+  text-align: left;
+  color: var(--text);
+}
+
+.wallet-option:hover {
+  border-color: var(--accent);
+  background: rgba(233, 69, 96, 0.08);
+  transform: translateX(4px);
+}
+
+.wallet-option:active {
+  transform: translateX(2px) scale(0.99);
+}
+
+.wallet-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  object-fit: contain;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 4px;
+}
+
+.wallet-option-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.wallet-option-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.wallet-option-desc {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+.wallet-arrow {
+  color: var(--text-dim);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.wallet-option:hover .wallet-arrow {
+  color: var(--accent);
+}
+
+.wallet-modal-hint {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 16px;
+}
+
+/* 钱包栏图标 */
+.wallet-bar-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  vertical-align: middle;
+}
