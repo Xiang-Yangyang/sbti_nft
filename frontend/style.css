@@ -361,19 +361,19 @@ body {
     transform: rotateX(0deg) rotateY(0deg) scale(1);
   }
   15% {
-    transform: rotateX(4deg) rotateY(-3deg) scale(1.02);
+    transform: rotateX(8deg) rotateY(-6deg) scale(1.03);
   }
   30% {
-    transform: rotateX(-2deg) rotateY(5deg) scale(1.035);
+    transform: rotateX(-5deg) rotateY(10deg) scale(1.05);
   }
   50% {
-    transform: rotateX(3deg) rotateY(4deg) scale(1.04);
+    transform: rotateX(7deg) rotateY(8deg) scale(1.06);
   }
   65% {
-    transform: rotateX(-4deg) rotateY(-2deg) scale(1.025);
+    transform: rotateX(-8deg) rotateY(-5deg) scale(1.04);
   }
   80% {
-    transform: rotateX(2deg) rotateY(-5deg) scale(1.015);
+    transform: rotateX(5deg) rotateY(-9deg) scale(1.02);
   }
   100% {
     transform: rotateX(0deg) rotateY(0deg) scale(1);
