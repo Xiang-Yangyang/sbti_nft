@@ -193,8 +193,9 @@
   }
   .card-wrapper svg {
     width: 320px;
-    height: 320px;
+    height: auto;
     border-radius: 16px;
+    cursor: pointer;
     box-shadow: 0 0 40px rgba(114, 239, 221, 0.12), 0 0 80px rgba(76, 201, 240, 0.06);
     transition: transform 0.3s ease;
   }
@@ -206,6 +207,32 @@
   }
   #goldCardWrapper:hover svg {
     box-shadow: 0 0 50px rgba(255, 215, 0, 0.25), 0 0 100px rgba(255, 140, 0, 0.12);
+  }
+  /* 灵魂碑尺寸与 Soul Card 一致 */
+  .stele-showcase .card-wrapper svg {
+    width: 320px;
+    cursor: pointer;
+  }
+  /* CTRL碑 光晕 */
+  .stele-ctrl svg {
+    box-shadow: 0 0 30px rgba(233,69,96,0.15), 0 0 60px rgba(233,69,96,0.08);
+  }
+  .stele-ctrl:hover svg {
+    box-shadow: 0 0 40px rgba(233,69,96,0.25), 0 0 80px rgba(233,69,96,0.12);
+  }
+  /* BOSS金碑 光晕（金色） */
+  .stele-boss svg {
+    box-shadow: 0 0 40px rgba(255,215,0,0.2), 0 0 80px rgba(255,140,0,0.1);
+  }
+  .stele-boss:hover svg {
+    box-shadow: 0 0 50px rgba(255,215,0,0.35), 0 0 100px rgba(255,140,0,0.18);
+  }
+  /* JOKE-R碑 彩虹光晕 */
+  .stele-joker svg {
+    box-shadow: 0 0 30px rgba(123,255,58,0.15), 0 0 60px rgba(114,239,221,0.08);
+  }
+  .stele-joker:hover svg {
+    box-shadow: 0 0 40px rgba(123,255,58,0.25), 0 0 80px rgba(114,239,221,0.12);
   }
   .card-wrapper .card-note {
     font-size: 12px;
@@ -348,7 +375,8 @@
     .hero h1 { font-size: 32px; }
     .hero .stats { gap: 24px; }
     .hero .stat-num { font-size: 28px; }
-    .card-wrapper svg { width: 260px; height: 260px; }
+    .card-wrapper svg { width: 260px; height: auto; }
+    .stele-showcase .card-wrapper svg { width: 260px; }
     .back-btn { top: 12px; left: 12px; padding: 6px 14px; }
   }
 </style>
@@ -606,111 +634,384 @@
   <p style="text-align:center; color:rgba(255,255,255,0.55); font-size:13px; margin-top:10px; letter-spacing:1px;">🔄 刷新页面试试 — 每次加载都会随机生成不同的渐变角度与配色</p>
 
   <h4 style="color: rgba(255,255,255,0.75); font-size: 14px; margin: 40px 0 20px;">灵魂碑 — Soul Stele（铭刻后）</h4>
-  <div class="card-showcase">
+  <div class="card-showcase stele-showcase">
     <!-- CTRL -->
-    <div class="card-wrapper">
+    <div class="card-wrapper stele-ctrl">
       <div class="label">🔴 CTRL 拿捏者</div>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">
+      <svg id="steleCtrl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">
         <defs>
           <linearGradient id="g1a" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" style="stop-color:#e94560"/><stop offset="100%" style="stop-color:#0f3460"/>
           </linearGradient>
-          <radialGradient id="glowa" cx="50%" cy="35%" r="45%">
-            <stop offset="0%" style="stop-color:#e94560;stop-opacity:0.12"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>
+          <radialGradient id="glowa" cx="50%" cy="30%" r="45%">
+            <stop offset="0%" style="stop-color:#e94560;stop-opacity:0.15"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>
           </radialGradient>
+          <linearGradient id="divA" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#e94560;stop-opacity:0"/><stop offset="50%" style="stop-color:#e94560;stop-opacity:0.5"/><stop offset="100%" style="stop-color:#e94560;stop-opacity:0"/>
+          </linearGradient>
+          <linearGradient id="outerGlowA" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#72efdd"/>
+            <stop offset="14%" style="stop-color:#4cc9f0"/>
+            <stop offset="28%" style="stop-color:#4361ee"/>
+            <stop offset="43%" style="stop-color:#7209b7"/>
+            <stop offset="57%" style="stop-color:#b5179e"/>
+            <stop offset="71%" style="stop-color:#f72585"/>
+            <stop offset="85%" style="stop-color:#ff6fff"/>
+            <stop offset="100%" style="stop-color:#72efdd"/>
+          </linearGradient>
+          <linearGradient id="borderA" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#72efdd"/>
+            <stop offset="15%" style="stop-color:#4cc9f0"/>
+            <stop offset="30%" style="stop-color:#4361ee"/>
+            <stop offset="50%" style="stop-color:#7209b7"/>
+            <stop offset="65%" style="stop-color:#b5179e"/>
+            <stop offset="80%" style="stop-color:#f72585"/>
+            <stop offset="90%" style="stop-color:#ff6fff"/>
+            <stop offset="100%" style="stop-color:#72efdd"/>
+          </linearGradient>
+          <filter id="gA" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="12" result="blur"/></filter>
+          <linearGradient id="cardbgA" x1="30%" y1="0%" x2="70%" y2="100%">
+            <stop offset="0%" style="stop-color:#0e0e1a"/>
+            <stop offset="40%" style="stop-color:#161625"/>
+            <stop offset="100%" style="stop-color:#1a1a30"/>
+          </linearGradient>
         </defs>
-        <circle cx="200" cy="140" r="130" fill="url(#glowa)"/>
-        <path d="M55,130 L55,360 L345,360 L345,130 Q345,40 200,40 Q55,40 55,130Z" fill="none" stroke="url(#g1a)" stroke-width="2"/>
-        <text x="200" y="75" text-anchor="middle" fill="#e94560" font-size="14" font-family="serif" letter-spacing="4">SOUL STELE</text>
-        <text x="200" y="98" text-anchor="middle" fill="#8888aa" font-size="11" font-family="sans-serif" letter-spacing="1">CryptoKing</text>
-        <text x="200" y="140" text-anchor="middle" fill="url(#g1a)" font-size="42" font-family="monospace" font-weight="bold">CTRL</text>
-        <text x="200" y="164" text-anchor="middle" fill="#8888aa" font-size="14" font-family="sans-serif">拿捏者</text>
-        <text x="200" y="184" text-anchor="middle" fill="#555566" font-size="10" font-family="monospace">Match: 87%</text>
-        <line x1="85" y1="194" x2="315" y2="194" stroke="#333344" stroke-width="0.5"/>
-        <text x="83" y="213" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S1</text>
-        <rect x="88" y="206" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="206" width="78" height="7" rx="2" fill="#e94560" opacity="0.7"/>
-        <text x="83" y="223" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S2</text>
-        <rect x="88" y="216" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="216" width="78" height="7" rx="2" fill="#e94560" opacity="0.7"/>
-        <text x="83" y="233" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S3</text>
-        <rect x="88" y="226" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="226" width="78" height="7" rx="2" fill="#e94560" opacity="0.7"/>
-        <text x="83" y="243" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">E1</text>
-        <rect x="88" y="236" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="236" width="78" height="7" rx="2" fill="#e94560" opacity="0.7"/>
-        <text x="83" y="253" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">E2</text>
-        <rect x="88" y="246" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="246" width="52" height="7" rx="2" fill="#e94560" opacity="0.7"/>
-        <text x="200" y="368" text-anchor="middle" fill="#444455" font-size="9" font-family="monospace">2026-04-10</text>
-        <text x="200" y="384" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#42</text>
+        <!-- 外发光（碑形path + 模糊） -->
+        <path d="M26,85 L26,354 Q26,374 48,374 L352,374 Q374,374 374,354 L374,85 Q374,11 200,11 Q26,11 26,85Z" fill="none" stroke="url(#outerGlowA)" stroke-width="10" filter="url(#gA)" opacity="0.9"/>
+        <!-- 碑体 -->
+        <circle cx="200" cy="120" r="130" fill="url(#glowa)"/>
+        <!-- 碑体主体 -->
+        <path d="M30,85 L30,352 Q30,370 48,370 L352,370 Q370,370 370,352 L370,85 Q370,15 200,15 Q30,15 30,85Z" fill="url(#cardbgA)" stroke="url(#borderA)" stroke-width="2" opacity="0.7"/>
+        <!-- 星尘 -->
+        <circle cx="90" cy="82" r="1" fill="#e94560" opacity="0.4"/>
+        <circle cx="310" cy="75" r="0.8" fill="#0f3460" opacity="0.5"/>
+        <circle cx="120" cy="52" r="1.2" fill="#e94560" opacity="0.3"/>
+        <circle cx="280" cy="60" r="0.7" fill="#e94560" opacity="0.4"/>
+        <!-- 顶部信息 -->
+        <text x="200" y="60" text-anchor="middle" fill="#e94560" font-size="11" font-family="'Courier New',monospace" letter-spacing="5" opacity="0.9">SBTI STELE</text>
+        <text x="200" y="78" text-anchor="middle" fill="#6a6a88" font-size="9" font-family="monospace" letter-spacing="2">CryptoKing</text>
+        <text x="200" y="118" text-anchor="middle" fill="url(#g1a)" font-size="44" font-family="'Courier New',monospace" font-weight="800" letter-spacing="8">CTRL</text>
+        <text x="200" y="138" text-anchor="middle" fill="#8888aa" font-size="14" font-family="sans-serif" font-weight="300" letter-spacing="4">拿捏者</text>
+        <!-- 匹配度进度条 -->
+        <text x="155" y="155" text-anchor="end" fill="#e94560" font-size="9" font-family="monospace" font-weight="bold">87%</text>
+        <rect x="160" y="149" width="80" height="5" rx="2.5" fill="#1a1a2e"/>
+        <rect x="160" y="149" width="70" height="5" rx="2.5" fill="#e94560" opacity="0.8"/>
+        <!-- 分隔线 -->
+        <rect x="60" y="166" width="280" height="1" rx="0.5" fill="url(#divA)"/>
+        <!-- ═══ SELF ═══ S1=3 S2=3 S3=3 -->
+        <text x="200" y="192" text-anchor="middle" fill="#666677" font-size="10" font-family="monospace" letter-spacing="3">SELF</text>
+        <!-- S1=3 -->
+        <text x="120" y="204" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">S1</text>
+        <rect x="124" y="199" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="131" y="199" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="138" y="199" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="145" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="152" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- S2=3 -->
+        <text x="177" y="204" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">S2</text>
+        <rect x="181" y="199" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="188" y="199" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="195" y="199" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="202" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="209" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- S3=3 -->
+        <text x="234" y="204" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">S3</text>
+        <rect x="238" y="199" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="245" y="199" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="252" y="199" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="259" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="266" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- ═══ EMOTION ═══ E1=3 E2=2 E3=3 -->
+        <text x="200" y="220" text-anchor="middle" fill="#666677" font-size="10" font-family="monospace" letter-spacing="3">EMOTION</text>
+        <!-- E1=3 -->
+        <text x="120" y="232" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">E1</text>
+        <rect x="124" y="227" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="131" y="227" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="138" y="227" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="145" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="152" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- E2=2 -->
+        <text x="177" y="232" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">E2</text>
+        <rect x="181" y="227" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="188" y="227" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="195" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="202" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="209" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- E3=3 -->
+        <text x="234" y="232" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">E3</text>
+        <rect x="238" y="227" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="245" y="227" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="252" y="227" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="259" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="266" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- ═══ ATTITUDE ═══ A1=2 A2=3 A3=3 -->
+        <text x="200" y="248" text-anchor="middle" fill="#666677" font-size="10" font-family="monospace" letter-spacing="3">ATTITUDE</text>
+        <!-- A1=2 -->
+        <text x="120" y="260" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">A1</text>
+        <rect x="124" y="255" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="131" y="255" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="138" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="145" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="152" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- A2=3 -->
+        <text x="177" y="260" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">A2</text>
+        <rect x="181" y="255" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="188" y="255" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="195" y="255" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="202" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="209" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- A3=3 -->
+        <text x="234" y="260" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">A3</text>
+        <rect x="238" y="255" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="245" y="255" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="252" y="255" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="259" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="266" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- ═══ ACTION ═══ Ac1=3 Ac2=3 Ac3=3 -->
+        <text x="200" y="276" text-anchor="middle" fill="#666677" font-size="10" font-family="monospace" letter-spacing="3">ACTION</text>
+        <!-- Ac1=3 -->
+        <text x="120" y="288" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">Ac1</text>
+        <rect x="124" y="283" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="131" y="283" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="138" y="283" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="145" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="152" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- Ac2=3 -->
+        <text x="177" y="288" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">Ac2</text>
+        <rect x="181" y="283" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="188" y="283" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="195" y="283" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="202" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="209" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- Ac3=3 -->
+        <text x="234" y="288" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">Ac3</text>
+        <rect x="238" y="283" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="245" y="283" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="252" y="283" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="259" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="266" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- ═══ SOCIAL ═══ So1=2 So2=3 So3=2 -->
+        <text x="200" y="304" text-anchor="middle" fill="#666677" font-size="10" font-family="monospace" letter-spacing="3">SOCIAL</text>
+        <!-- So1=2 -->
+        <text x="120" y="316" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">So1</text>
+        <rect x="124" y="311" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="131" y="311" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="138" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="145" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="152" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- So2=3 -->
+        <text x="177" y="316" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">So2</text>
+        <rect x="181" y="311" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="188" y="311" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="195" y="311" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="202" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="209" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- So3=2 -->
+        <text x="234" y="316" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">So3</text>
+        <rect x="238" y="311" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="245" y="311" width="5" height="5" rx="1" fill="#e94560" opacity="0.85"/><rect x="252" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="259" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="266" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- 底部分隔 -->
+        <rect x="60" y="332" width="280" height="1" rx="0.5" fill="url(#divA)"/>
+        <!-- 底部时间 -->
+        <text x="200" y="345" text-anchor="middle" fill="#444455" font-size="9" font-family="monospace" letter-spacing="1">2026-04-18</text>
+        <text x="200" y="358" text-anchor="middle" fill="#555566" font-size="10" font-family="monospace" font-weight="bold">#42</text>
       </svg>
       <p class="card-note">Match 87% · 含用户名和铭刻时间</p>
     </div>
 
     <!-- BOSS -->
-    <div class="card-wrapper">
-      <div class="label">🟡 BOSS 领导者</div>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">
+    <div class="card-wrapper stele-boss">
+      <div class="label" style="color:#ffd700;">✨ BOSS 领导者 · 金碑</div>
+      <svg id="steleBoss" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">
         <defs>
           <linearGradient id="g1b" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" style="stop-color:#ffd700"/><stop offset="100%" style="stop-color:#b8860b"/>
           </linearGradient>
-          <radialGradient id="glowb" cx="50%" cy="35%" r="45%">
-            <stop offset="0%" style="stop-color:#ffd700;stop-opacity:0.12"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>
+          <radialGradient id="glowb" cx="50%" cy="30%" r="45%">
+            <stop offset="0%" style="stop-color:#ffd700;stop-opacity:0.15"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>
           </radialGradient>
+          <linearGradient id="divB" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#ffd700;stop-opacity:0"/><stop offset="50%" style="stop-color:#ffd700;stop-opacity:0.5"/><stop offset="100%" style="stop-color:#ffd700;stop-opacity:0"/>
+          </linearGradient>
+          <linearGradient id="outerGlowB" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#ffd700"/>
+            <stop offset="14%" style="stop-color:#ffb800"/>
+            <stop offset="28%" style="stop-color:#ff8c00"/>
+            <stop offset="43%" style="stop-color:#ffa500"/>
+            <stop offset="57%" style="stop-color:#ffe066"/>
+            <stop offset="71%" style="stop-color:#ffd700"/>
+            <stop offset="85%" style="stop-color:#ff9500"/>
+            <stop offset="100%" style="stop-color:#ffb800"/>
+          </linearGradient>
+          <linearGradient id="borderB" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#ffd700"/>
+            <stop offset="14%" style="stop-color:#ffb800"/>
+            <stop offset="28%" style="stop-color:#ff8c00"/>
+            <stop offset="43%" style="stop-color:#ffa500"/>
+            <stop offset="57%" style="stop-color:#ffe066"/>
+            <stop offset="71%" style="stop-color:#ffd700"/>
+            <stop offset="85%" style="stop-color:#ff9500"/>
+            <stop offset="100%" style="stop-color:#ffb800"/>
+          </linearGradient>
+          <filter id="gB" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="12" result="blur"/></filter>
+          <linearGradient id="cardbgB" x1="30%" y1="0%" x2="70%" y2="100%">
+            <stop offset="0%" style="stop-color:#0e0e1a"/>
+            <stop offset="40%" style="stop-color:#161625"/>
+            <stop offset="100%" style="stop-color:#1a1a30"/>
+          </linearGradient>
         </defs>
-        <circle cx="200" cy="140" r="130" fill="url(#glowb)"/>
-        <path d="M55,130 L55,360 L345,360 L345,130 Q345,40 200,40 Q55,40 55,130Z" fill="none" stroke="url(#g1b)" stroke-width="2"/>
-        <text x="200" y="75" text-anchor="middle" fill="#ffd700" font-size="14" font-family="serif" letter-spacing="4">SOUL STELE</text>
-        <text x="200" y="98" text-anchor="middle" fill="#8888aa" font-size="11" font-family="sans-serif" letter-spacing="1">BigBoss_007</text>
-        <text x="200" y="140" text-anchor="middle" fill="url(#g1b)" font-size="42" font-family="monospace" font-weight="bold">BOSS</text>
-        <text x="200" y="164" text-anchor="middle" fill="#8888aa" font-size="14" font-family="sans-serif">领导者</text>
-        <text x="200" y="184" text-anchor="middle" fill="#555566" font-size="10" font-family="monospace">Match: 92%</text>
-        <line x1="85" y1="194" x2="315" y2="194" stroke="#333344" stroke-width="0.5"/>
-        <text x="83" y="213" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S1</text>
-        <rect x="88" y="206" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="206" width="78" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
-        <text x="83" y="223" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S2</text>
-        <rect x="88" y="216" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="216" width="78" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
-        <text x="83" y="233" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S3</text>
-        <rect x="88" y="226" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="226" width="78" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
-        <text x="83" y="243" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">E1</text>
-        <rect x="88" y="236" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="236" width="78" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
-        <text x="83" y="253" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">E2</text>
-        <rect x="88" y="246" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="246" width="52" height="7" rx="2" fill="#ffd700" opacity="0.7"/>
-        <text x="200" y="368" text-anchor="middle" fill="#444455" font-size="9" font-family="monospace">2026-04-11</text>
-        <text x="200" y="384" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#7</text>
+        <!-- 外发光（碑形path + 模糊） -->
+        <path d="M26,85 L26,354 Q26,374 48,374 L352,374 Q374,374 374,354 L374,85 Q374,11 200,11 Q26,11 26,85Z" fill="none" stroke="url(#outerGlowB)" stroke-width="10" filter="url(#gB)" opacity="0.9"/>
+        <!-- 碑体 -->
+        <circle cx="200" cy="120" r="130" fill="url(#glowb)"/>
+        <!-- 碑体主体 -->
+        <path d="M30,85 L30,352 Q30,370 48,370 L352,370 Q370,370 370,352 L370,85 Q370,15 200,15 Q30,15 30,85Z" fill="url(#cardbgB)" stroke="url(#borderB)" stroke-width="2" opacity="0.7"/>
+        <!-- 星尘 -->
+        <circle cx="90" cy="82" r="1" fill="#ffd700" opacity="0.4"/>
+        <circle cx="310" cy="75" r="0.8" fill="#b8860b" opacity="0.5"/>
+        <circle cx="120" cy="52" r="1.2" fill="#ffd700" opacity="0.3"/>
+        <circle cx="280" cy="60" r="0.7" fill="#ffd700" opacity="0.4"/>
+        <!-- 顶部信息 -->
+        <text x="200" y="60" text-anchor="middle" fill="#ffd700" font-size="11" font-family="'Courier New',monospace" letter-spacing="5" opacity="0.9">SBTI STELE</text>
+        <text x="200" y="78" text-anchor="middle" fill="#b8860b" font-size="9" font-family="monospace" letter-spacing="2">BigBoss_007</text>
+        <text x="200" y="118" text-anchor="middle" fill="url(#g1b)" font-size="44" font-family="'Courier New',monospace" font-weight="800" letter-spacing="8">BOSS</text>
+        <text x="200" y="138" text-anchor="middle" fill="#ffd700" font-size="14" font-family="sans-serif" font-weight="300" letter-spacing="4" opacity="0.7">领导者</text>
+        <!-- 匹配度进度条 -->
+        <text x="155" y="155" text-anchor="end" fill="#ffd700" font-size="9" font-family="monospace" font-weight="bold">92%</text>
+        <rect x="160" y="149" width="80" height="5" rx="2.5" fill="#1a1a2e"/>
+        <rect x="160" y="149" width="74" height="5" rx="2.5" fill="#ffd700" opacity="0.8"/>
+        <!-- 分隔线 -->
+        <rect x="60" y="166" width="280" height="1" rx="0.5" fill="url(#divB)"/>
+        <!-- ═══ SELF ═══ S1=3 S2=3 S3=3 -->
+        <text x="200" y="192" text-anchor="middle" fill="#b8860b" font-size="10" font-family="monospace" letter-spacing="3">SELF</text>
+        <!-- S1=3 -->
+        <text x="120" y="204" text-anchor="end" fill="#a08030" font-size="9" font-family="monospace">S1</text>
+        <rect x="124" y="199" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="131" y="199" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="138" y="199" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="145" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="152" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- S2=3 -->
+        <text x="177" y="204" text-anchor="end" fill="#a08030" font-size="9" font-family="monospace">S2</text>
+        <rect x="181" y="199" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="188" y="199" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="195" y="199" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="202" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="209" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- S3=3 -->
+        <text x="234" y="204" text-anchor="end" fill="#a08030" font-size="9" font-family="monospace">S3</text>
+        <rect x="238" y="199" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="245" y="199" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="252" y="199" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="259" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="266" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- ═══ EMOTION ═══ E1=3 E2=2 E3=3 -->
+        <text x="200" y="220" text-anchor="middle" fill="#b8860b" font-size="10" font-family="monospace" letter-spacing="3">EMOTION</text>
+        <!-- E1=3 -->
+        <text x="120" y="232" text-anchor="end" fill="#a08030" font-size="9" font-family="monospace">E1</text>
+        <rect x="124" y="227" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="131" y="227" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="138" y="227" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="145" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="152" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- E2=2 -->
+        <text x="177" y="232" text-anchor="end" fill="#a08030" font-size="9" font-family="monospace">E2</text>
+        <rect x="181" y="227" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="188" y="227" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="195" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="202" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="209" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- E3=3 -->
+        <text x="234" y="232" text-anchor="end" fill="#a08030" font-size="9" font-family="monospace">E3</text>
+        <rect x="238" y="227" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="245" y="227" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="252" y="227" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="259" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="266" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- ═══ ATTITUDE ═══ A1=2 A2=2 A3=3 -->
+        <text x="200" y="248" text-anchor="middle" fill="#b8860b" font-size="10" font-family="monospace" letter-spacing="3">ATTITUDE</text>
+        <!-- A1=2 -->
+        <text x="120" y="260" text-anchor="end" fill="#a08030" font-size="9" font-family="monospace">A1</text>
+        <rect x="124" y="255" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="131" y="255" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="138" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="145" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="152" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- A2=2 -->
+        <text x="177" y="260" text-anchor="end" fill="#a08030" font-size="9" font-family="monospace">A2</text>
+        <rect x="181" y="255" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="188" y="255" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="195" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="202" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="209" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- A3=3 -->
+        <text x="234" y="260" text-anchor="end" fill="#a08030" font-size="9" font-family="monospace">A3</text>
+        <rect x="238" y="255" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="245" y="255" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="252" y="255" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="259" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="266" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- ═══ ACTION ═══ Ac1=3 Ac2=3 Ac3=3 -->
+        <text x="200" y="276" text-anchor="middle" fill="#b8860b" font-size="10" font-family="monospace" letter-spacing="3">ACTION</text>
+        <!-- Ac1=3 -->
+        <text x="120" y="288" text-anchor="end" fill="#a08030" font-size="9" font-family="monospace">Ac1</text>
+        <rect x="124" y="283" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="131" y="283" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="138" y="283" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="145" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="152" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- Ac2=3 -->
+        <text x="177" y="288" text-anchor="end" fill="#a08030" font-size="9" font-family="monospace">Ac2</text>
+        <rect x="181" y="283" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="188" y="283" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="195" y="283" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="202" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="209" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- Ac3=3 -->
+        <text x="234" y="288" text-anchor="end" fill="#a08030" font-size="9" font-family="monospace">Ac3</text>
+        <rect x="238" y="283" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="245" y="283" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="252" y="283" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="259" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="266" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- ═══ SOCIAL ═══ So1=1 So2=3 So3=1 -->
+        <text x="200" y="304" text-anchor="middle" fill="#b8860b" font-size="10" font-family="monospace" letter-spacing="3">SOCIAL</text>
+        <!-- So1=1 -->
+        <text x="120" y="316" text-anchor="end" fill="#a08030" font-size="9" font-family="monospace">So1</text>
+        <rect x="124" y="311" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="131" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="138" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="145" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="152" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- So2=3 -->
+        <text x="177" y="316" text-anchor="end" fill="#a08030" font-size="9" font-family="monospace">So2</text>
+        <rect x="181" y="311" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="188" y="311" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="195" y="311" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="202" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="209" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- So3=1 -->
+        <text x="234" y="316" text-anchor="end" fill="#a08030" font-size="9" font-family="monospace">So3</text>
+        <rect x="238" y="311" width="5" height="5" rx="1" fill="#ffd700" opacity="0.85"/><rect x="245" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="252" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="259" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="266" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- 底部分隔 -->
+        <rect x="60" y="332" width="280" height="1" rx="0.5" fill="url(#divB)"/>
+        <!-- 底部时间 -->
+        <text x="200" y="345" text-anchor="middle" fill="#b8860b" font-size="9" font-family="monospace" letter-spacing="1">2026-04-11</text>
+        <text x="200" y="358" text-anchor="middle" fill="#b8860b" font-size="10" font-family="monospace" font-weight="bold">#7</text>
       </svg>
       <p class="card-note">Match 92% · 含用户名和铭刻时间</p>
     </div>
 
     <!-- JOKE-R -->
-    <div class="card-wrapper">
+    <div class="card-wrapper stele-joker">
       <div class="label">🃏 JOKE-R 小丑</div>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">
+      <svg id="steleJoker" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">
         <defs>
           <linearGradient id="g1c" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#ffff00"/><stop offset="100%" style="stop-color:#ff6600"/>
+            <stop offset="0%" style="stop-color:#7bff3a"/><stop offset="100%" style="stop-color:#32cd32"/>
           </linearGradient>
-          <radialGradient id="glowc" cx="50%" cy="35%" r="45%">
-            <stop offset="0%" style="stop-color:#ffff00;stop-opacity:0.12"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>
+          <radialGradient id="glowc" cx="50%" cy="30%" r="45%">
+            <stop offset="0%" style="stop-color:#7bff3a;stop-opacity:0.15"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>
           </radialGradient>
+          <linearGradient id="divC" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#7bff3a;stop-opacity:0"/><stop offset="50%" style="stop-color:#7bff3a;stop-opacity:0.5"/><stop offset="100%" style="stop-color:#7bff3a;stop-opacity:0"/>
+          </linearGradient>
+          <linearGradient id="outerGlowC" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#72efdd"/>
+            <stop offset="14%" style="stop-color:#4cc9f0"/>
+            <stop offset="28%" style="stop-color:#4361ee"/>
+            <stop offset="43%" style="stop-color:#7209b7"/>
+            <stop offset="57%" style="stop-color:#b5179e"/>
+            <stop offset="71%" style="stop-color:#f72585"/>
+            <stop offset="85%" style="stop-color:#ff6fff"/>
+            <stop offset="100%" style="stop-color:#72efdd"/>
+          </linearGradient>
+          <linearGradient id="borderC" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#72efdd"/>
+            <stop offset="15%" style="stop-color:#4cc9f0"/>
+            <stop offset="30%" style="stop-color:#4361ee"/>
+            <stop offset="50%" style="stop-color:#7209b7"/>
+            <stop offset="65%" style="stop-color:#b5179e"/>
+            <stop offset="80%" style="stop-color:#f72585"/>
+            <stop offset="90%" style="stop-color:#ff6fff"/>
+            <stop offset="100%" style="stop-color:#72efdd"/>
+          </linearGradient>
+          <filter id="gC" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="12" result="blur"/></filter>
+          <linearGradient id="cardbgC" x1="30%" y1="0%" x2="70%" y2="100%">
+            <stop offset="0%" style="stop-color:#0e0e1a"/>
+            <stop offset="40%" style="stop-color:#161625"/>
+            <stop offset="100%" style="stop-color:#1a1a30"/>
+          </linearGradient>
         </defs>
-        <circle cx="200" cy="140" r="130" fill="url(#glowc)"/>
-        <path d="M55,130 L55,360 L345,360 L345,130 Q345,40 200,40 Q55,40 55,130Z" fill="none" stroke="url(#g1c)" stroke-width="2"/>
-        <text x="200" y="75" text-anchor="middle" fill="#ffff00" font-size="14" font-family="serif" letter-spacing="4">SOUL STELE</text>
-        <text x="200" y="98" text-anchor="middle" fill="#8888aa" font-size="11" font-family="sans-serif" letter-spacing="1">Joker_2026</text>
-        <text x="200" y="140" text-anchor="middle" fill="url(#g1c)" font-size="42" font-family="monospace" font-weight="bold">JOKE-R</text>
-        <text x="200" y="164" text-anchor="middle" fill="#8888aa" font-size="14" font-family="sans-serif">小丑</text>
-        <text x="200" y="184" text-anchor="middle" fill="#555566" font-size="10" font-family="monospace">Match: 76%</text>
-        <line x1="85" y1="194" x2="315" y2="194" stroke="#333344" stroke-width="0.5"/>
-        <text x="83" y="213" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S1</text>
-        <rect x="88" y="206" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="206" width="26" height="7" rx="2" fill="#ffff00" opacity="0.7"/>
-        <text x="83" y="223" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S2</text>
-        <rect x="88" y="216" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="216" width="26" height="7" rx="2" fill="#ffff00" opacity="0.7"/>
-        <text x="83" y="233" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">S3</text>
-        <rect x="88" y="226" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="226" width="78" height="7" rx="2" fill="#ffff00" opacity="0.7"/>
-        <text x="83" y="243" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">E1</text>
-        <rect x="88" y="236" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="236" width="26" height="7" rx="2" fill="#ffff00" opacity="0.7"/>
-        <text x="83" y="253" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">E2</text>
-        <rect x="88" y="246" width="78" height="7" rx="2" fill="#1a1a2e"/><rect x="88" y="246" width="78" height="7" rx="2" fill="#ffff00" opacity="0.7"/>
-        <text x="200" y="368" text-anchor="middle" fill="#444455" font-size="9" font-family="monospace">2026-04-12</text>
-        <text x="200" y="384" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#128</text>
+        <!-- 外发光（碑形path + 模糊） -->
+        <path d="M26,85 L26,354 Q26,374 48,374 L352,374 Q374,374 374,354 L374,85 Q374,11 200,11 Q26,11 26,85Z" fill="none" stroke="url(#outerGlowC)" stroke-width="10" filter="url(#gC)" opacity="0.9"/>
+        <!-- 碑体 -->
+        <circle cx="200" cy="120" r="130" fill="url(#glowc)"/>
+        <!-- 碑体主体 -->
+        <path d="M30,85 L30,352 Q30,370 48,370 L352,370 Q370,370 370,352 L370,85 Q370,15 200,15 Q30,15 30,85Z" fill="url(#cardbgC)" stroke="url(#borderC)" stroke-width="2" opacity="0.7"/>
+        <!-- 星尘 -->
+        <circle cx="90" cy="82" r="1" fill="#7bff3a" opacity="0.4"/>
+        <circle cx="310" cy="75" r="0.8" fill="#32cd32" opacity="0.5"/>
+        <circle cx="120" cy="52" r="1.2" fill="#7bff3a" opacity="0.3"/>
+        <circle cx="280" cy="60" r="0.7" fill="#7bff3a" opacity="0.4"/>
+        <!-- 顶部信息 -->
+        <text x="200" y="60" text-anchor="middle" fill="#7bff3a" font-size="11" font-family="'Courier New',monospace" letter-spacing="5" opacity="0.9">SBTI STELE</text>
+        <text x="200" y="78" text-anchor="middle" fill="#6a6a88" font-size="9" font-family="monospace" letter-spacing="2">Joker_2026</text>
+        <text x="200" y="118" text-anchor="middle" fill="url(#g1c)" font-size="38" font-family="'Courier New',monospace" font-weight="800" letter-spacing="6">JOKE-R</text>
+        <text x="200" y="138" text-anchor="middle" fill="#8888aa" font-size="14" font-family="sans-serif" font-weight="300" letter-spacing="4">小丑</text>
+        <!-- 匹配度进度条 -->
+        <text x="155" y="155" text-anchor="end" fill="#7bff3a" font-size="9" font-family="monospace" font-weight="bold">76%</text>
+        <rect x="160" y="149" width="80" height="5" rx="2.5" fill="#1a1a2e"/>
+        <rect x="160" y="149" width="61" height="5" rx="2.5" fill="#7bff3a" opacity="0.8"/>
+        <!-- 分隔线 -->
+        <rect x="60" y="166" width="280" height="1" rx="0.5" fill="url(#divC)"/>
+        <!-- ═══ SELF ═══ S1=1 S2=1 S3=3 -->
+        <text x="200" y="192" text-anchor="middle" fill="#666677" font-size="10" font-family="monospace" letter-spacing="3">SELF</text>
+        <!-- S1=1 -->
+        <text x="120" y="204" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">S1</text>
+        <rect x="124" y="199" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="131" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="138" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="145" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="152" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- S2=1 -->
+        <text x="177" y="204" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">S2</text>
+        <rect x="181" y="199" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="188" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="195" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="202" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="209" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- S3=3 -->
+        <text x="234" y="204" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">S3</text>
+        <rect x="238" y="199" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="245" y="199" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="252" y="199" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="259" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="266" y="199" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- ═══ EMOTION ═══ E1=1 E2=3 E3=1 -->
+        <text x="200" y="220" text-anchor="middle" fill="#666677" font-size="10" font-family="monospace" letter-spacing="3">EMOTION</text>
+        <!-- E1=1 -->
+        <text x="120" y="232" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">E1</text>
+        <rect x="124" y="227" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="131" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="138" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="145" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="152" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- E2=3 -->
+        <text x="177" y="232" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">E2</text>
+        <rect x="181" y="227" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="188" y="227" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="195" y="227" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="202" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="209" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- E3=1 -->
+        <text x="234" y="232" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">E3</text>
+        <rect x="238" y="227" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="245" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="252" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="259" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="266" y="227" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- ═══ ATTITUDE ═══ A1=1 A2=2 A3=1 -->
+        <text x="200" y="248" text-anchor="middle" fill="#666677" font-size="10" font-family="monospace" letter-spacing="3">ATTITUDE</text>
+        <!-- A1=1 -->
+        <text x="120" y="260" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">A1</text>
+        <rect x="124" y="255" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="131" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="138" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="145" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="152" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- A2=2 -->
+        <text x="177" y="260" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">A2</text>
+        <rect x="181" y="255" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="188" y="255" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="195" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="202" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="209" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- A3=1 -->
+        <text x="234" y="260" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">A3</text>
+        <rect x="238" y="255" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="245" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="252" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="259" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="266" y="255" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- ═══ ACTION ═══ Ac1=1 Ac2=1 Ac3=1 -->
+        <text x="200" y="276" text-anchor="middle" fill="#666677" font-size="10" font-family="monospace" letter-spacing="3">ACTION</text>
+        <!-- Ac1=1 -->
+        <text x="120" y="288" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">Ac1</text>
+        <rect x="124" y="283" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="131" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="138" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="145" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="152" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- Ac2=1 -->
+        <text x="177" y="288" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">Ac2</text>
+        <rect x="181" y="283" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="188" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="195" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="202" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="209" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- Ac3=1 -->
+        <text x="234" y="288" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">Ac3</text>
+        <rect x="238" y="283" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="245" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="252" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="259" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="266" y="283" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- ═══ SOCIAL ═══ So1=2 So2=1 So3=2 -->
+        <text x="200" y="304" text-anchor="middle" fill="#666677" font-size="10" font-family="monospace" letter-spacing="3">SOCIAL</text>
+        <!-- So1=2 -->
+        <text x="120" y="316" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">So1</text>
+        <rect x="124" y="311" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="131" y="311" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="138" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="145" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="152" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- So2=1 -->
+        <text x="177" y="316" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">So2</text>
+        <rect x="181" y="311" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="188" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="195" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="202" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="209" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- So3=2 -->
+        <text x="234" y="316" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">So3</text>
+        <rect x="238" y="311" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="245" y="311" width="5" height="5" rx="1" fill="#7bff3a" opacity="0.85"/><rect x="252" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="259" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/><rect x="266" y="311" width="5" height="5" rx="1" fill="#1a1a2e"/>
+        <!-- 底部分隔 -->
+        <rect x="60" y="332" width="280" height="1" rx="0.5" fill="url(#divC)"/>
+        <!-- 底部时间 -->
+        <text x="200" y="345" text-anchor="middle" fill="#444455" font-size="9" font-family="monospace" letter-spacing="1">2026-04-12</text>
+        <text x="200" y="358" text-anchor="middle" fill="#555566" font-size="10" font-family="monospace" font-weight="bold">#128</text>
       </svg>
       <p class="card-note">Match 76% · 含用户名和铭刻时间</p>
     </div>
@@ -765,9 +1066,9 @@
   <p class="section-desc">每种人格都有独特的代号、名称和配色</p>
   <div class="personality-grid">
     <div class="personality-chip"><div class="pcode" style="color:#e94560">CTRL</div><div class="pname">拿捏者</div></div>
-    <div class="personality-chip"><div class="pcode" style="color:#ffd700">ATM-er</div><div class="pname">送钱者</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#ff6b35">ATM-er</div><div class="pname">送钱者</div></div>
     <div class="personality-chip"><div class="pcode" style="color:#888888">Dior-s</div><div class="pname">屌丝</div></div>
-    <div class="personality-chip"><div class="pcode" style="color:#ffd700">BOSS</div><div class="pname">领导者</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#c9a227">BOSS</div><div class="pname">领导者</div></div>
     <div class="personality-chip"><div class="pcode" style="color:#ff69b4">THAN-K</div><div class="pname">感恩者</div></div>
     <div class="personality-chip"><div class="pcode" style="color:#ff4444">OH-NO</div><div class="pname">哦不人</div></div>
     <div class="personality-chip"><div class="pcode" style="color:#00ff88">GOGO</div><div class="pname">行者</div></div>
@@ -777,13 +1078,13 @@
     <div class="personality-chip"><div class="pcode" style="color:#9b59b6">FAKE</div><div class="pname">伪人</div></div>
     <div class="personality-chip"><div class="pcode" style="color:#95a5a6">OJBK</div><div class="pname">无所谓人</div></div>
     <div class="personality-chip"><div class="pcode" style="color:#8B4513">MALO</div><div class="pname">吗喽</div></div>
-    <div class="personality-chip"><div class="pcode" style="color:#ffff00">JOKE-R</div><div class="pname">小丑</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#7bff3a">JOKE-R</div><div class="pname">小丑</div></div>
     <div class="personality-chip"><div class="pcode" style="color:#00ffff">WOC!</div><div class="pname">握草人</div></div>
     <div class="personality-chip"><div class="pcode" style="color:#4169e1">THIN-K</div><div class="pname">思考者</div></div>
     <div class="personality-chip"><div class="pcode" style="color:#dc143c">SHIT</div><div class="pname">愤世者</div></div>
     <div class="personality-chip"><div class="pcode" style="color:#708090">ZZZZ</div><div class="pname">装死者</div></div>
     <div class="personality-chip"><div class="pcode" style="color:#cd853f">POOR</div><div class="pname">贫困者</div></div>
-    <div class="personality-chip"><div class="pcode" style="color:#daa520">MONK</div><div class="pname">僧人</div></div>
+    <div class="personality-chip"><div class="pcode" style="color:#c17817">MONK</div><div class="pname">僧人</div></div>
     <div class="personality-chip"><div class="pcode" style="color:#98fb98">IMSB</div><div class="pname">傻者</div></div>
     <div class="personality-chip"><div class="pcode" style="color:#4682b4">SOLO</div><div class="pname">孤儿</div></div>
     <div class="personality-chip"><div class="pcode" style="color:#ff4500">FUCK</div><div class="pname">草者</div></div>
@@ -812,7 +1113,7 @@
 </div>
 
 <script>
-// 普通卡 & 金卡独立随机化
+// 普通卡 & 金卡 & 碑 独立随机化
 (function() {
   const NORMAL_RING = ['#72efdd','#4cc9f0','#4361ee','#7209b7','#b5179e','#f72585','#ff6fff','#72efdd'];
   const GOLD_RING   = ['#ffd700','#ffb800','#ff8c00','#ffa500','#ffe066','#ffd700','#ff9500','#ffb800'];
@@ -851,14 +1152,111 @@
       stops.forEach((s, i) => { if (i < colors.length) s.style.stopColor = colors[i]; });
     });
   }
+  // 碑的渐变id不带-分隔符，用这个通用函数
+  function randomizeStele(svg, borderId, glowId, ring) {
+    const border = svg.querySelector('#' + borderId);
+    const glow = svg.querySelector('#' + glowId);
+    if (!border && !glow) return;
+    const c = randomAngle();
+    const offset = Math.floor(Math.random() * (ring.length - 1));
+    const colors = rotateRing(ring, offset);
+    [border, glow].forEach(grad => {
+      if (!grad) return;
+      grad.setAttribute('x1', c.x1);
+      grad.setAttribute('y1', c.y1);
+      grad.setAttribute('x2', c.x2);
+      grad.setAttribute('y2', c.y2);
+      const stops = grad.querySelectorAll('stop');
+      stops.forEach((s, i) => { if (i < colors.length) s.style.stopColor = colors[i]; });
+    });
+  }
 
-  // 普通卡随机化（独立角度 + 色偏）
+  // Soul Card 随机化
   const normalSvg = document.getElementById('normalCard');
   if (normalSvg) randomizeCard(normalSvg, 'n', NORMAL_RING);
-
-  // 金卡随机化（独立角度 + 色偏）
   const goldSvg = document.getElementById('goldCard');
   if (goldSvg) randomizeCard(goldSvg, 'gd', GOLD_RING);
+
+  // 碑随机化 — CTRL/JOKER 用彩虹色环，BOSS 用金色色环（与金卡一致）
+  const steleCtrl = document.getElementById('steleCtrl');
+  if (steleCtrl) randomizeStele(steleCtrl, 'borderA', 'outerGlowA', NORMAL_RING);
+  const steleBoss = document.getElementById('steleBoss');
+  if (steleBoss) randomizeStele(steleBoss, 'borderB', 'outerGlowB', GOLD_RING);
+  const steleJoker = document.getElementById('steleJoker');
+  if (steleJoker) randomizeStele(steleJoker, 'borderC', 'outerGlowC', NORMAL_RING);
+})();
+
+// 碑点击预览弹窗
+(function() {
+  const steleData = [
+    { id: 'steleCtrl', code: 'CTRL', name: '拿捏者', user: 'CryptoKing', match: '87%', date: '2026-04-18', tokenId: '#42', color: '#e94560' },
+    { id: 'steleBoss', code: 'BOSS', name: '领导者', user: 'BigBoss_007', match: '92%', date: '2026-04-11', tokenId: '#7', color: '#ffd700' },
+    { id: 'steleJoker', code: 'JOKE-R', name: '小丑', user: 'Joker_2026', match: '76%', date: '2026-04-12', tokenId: '#128', color: '#7bff3a' }
+  ];
+
+  if (!document.getElementById('aboutSteleModal')) {
+    const modal = document.createElement('div');
+    modal.id = 'aboutSteleModal';
+    modal.style.cssText = 'display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.88);backdrop-filter:blur(16px);align-items:center;justify-content:center;cursor:pointer;';
+    modal.innerHTML = `
+      <div style="display:flex;flex-direction:column;align-items:center;cursor:default;max-height:90vh;">
+        <div id="aboutSteleModalBody" style="width:min(420px,85vw);"></div>
+        <div id="aboutSteleModalInfo" style="text-align:center;margin-top:16px;color:rgba(255,255,255,0.6);font-size:14px;letter-spacing:1px;"></div>
+      </div>
+    `;
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) { modal.style.display = 'none'; document.body.style.overflow = ''; }
+    });
+    document.body.appendChild(modal);
+  }
+
+  steleData.forEach(s => {
+    const svg = document.getElementById(s.id);
+    if (!svg) return;
+    svg.addEventListener('click', function() {
+      const modal = document.getElementById('aboutSteleModal');
+      const body = document.getElementById('aboutSteleModalBody');
+      const info = document.getElementById('aboutSteleModalInfo');
+      const clone = svg.cloneNode(true);
+      clone.removeAttribute('id');
+      clone.style.width = '100%';
+      clone.style.height = 'auto';
+      clone.style.borderRadius = '16px';
+      body.innerHTML = '';
+      body.appendChild(clone);
+      info.innerHTML = '<div style="color:' + s.color + ';font-size:16px;font-weight:600;font-family:monospace;letter-spacing:2px;">' + s.code + ' · ' + s.name + '</div><div style="margin-top:6px;color:rgba(255,255,255,0.4);font-size:12px;">Soul Stele ' + s.tokenId + ' · Match ' + s.match + ' · ' + s.date + '</div>';
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    });
+  });
+})();
+
+// Soul Card 点击预览
+(function() {
+  const cardData = [
+    { id: 'normalCard', label: 'Soul Card #1', sub: '普通卡 · 空白 · 未铭刻', color: '#72efdd' },
+    { id: 'goldCard', label: 'Soul Card #8', sub: '✦ 金卡 · 10% 稀有', color: '#ffd700' }
+  ];
+  cardData.forEach(c => {
+    const svg = document.getElementById(c.id);
+    if (!svg) return;
+    svg.style.cursor = 'pointer';
+    svg.addEventListener('click', function() {
+      const modal = document.getElementById('aboutSteleModal');
+      const body = document.getElementById('aboutSteleModalBody');
+      const info = document.getElementById('aboutSteleModalInfo');
+      const clone = svg.cloneNode(true);
+      clone.removeAttribute('id');
+      clone.style.width = '100%';
+      clone.style.height = 'auto';
+      clone.style.borderRadius = '16px';
+      body.innerHTML = '';
+      body.appendChild(clone);
+      info.innerHTML = '<div style="color:' + c.color + ';font-size:16px;font-weight:600;font-family:monospace;letter-spacing:2px;">' + c.label + '</div><div style="margin-top:6px;color:rgba(255,255,255,0.4);font-size:12px;">' + c.sub + '</div>';
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    });
+  });
 })();
 </script>
 
