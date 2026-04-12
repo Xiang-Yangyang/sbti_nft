@@ -399,13 +399,15 @@
 </p>
 
 <script>
-// 每次加载随机定格：保持 Web UI 有序渐变色（青→蓝→紫→粉→青），
-// 只随机偏移起始位置 + 渐变角度，像定格在 glowShift 动画的某一帧
+// 每次加载随机定格 + 10% 概率出金卡
 (function() {
-  // Web UI 的有序渐变色环（闭环）
+  // 普通卡：Web UI 有序多彩渐变色环（闭环）
   const RING = ['#72efdd','#4cc9f0','#4361ee','#7209b7','#b5179e','#f72585','#ff6fff','#72efdd'];
+  // 金卡：Web UI gold-burst 金色渐变色环（闭环）
+  const GOLD_RING = ['#ffd700','#ffb800','#ff8c00','#ffa500','#ffe066','#ffd700','#ff9500','#ffb800'];
+  // 金卡概率
+  const GOLD_CHANCE = 0.10;
 
-  // 随机渐变角度 → x1,y1,x2,y2
   function randomAngle() {
     const angle = Math.random() * 360;
     const rad = angle * Math.PI / 180;
@@ -417,46 +419,29 @@
     };
   }
 
-  // 循环偏移颜色环（保持顺序，只移动起点）
-  function rotateRing(offset) {
-    // offset: 0~6，从色环的不同位置开始
+  function rotateRing(ring, offset) {
+    const len = ring.length - 1; // 去掉闭环尾
     const colors = [];
-    for (let i = 0; i < 7; i++) {
-      colors.push(RING[(i + offset) % 7]);
+    for (let i = 0; i < len; i++) {
+      colors.push(ring[(i + offset) % len]);
     }
     colors.push(colors[0]); // 闭环
     return colors;
   }
 
-  function randomizeGradient(grad) {
-    if (!grad) return;
-    // 随机角度
-    const c = randomAngle();
-    grad.setAttribute('x1', c.x1);
-    grad.setAttribute('y1', c.y1);
-    grad.setAttribute('x2', c.x2);
-    grad.setAttribute('y2', c.y2);
-    // 随机偏移色环起始位置（保持有序渐变）
-    const offset = Math.floor(Math.random() * 7);
-    const colors = rotateRing(offset);
-    const stops = grad.querySelectorAll('stop');
-    stops.forEach((s, i) => {
-      if (i < colors.length) {
-        s.style.stopColor = colors[i];
-      }
-    });
-  }
-
-  // 边框和光晕共享同一套随机参数（颜色对应一致）
   document.querySelectorAll('svg').forEach(svg => {
     const border1 = svg.querySelector('#border1');
     const outerGlow = svg.querySelector('#outerGlow');
     if (!border1 && !outerGlow) return;
 
-    // 生成一套共享的随机参数
+    // 随机决定是否金卡
+    const isGold = Math.random() < GOLD_CHANCE;
+    const ring = isGold ? GOLD_RING : RING;
+
+    // 共享随机参数
     const c = randomAngle();
-    const offset = Math.floor(Math.random() * 7);
-    const colors = rotateRing(offset);
+    const offset = Math.floor(Math.random() * (ring.length - 1));
+    const colors = rotateRing(ring, offset);
 
     // 边框和光晕用同样的角度和颜色
     [border1, outerGlow].forEach(grad => {
@@ -472,6 +457,61 @@
         }
       });
     });
+
+    // 金卡额外效果：全套金色处理
+    if (isGold) {
+      // 1. SBTI 大标题渐变 → 金色渐变
+      const g1 = svg.querySelector('#g1');
+      if (g1) {
+        const g1stops = g1.querySelectorAll('stop');
+        const goldTitle = ['#ffd700', '#ffb800', '#ff8c00'];
+        g1stops.forEach((s, i) => {
+          if (i < goldTitle.length) s.style.stopColor = goldTitle[i];
+        });
+      }
+      // 2. 内部背景光晕 → 暖金色
+      const glow = svg.querySelector('#glow');
+      if (glow) {
+        const glowStops = glow.querySelectorAll('stop');
+        if (glowStops[0]) glowStops[0].style.stopColor = '#ffd700';
+        if (glowStops[0]) glowStops[0].style.stopOpacity = '0.15';
+      }
+      // 3. 五角星中心点 → 金色（原本是 #72efdd 青色）
+      const centerDot = svg.querySelector('circle[r="6"]');
+      if (centerDot) centerDot.setAttribute('fill', '#ffd700');
+      // 4. 五角星圆环 → 金色渐变（跟随 g1）
+      // polygon 和 circle 已经用 url(#g1)，改了 g1 就会跟着变
+      // 5. 角落装饰光点 → 金色系
+      const cornerDots = svg.querySelectorAll('circle[r="2"]');
+      const cornerGolds = ['#ffd700', '#ffb800', '#ff9500', '#ffe066'];
+      cornerDots.forEach((dot, i) => {
+        dot.setAttribute('fill', cornerGolds[i % cornerGolds.length]);
+      });
+      // 6. 粒子光点 → 金色系
+      const particles = svg.querySelectorAll('circle[opacity="0.5"], circle[opacity="0.4"], circle[opacity="0.3"], circle[opacity="0.6"]');
+      particles.forEach(p => {
+        const r = parseFloat(p.getAttribute('r'));
+        if (r > 0 && r < 2) { // 只改小粒子，不改中心点和背景光晕
+          p.setAttribute('fill', cornerGolds[Math.floor(Math.random() * cornerGolds.length)]);
+        }
+      });
+      // 7. 脉冲圆点 → 金色
+      const pulseDot = svg.querySelector('circle[r="3"]');
+      if (pulseDot) pulseDot.setAttribute('fill', '#ffd700');
+      // 8. 边框 stroke-width 稍微加粗
+      const borderRect = svg.querySelector('[stroke="url(#border1)"]');
+      if (borderRect) borderRect.setAttribute('stroke-width', '2.5');
+      // 9. 分隔线渐变 → 金色
+      const divider = svg.querySelector('#divider');
+      if (divider) {
+        const dStops = divider.querySelectorAll('stop');
+        const divGolds = ['#ffd700', '#ffb800', '#ffe066', '#ffb800', '#ffd700'];
+        dStops.forEach((s, i) => {
+          if (i < divGolds.length) s.style.stopColor = divGolds[i];
+        });
+      }
+      console.log('🌟 恭喜！随机到金卡！');
+    }
   });
 })();
 </script>
