@@ -82,6 +82,7 @@ const BSC_TESTNET_CONFIG = {
 // ============ 连接状态 ============
 let isConnected = false; // 前端维护的连接状态
 let currentWalletType = null; // 当前连接的钱包类型
+let connectedWalletProvider = null; // 连接时选择的原始钱包 provider，后续 mint/铭刻都用它
 
 // ============ 钱包 Provider 检测 ============
 const WALLET_CONFIG = {
@@ -240,7 +241,8 @@ async function connectWithWallet(walletType) {
       showToast('ethers.js 加载失败，请刷新页面重试');
       return;
     }
-    provider = new ethers.BrowserProvider(walletProvider);
+    connectedWalletProvider = walletProvider; // 锁定连接时选择的钱包
+    provider = new ethers.BrowserProvider(connectedWalletProvider);
     signer = await provider.getSigner();
     contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
@@ -528,6 +530,7 @@ async function disconnectWallet() {
   contract = null;
   isConnected = false;
   currentWalletType = null;
+  connectedWalletProvider = null;
   userBlankNFTs = [];
   userInscribedNFTs = [];
 
@@ -602,6 +605,13 @@ async function mintNFT() {
 
   try {
     showLoading('Minting 灵魂卡片...');
+
+    // 确保使用连接时选择的钱包
+    if (connectedWalletProvider) {
+      provider = new ethers.BrowserProvider(connectedWalletProvider);
+      signer = await provider.getSigner();
+      contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+    }
 
     const mintPrice = await contract.mintPrice();
     // 用底层 sendTransaction 发送，确保 gasLimit 不会被钱包覆盖
@@ -1024,6 +1034,13 @@ async function inscribeNFT() {
   try {
     showLoading('铭刻灵魂到区块链...');
 
+    // 确保使用连接时选择的钱包
+    if (connectedWalletProvider) {
+      provider = new ethers.BrowserProvider(connectedWalletProvider);
+      signer = await provider.getSigner();
+      contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+    }
+
     const tx = await (async () => {
       // 用底层 sendTransaction 发送，确保 gasLimit 不会被钱包覆盖
       const inscribeData = contract.interface.encodeFunctionData('inscribe', [
@@ -1079,7 +1096,7 @@ async function inscribeNFT() {
  * 多种策略并行尝试，尽最大可能让钱包更新图片
  */
 async function forceRefreshNFTMetadata(tokenId) {
-  const walletProvider = provider?.provider || window.ethereum;
+  const walletProvider = connectedWalletProvider || provider?.provider || window.ethereum;
   if (!walletProvider) return;
 
   // 策略1: wallet_watchAsset — 让钱包重新关注这个 NFT，会重新拉取 tokenURI
