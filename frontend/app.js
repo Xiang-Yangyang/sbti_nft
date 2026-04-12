@@ -1284,3 +1284,60 @@ window.addEventListener('load', async () => {
   document.addEventListener('touchmove', onPointerMove, { passive: false });
   document.addEventListener('touchend', onPointerUp);
 })();
+
+// ============ Hover 脉冲（外层容器 scale，不打断内层呼吸） + 金色光发散 ============
+(function initHoverPulse() {
+  const preview = document.querySelector('.nft-preview');
+  if (!preview) return;
+
+  let pulseTimer = null;
+  let mouseIsDown = false; // 追踪鼠标按下状态，拖拽时不触发 hover 效果
+
+  // 全局监听鼠标按下/抬起
+  document.addEventListener('mousedown', () => { mouseIsDown = true; });
+  document.addEventListener('mouseup', () => { mouseIsDown = false; });
+
+  preview.addEventListener('mouseenter', () => {
+    // 鼠标按着左键进入（拖拽中）→ 跳过所有 hover 特效
+    if (mouseIsDown) return;
+
+    const card = preview.querySelector('.soul-card');
+    const glow = preview.querySelector('.soul-card-glow');
+
+    // ---- 金色光发散 ----
+    if (glow) {
+      // 移除再添加 class，确保每次 hover 都能重新播放动画
+      glow.classList.remove('gold-burst');
+      // 强制 reflow，让浏览器识别 class 变化
+      void glow.offsetWidth;
+      glow.classList.add('gold-burst');
+
+      // 动画结束后移除 class，为下次触发做准备
+      const onEnd = () => {
+        glow.classList.remove('gold-burst');
+        glow.removeEventListener('animationend', onEnd);
+      };
+      glow.addEventListener('animationend', onEnd);
+    }
+
+    // ---- 卡片脉冲放大（外层容器 scale，不影响内层拖拽/呼吸） ----
+    preview.style.transition = 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    preview.style.transform = 'scale(1.035)';
+
+    if (pulseTimer) clearTimeout(pulseTimer);
+    pulseTimer = setTimeout(() => {
+      preview.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+      preview.style.transform = 'scale(1)';
+    }, 350);
+  });
+
+  // 鼠标离开时确保回到原位（金色光继续播完不打断）
+  preview.addEventListener('mouseleave', () => {
+    preview.style.transition = 'transform 0.4s ease-out';
+    preview.style.transform = 'scale(1)';
+    if (pulseTimer) {
+      clearTimeout(pulseTimer);
+      pulseTimer = null;
+    }
+  });
+})();

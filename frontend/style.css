@@ -289,17 +289,6 @@ body {
   user-select: none;
 }
 
-/* hover 时卡片呼吸放大一次（幅度小） */
-.soul-card:hover:not(.dragging) {
-  animation: card3dBreathe 5s ease-in-out infinite, cardHoverPulse 0.7s ease-in-out;
-}
-
-@keyframes cardHoverPulse {
-  0% { transform: rotateX(0deg) rotateY(0deg) scale(1); }
-  45% { transform: rotateX(0deg) rotateY(0deg) scale(1.035); }
-  100% { transform: rotateX(0deg) rotateY(0deg) scale(1); }
-}
-
 /* 金色发散光用伪元素，底层渐变光始终可见 */
 .soul-card-glow {
   overflow: visible;
@@ -310,7 +299,12 @@ body {
   position: absolute;
   inset: -4px;
   border-radius: 24px;
-  background: radial-gradient(ellipse at center, #ffd700, #ff8c00, #ffa500, transparent 70%);
+  background: linear-gradient(
+    135deg,
+    #ffd700, #ffb800, #ff8c00, #ffa500,
+    #ffe066, #ffd700, #ff9500, #ffb800
+  );
+  background-size: 400% 400%;
   opacity: 0;
   filter: blur(12px);
   z-index: 1;
@@ -318,36 +312,41 @@ body {
   transition: none;
 }
 
-/* hover 时金色光一次性向外发散 */
-.soul-card:hover:not(.dragging) .soul-card-glow::after {
-  animation: glowGoldBurst 1.6s ease-out forwards;
+/* hover 时金色光一次性向外发散（由 JS 添加 class 触发，不受 dragging 打断） */
+.soul-card-glow.gold-burst::after {
+  animation: glowGoldBurst 1.2s ease-out forwards;
 }
 
 @keyframes glowGoldBurst {
   0% {
     opacity: 0;
     inset: -4px;
-    filter: blur(8px);
+    filter: blur(6px);
+    background-position: 0% 50%;
   }
   12% {
-    opacity: 1;
-    inset: -12px;
-    filter: blur(14px);
+    opacity: 0.7;
+    inset: -10px;
+    filter: blur(12px);
+    background-position: 30% 60%;
   }
   35% {
-    opacity: 0.75;
-    inset: -30px;
-    filter: blur(24px);
+    opacity: 0.5;
+    inset: -22px;
+    filter: blur(18px);
+    background-position: 60% 40%;
   }
   65% {
-    opacity: 0.35;
-    inset: -45px;
-    filter: blur(32px);
+    opacity: 0.25;
+    inset: -35px;
+    filter: blur(24px);
+    background-position: 85% 60%;
   }
   100% {
     opacity: 0;
-    inset: -55px;
-    filter: blur(38px);
+    inset: -45px;
+    filter: blur(30px);
+    background-position: 100% 50%;
   }
 }
 
