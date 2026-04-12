@@ -21,7 +21,7 @@
 ## 二、各操作 Gas 消耗与成本明细
 
 ### 数据来源说明
-以下 Gas 数据均来自 BSC Testnet 上 **真实交易的实际消耗**（非估算），合约地址：`0x5A3ae16f3A1F0ded5D7794AA98B39973fe44E53B`
+以下 Gas 数据均来自 BSC Testnet 上 **真实交易的实际消耗**（非估算），合约地址：`0xB6279d850B63cfBba46B08b3eD92D0175019ce55`（Core）+ `0x515FA86dEcB6565905E880875Dd2D8455443b113`（Renderer v2）
 
 ---
 

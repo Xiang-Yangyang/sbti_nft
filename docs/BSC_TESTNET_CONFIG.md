@@ -107,11 +107,12 @@ Binance Web3 Wallet 内置支持 BSC Testnet，在网络列表中搜索 "BNB Sma
 
 ## 5. 项目合约信息
 
-### 已部署合约
+### 已部署合约（分体架构 v2）
 
 | 合约 | 地址 | 验证状态 |
 |------|------|----------|
-| **SBTINft** | [`0x5A3ae16f3A1F0ded5D7794AA98B39973fe44E53B`](https://testnet.bscscan.com/address/0x5A3ae16f3A1F0ded5D7794AA98B39973fe44E53B) | ✅ 已部署 (2026-04-12) |
+| **SBTINft (Core)** | [`0xB6279d850B63cfBba46B08b3eD92D0175019ce55`](https://testnet.bscscan.com/address/0xB6279d850B63cfBba46B08b3eD92D0175019ce55) | ✅ 已部署 (2026-04-12) |
+| **SBTIRenderer** | [`0x515FA86dEcB6565905E880875Dd2D8455443b113`](https://testnet.bscscan.com/address/0x515FA86dEcB6565905E880875Dd2D8455443b113) | ✅ 已部署 (2026-04-12, v2) |
 
 ### 合约参数
 
@@ -119,8 +120,8 @@ Binance Web3 Wallet 内置支持 BSC Testnet，在网络列表中搜索 "BNB Sma
 |------|------|
 | **Token Name** | SBTI Soul Stele |
 | **Token Symbol** | SBTI |
-| **Mint Price** | 0.0001 tBNB |
-| **Max Supply** | 10,000 |
+| **Mint Price** | 0.00001 tBNB |
+| **Max Supply** | 16,384 |
 | **标准** | ERC-721 |
 | **Solidity 版本** | 0.8.24 |
 
@@ -175,11 +176,12 @@ bsc_testnet = "https://bsc-testnet-rpc.publicnode.com"
 bsc_testnet = { key = "${BSCSCAN_API_KEY}", url = "https://api-testnet.bscscan.com/api" }
 ```
 
-### 前端 app.js 关键配置
+### 前端 config.js 关键配置
 
 ```javascript
-// 合约地址
-const CONTRACT_ADDRESS = '0x5A3ae16f3A1F0ded5D7794AA98B39973fe44E53B';
+// 合约地址（从 config.js 读取）
+const CONTRACT_ADDRESS = '0xB6279d850B63cfBba46B08b3eD92D0175019ce55';
+const RENDERER_ADDRESS = '0x515FA86dEcB6565905E880875Dd2D8455443b113';
 
 // 链 ID 校验
 const EXPECTED_CHAIN_ID = 97;
@@ -259,8 +261,8 @@ forge script script/Deploy.s.sol:DeploySBTI \
   --broadcast
 
 # 查询合约（用 cast）
-cast call 0x5A3ae16f3A1F0ded5D7794AA98B39973fe44E53B "totalSupply()" --rpc-url https://bsc-testnet-rpc.publicnode.com
-cast call 0x5A3ae16f3A1F0ded5D7794AA98B39973fe44E53B "mintPrice()" --rpc-url https://bsc-testnet-rpc.publicnode.com
+cast call 0xB6279d850B63cfBba46B08b3eD92D0175019ce55 "totalSupply()" --rpc-url https://bsc-testnet-rpc.publicnode.com
+cast call 0xB6279d850B63cfBba46B08b3eD92D0175019ce55 "mintPrice()" --rpc-url https://bsc-testnet-rpc.publicnode.com
 
 # 启动前端
 cd frontend && python3 -m http.server 8080

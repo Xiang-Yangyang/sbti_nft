@@ -4,7 +4,8 @@
  */
 const SBTI_CONFIG = {
   // ============ 合约地址 ============
-  CONTRACT_ADDRESS: '0x5A3ae16f3A1F0ded5D7794AA98B39973fe44E53B',
+  CONTRACT_ADDRESS: '0xB6279d850B63cfBba46B08b3eD92D0175019ce55',
+  RENDERER_ADDRESS: '0x515FA86dEcB6565905E880875Dd2D8455443b113',
 
   // ============ 网络配置 ============
   CHAIN_ID: 97,                    // BSC Testnet

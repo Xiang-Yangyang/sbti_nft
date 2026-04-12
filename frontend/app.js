@@ -808,16 +808,11 @@ function renderStelePreview(result) {
   const now = new Date();
   const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
 
-  // 维度柱状图（紧凑版，适配 400×400）
-  let bars = '';
-  const dimLabels = ['S1','S2','S3','E1','E2','E3','A1','A2','A3','Ac1','Ac2','Ac3','So1','So2','So3'];
-  result.dimensions.forEach((val, i) => {
-    const barWidth = val * 26;
-    const y = 206 + i * 10;
-    bars += `<text x="83" y="${y+7}" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">${dimLabels[i]}</text>`;
-    bars += `<rect x="88" y="${y}" width="78" height="7" rx="2" fill="#1a1a2e"/>`;
-    bars += `<rect x="88" y="${y}" width="${barWidth}" height="7" rx="2" fill="${color}" opacity="0.7"/>`;
-  });
+  // 匹配度进度条宽度
+  const barW = Math.round(result.similarity * 80 / 100);
+
+  // 维度方块矩阵（与 about.html 对齐）
+  const blocks = buildDimBlocks(result.dimensions, color);
 
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">
@@ -825,25 +820,75 @@ function renderStelePreview(result) {
         <linearGradient id="tg" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" style="stop-color:${color}"/><stop offset="100%" style="stop-color:${color2}"/>
         </linearGradient>
-        <radialGradient id="tglow" cx="50%" cy="35%" r="45%">
-          <stop offset="0%" style="stop-color:${color};stop-opacity:0.12"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>
+        <radialGradient id="tglow" cx="50%" cy="30%" r="45%">
+          <stop offset="0%" style="stop-color:${color};stop-opacity:0.15"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>
         </radialGradient>
+        <linearGradient id="tdv" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:${color};stop-opacity:0"/><stop offset="50%" style="stop-color:${color};stop-opacity:0.5"/><stop offset="100%" style="stop-color:${color};stop-opacity:0"/>
+        </linearGradient>
+        <linearGradient id="tcb" x1="30%" y1="0%" x2="70%" y2="100%">
+          <stop offset="0%" style="stop-color:#0e0e1a"/><stop offset="40%" style="stop-color:#161625"/><stop offset="100%" style="stop-color:#1a1a30"/>
+        </linearGradient>
+        <linearGradient id="tbdr" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#72efdd"/><stop offset="15%" style="stop-color:#4cc9f0"/><stop offset="30%" style="stop-color:#4361ee"/><stop offset="50%" style="stop-color:#7209b7"/><stop offset="65%" style="stop-color:#b5179e"/><stop offset="80%" style="stop-color:#f72585"/><stop offset="90%" style="stop-color:#ff6fff"/><stop offset="100%" style="stop-color:#72efdd"/>
+        </linearGradient>
+        <filter id="tgB" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="12" result="blur"/></filter>
       </defs>
-      <circle cx="200" cy="140" r="130" fill="url(#tglow)"/>
-      <path d="M55,130 L55,360 L345,360 L345,130 Q345,40 200,40 Q55,40 55,130Z" fill="none" stroke="url(#tg)" stroke-width="2"/>
-      <text x="200" y="75" text-anchor="middle" fill="${color}" font-size="14" font-family="serif" letter-spacing="4">SOUL STELE</text>
-      <text x="200" y="98" text-anchor="middle" fill="#8888aa" font-size="11" font-family="sans-serif" letter-spacing="1">${username}</text>
-      <text x="200" y="140" text-anchor="middle" fill="url(#tg)" font-size="42" font-family="monospace" font-weight="bold">${result.code}</text>
-      <text x="200" y="164" text-anchor="middle" fill="#8888aa" font-size="14" font-family="sans-serif">${result.name}</text>
-      <text x="200" y="184" text-anchor="middle" fill="#555566" font-size="10" font-family="monospace">Match: ${result.similarity}%</text>
-      <line x1="85" y1="194" x2="315" y2="194" stroke="#333344" stroke-width="0.5"/>
-      ${bars}
-      <text x="200" y="368" text-anchor="middle" fill="#444455" font-size="9" font-family="monospace">${timeStr}</text>
-      <text x="200" y="384" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#${currentTokenId || '???'}</text>
+      <path d="M26,85 L26,354 Q26,374 48,374 L352,374 Q374,374 374,354 L374,85 Q374,11 200,11 Q26,11 26,85Z" fill="none" stroke="url(#tbdr)" stroke-width="10" filter="url(#tgB)" opacity="0.9"/>
+      <circle cx="200" cy="120" r="130" fill="url(#tglow)"/>
+      <path d="M30,85 L30,352 Q30,370 48,370 L352,370 Q370,370 370,352 L370,85 Q370,15 200,15 Q30,15 30,85Z" fill="url(#tcb)" stroke="url(#tbdr)" stroke-width="2" opacity="0.7"/>
+      <circle cx="90" cy="82" r="1" fill="${color}" opacity="0.4"/>
+      <circle cx="310" cy="75" r="0.8" fill="${color}" opacity="0.5"/>
+      <circle cx="120" cy="52" r="1.2" fill="${color}" opacity="0.3"/>
+      <circle cx="280" cy="60" r="0.7" fill="${color}" opacity="0.4"/>
+      <text x="200" y="60" text-anchor="middle" fill="${color}" font-size="11" font-family="monospace" letter-spacing="5" opacity="0.9">SBTI STELE</text>
+      <text x="200" y="78" text-anchor="middle" fill="#6a6a88" font-size="9" font-family="monospace" letter-spacing="2">${username}</text>
+      <text x="200" y="118" text-anchor="middle" fill="url(#tg)" font-size="44" font-family="monospace" font-weight="800" letter-spacing="8">${result.code}</text>
+      <text x="200" y="138" text-anchor="middle" fill="#8888aa" font-size="14" font-family="sans-serif" font-weight="300" letter-spacing="4">${result.name}</text>
+      <text x="155" y="155" text-anchor="end" fill="${color}" font-size="9" font-family="monospace" font-weight="bold">${result.similarity}%</text>
+      <rect x="160" y="149" width="80" height="5" rx="2.5" fill="#1a1a2e"/>
+      <rect x="160" y="149" width="${barW}" height="5" rx="2.5" fill="${color}" opacity="0.8"/>
+      <rect x="60" y="166" width="280" height="1" rx="0.5" fill="url(#tdv)"/>
+      ${blocks}
+      <rect x="60" y="332" width="280" height="1" rx="0.5" fill="url(#tdv)"/>
+      <text x="200" y="345" text-anchor="middle" fill="#444455" font-size="9" font-family="monospace" letter-spacing="1">${timeStr}</text>
+      <text x="200" y="358" text-anchor="middle" fill="#555566" font-size="10" font-family="monospace" font-weight="bold">#${currentTokenId || '???'}</text>
     </svg>
   `;
 
   document.getElementById('stelePreview').innerHTML = svg;
+}
+
+// 构建维度方块矩阵 SVG（与 about.html 对齐）
+function buildDimBlocks(dimensions, color) {
+  const groups = [
+    { name: 'SELF',     titleY: 192, blockY: 199, dims: [{label:'S1',i:0},{label:'S2',i:1},{label:'S3',i:2}] },
+    { name: 'EMOTION',  titleY: 220, blockY: 227, dims: [{label:'E1',i:3},{label:'E2',i:4},{label:'E3',i:5}] },
+    { name: 'ATTITUDE', titleY: 248, blockY: 255, dims: [{label:'A1',i:6},{label:'A2',i:7},{label:'A3',i:8}] },
+    { name: 'ACTION',   titleY: 276, blockY: 283, dims: [{label:'Ac1',i:9},{label:'Ac2',i:10},{label:'Ac3',i:11}] },
+    { name: 'SOCIAL',   titleY: 304, blockY: 311, dims: [{label:'So1',i:12},{label:'So2',i:13},{label:'So3',i:14}] },
+  ];
+  const colLabelX = [120, 177, 234];
+  const colStartX = [124, 181, 238];
+
+  let svg = '';
+  groups.forEach(g => {
+    svg += `<text x="200" y="${g.titleY}" text-anchor="middle" fill="#666677" font-size="10" font-family="monospace" letter-spacing="3">${g.name}</text>`;
+    g.dims.forEach((d, col) => {
+      const val = dimensions[d.i];
+      const labelY = g.blockY + 5;
+      svg += `<text x="${colLabelX[col]}" y="${labelY}" text-anchor="end" fill="#555566" font-size="9" font-family="monospace">${d.label}</text>`;
+      for (let j = 0; j < 5; j++) {
+        const bx = colStartX[col] + j * 7;
+        if (j < val) {
+          svg += `<rect x="${bx}" y="${g.blockY}" width="5" height="5" rx="1" fill="${color}" opacity="0.85"/>`;
+        } else {
+          svg += `<rect x="${bx}" y="${g.blockY}" width="5" height="5" rx="1" fill="#1a1a2e"/>`;
+        }
+      }
+    });
+  });
+  return svg;
 }
 
 // ============ 灵魂碑查看弹窗 ============
@@ -851,18 +896,13 @@ function showSteleModal(nft) {
   const color = getPersonalityColor(nft.personalityIndex || 0);
   const color2 = getPersonalityColor2(nft.personalityIndex || 0);
 
-  // 维度柱状图（紧凑版，适配 400×400）
-  let bars = '';
-  const dimLabels = ['S1','S2','S3','E1','E2','E3','A1','A2','A3','Ac1','Ac2','Ac3','So1','So2','So3'];
-  if (nft.dimensions && nft.dimensions.length === 15) {
-    nft.dimensions.forEach((val, i) => {
-      const barWidth = val * 26;
-      const y = 206 + i * 10;
-      bars += `<text x="83" y="${y+7}" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">${dimLabels[i]}</text>`;
-      bars += `<rect x="88" y="${y}" width="78" height="7" rx="2" fill="#1a1a2e"/>`;
-      bars += `<rect x="88" y="${y}" width="${barWidth}" height="7" rx="2" fill="${color}" opacity="0.7"/>`;
-    });
-  }
+  // 匹配度进度条宽度
+  const barW = Math.round(nft.matchPercent * 80 / 100);
+
+  // 维度方块矩阵
+  const blocks = (nft.dimensions && nft.dimensions.length === 15)
+    ? buildDimBlocks(nft.dimensions, color)
+    : '';
 
   const inscribeDate = nft.inscribeTime
     ? new Date(nft.inscribeTime * 1000).toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')
@@ -875,21 +915,39 @@ function showSteleModal(nft) {
         <linearGradient id="mtg" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" style="stop-color:${color}"/><stop offset="100%" style="stop-color:${color2}"/>
         </linearGradient>
-        <radialGradient id="mglow" cx="50%" cy="35%" r="45%">
-          <stop offset="0%" style="stop-color:${color};stop-opacity:0.12"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>
+        <radialGradient id="mglow" cx="50%" cy="30%" r="45%">
+          <stop offset="0%" style="stop-color:${color};stop-opacity:0.15"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>
         </radialGradient>
+        <linearGradient id="mdv" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:${color};stop-opacity:0"/><stop offset="50%" style="stop-color:${color};stop-opacity:0.5"/><stop offset="100%" style="stop-color:${color};stop-opacity:0"/>
+        </linearGradient>
+        <linearGradient id="mcb" x1="30%" y1="0%" x2="70%" y2="100%">
+          <stop offset="0%" style="stop-color:#0e0e1a"/><stop offset="40%" style="stop-color:#161625"/><stop offset="100%" style="stop-color:#1a1a30"/>
+        </linearGradient>
+        <linearGradient id="mbdr" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#72efdd"/><stop offset="15%" style="stop-color:#4cc9f0"/><stop offset="30%" style="stop-color:#4361ee"/><stop offset="50%" style="stop-color:#7209b7"/><stop offset="65%" style="stop-color:#b5179e"/><stop offset="80%" style="stop-color:#f72585"/><stop offset="90%" style="stop-color:#ff6fff"/><stop offset="100%" style="stop-color:#72efdd"/>
+        </linearGradient>
+        <filter id="mgB" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="12" result="blur"/></filter>
       </defs>
-      <circle cx="200" cy="140" r="130" fill="url(#mglow)"/>
-      <path d="M55,130 L55,360 L345,360 L345,130 Q345,40 200,40 Q55,40 55,130Z" fill="none" stroke="url(#mtg)" stroke-width="2"/>
-      <text x="200" y="75" text-anchor="middle" fill="${color}" font-size="14" font-family="serif" letter-spacing="4">SOUL STELE</text>
-      <text x="200" y="98" text-anchor="middle" fill="#8888aa" font-size="11" font-family="sans-serif" letter-spacing="1">${usernameDisplay}</text>
-      <text x="200" y="140" text-anchor="middle" fill="url(#mtg)" font-size="42" font-family="monospace" font-weight="bold">${nft.code}</text>
-      <text x="200" y="164" text-anchor="middle" fill="#8888aa" font-size="14" font-family="sans-serif">${nft.name}</text>
-      <text x="200" y="184" text-anchor="middle" fill="#555566" font-size="10" font-family="monospace">Match: ${nft.matchPercent}%</text>
-      <line x1="85" y1="194" x2="315" y2="194" stroke="#333344" stroke-width="0.5"/>
-      ${bars}
-      <text x="200" y="368" text-anchor="middle" fill="#444455" font-size="9" font-family="monospace">${inscribeDate}</text>
-      <text x="200" y="384" text-anchor="middle" fill="#333344" font-size="10" font-family="monospace">#${nft.tokenId}</text>
+      <path d="M26,85 L26,354 Q26,374 48,374 L352,374 Q374,374 374,354 L374,85 Q374,11 200,11 Q26,11 26,85Z" fill="none" stroke="url(#mbdr)" stroke-width="10" filter="url(#mgB)" opacity="0.9"/>
+      <circle cx="200" cy="120" r="130" fill="url(#mglow)"/>
+      <path d="M30,85 L30,352 Q30,370 48,370 L352,370 Q370,370 370,352 L370,85 Q370,15 200,15 Q30,15 30,85Z" fill="url(#mcb)" stroke="url(#mbdr)" stroke-width="2" opacity="0.7"/>
+      <circle cx="90" cy="82" r="1" fill="${color}" opacity="0.4"/>
+      <circle cx="310" cy="75" r="0.8" fill="${color}" opacity="0.5"/>
+      <circle cx="120" cy="52" r="1.2" fill="${color}" opacity="0.3"/>
+      <circle cx="280" cy="60" r="0.7" fill="${color}" opacity="0.4"/>
+      <text x="200" y="60" text-anchor="middle" fill="${color}" font-size="11" font-family="monospace" letter-spacing="5" opacity="0.9">SBTI STELE</text>
+      <text x="200" y="78" text-anchor="middle" fill="#6a6a88" font-size="9" font-family="monospace" letter-spacing="2">${usernameDisplay}</text>
+      <text x="200" y="118" text-anchor="middle" fill="url(#mtg)" font-size="44" font-family="monospace" font-weight="800" letter-spacing="8">${nft.code}</text>
+      <text x="200" y="138" text-anchor="middle" fill="#8888aa" font-size="14" font-family="sans-serif" font-weight="300" letter-spacing="4">${nft.name}</text>
+      <text x="155" y="155" text-anchor="end" fill="${color}" font-size="9" font-family="monospace" font-weight="bold">${nft.matchPercent}%</text>
+      <rect x="160" y="149" width="80" height="5" rx="2.5" fill="#1a1a2e"/>
+      <rect x="160" y="149" width="${barW}" height="5" rx="2.5" fill="${color}" opacity="0.8"/>
+      <rect x="60" y="166" width="280" height="1" rx="0.5" fill="url(#mdv)"/>
+      ${blocks}
+      <rect x="60" y="332" width="280" height="1" rx="0.5" fill="url(#mdv)"/>
+      <text x="200" y="345" text-anchor="middle" fill="#444455" font-size="9" font-family="monospace" letter-spacing="1">${inscribeDate}</text>
+      <text x="200" y="358" text-anchor="middle" fill="#555566" font-size="10" font-family="monospace" font-weight="bold">#${nft.tokenId}</text>
     </svg>
   `;
 

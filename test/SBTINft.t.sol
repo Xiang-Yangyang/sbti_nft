@@ -2,15 +2,18 @@
 pragma solidity ^0.8.24;
 
 import "forge-std/Test.sol";
+import "../contracts/SBTIRenderer.sol";
 import "../contracts/SBTINft.sol";
 
 contract SBTINftGasTest is Test {
     SBTINft public nft;
+    SBTIRenderer public renderer;
     address public user = address(0xBEEF);
     uint256 public mintCost;
 
     function setUp() public {
-        nft = new SBTINft();
+        renderer = new SBTIRenderer();
+        nft = new SBTINft(address(renderer));
         mintCost = nft.mintPrice();
         vm.deal(user, 100 ether);
     }
