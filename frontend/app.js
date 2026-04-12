@@ -39,29 +39,9 @@ let answers = [];
 let isDrunkTriggered = false;
 let showDrinkFollowup = false;
 
-// 合约地址（部署后填入）
-const CONTRACT_ADDRESS = '0x1d67Cf5CF69fe3E5706C33320E6b4E2301Dc9E34'; // BSC Testnet
-const CONTRACT_ABI = [
-  'function mint() external payable returns (uint256)',
-  'function inscribe(uint256 tokenId, uint8 personalityIndex, uint8[15] dimensions, uint8 matchPercent, string username) external',
-  'function isInscribed(uint256) view returns (bool)',
-  'function totalSupply() view returns (uint256)',
-  'function MAX_SUPPLY() view returns (uint256)',
-  'function mintPrice() view returns (uint256)',
-  'function tokenURI(uint256) view returns (string)',
-  'function balanceOf(address) view returns (uint256)',
-  'function ownerOf(uint256) view returns (address)',
-  'function getSoulStele(uint256) view returns (uint8 personalityIndex, uint8[15] dimensions, uint32 inscribeTime, uint8 matchPercent)',
-  'function getUsername(uint256) view returns (string)',
-  'function inscribedUsername(uint256) view returns (string)',
-  'function personalityCodes(uint256) view returns (string)',
-  'function personalityNames(uint256) view returns (string)',
-  'function isGoldCard(uint256) view returns (bool)',
-  'function cardSeed(uint256) view returns (uint256)',
-  'event Minted(address indexed owner, uint256 indexed tokenId)',
-  'event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)',
-  'event Inscribed(uint256 indexed tokenId, uint8 personalityIndex, uint8 matchPercent)',
-];
+// 合约配置（从 config.js 读取）
+const CONTRACT_ADDRESS = SBTI_CONFIG.CONTRACT_ADDRESS;
+const CONTRACT_ABI = SBTI_CONFIG.CONTRACT_ABI;
 
 // 用户持有的空白 NFT 列表
 let userBlankNFTs = [];
@@ -69,14 +49,14 @@ let userBlankNFTs = [];
 // 每项: { tokenId, personalityIndex, code, name, matchPercent, dimensions, inscribeTime }
 let userInscribedNFTs = [];
 
-// ============ BSC Testnet 配置 ============
-const BSC_TESTNET_CHAIN_ID = '0x61'; // 97
+// ============ 网络配置（从 config.js 读取） ============
+const BSC_TESTNET_CHAIN_ID = '0x' + SBTI_CONFIG.CHAIN_ID.toString(16); // 97 → '0x61'
 const BSC_TESTNET_CONFIG = {
   chainId: BSC_TESTNET_CHAIN_ID,
-  chainName: 'BSC Testnet',
-  nativeCurrency: { name: 'tBNB', symbol: 'tBNB', decimals: 18 },
-  rpcUrls: ['https://bsc-testnet-rpc.publicnode.com'],
-  blockExplorerUrls: ['https://testnet.bscscan.com'],
+  chainName: SBTI_CONFIG.CHAIN_NAME,
+  nativeCurrency: { name: SBTI_CONFIG.CURRENCY_SYMBOL, symbol: SBTI_CONFIG.CURRENCY_SYMBOL, decimals: 18 },
+  rpcUrls: [SBTI_CONFIG.RPC_URL],
+  blockExplorerUrls: [SBTI_CONFIG.EXPLORER_URL],
 };
 
 // ============ 连接状态 ============
@@ -256,7 +236,7 @@ async function connectWithWallet(walletType) {
     document.getElementById('walletAddress').style.display = 'inline';
     document.getElementById('walletAddress').textContent = userAddress.slice(0, 6) + '...' + userAddress.slice(-4);
     document.getElementById('walletNetwork').style.display = 'inline';
-    document.getElementById('walletNetwork').textContent = 'BSC Testnet';
+    document.getElementById('walletNetwork').textContent = SBTI_CONFIG.CHAIN_NAME;
 
     showToast(`${config.name} 已连接 ✅`);
 
@@ -959,7 +939,7 @@ async function showBlankCardModal(tokenId) {
 
   try {
     // 用独立 RPC 读取，避免依赖钱包连接状态
-    const rpc = new ethers.JsonRpcProvider('https://bsc-testnet-rpc.publicnode.com');
+    const rpc = new ethers.JsonRpcProvider(SBTI_CONFIG.RPC_URL);
     const readContract = new ethers.Contract(CONTRACT_ADDRESS, [
       'function tokenURI(uint256) view returns (string)',
       'function isGoldCard(uint256) view returns (bool)',
@@ -1123,7 +1103,7 @@ async function forceRefreshNFTMetadata(tokenId) {
 
   // 策略2: 重新读一次 tokenURI 触发缓存更新（某些钱包会监听 eth_call）
   try {
-    const rpc = new ethers.JsonRpcProvider('https://bsc-testnet-rpc.publicnode.com');
+    const rpc = new ethers.JsonRpcProvider(SBTI_CONFIG.RPC_URL);
     const readContract = new ethers.Contract(CONTRACT_ADDRESS, [
       'function tokenURI(uint256) view returns (string)',
     ], rpc);
@@ -1318,7 +1298,7 @@ window.addEventListener('load', async () => {
 
   // 读取 supply 和 price（不需要钱包，用公共 RPC）
   try {
-    const rpc = new ethers.JsonRpcProvider('https://bsc-testnet-rpc.publicnode.com');
+    const rpc = new ethers.JsonRpcProvider(SBTI_CONFIG.RPC_URL);
     const readContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, rpc);
     const [supply, maxSupply, price] = await Promise.all([
       readContract.totalSupply(),

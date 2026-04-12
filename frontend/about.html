@@ -1108,7 +1108,7 @@
 <div class="about-footer">
   <p>SBTI × NFT · Built on BNB Smart Chain · 100% On-Chain SVG</p>
   <p style="margin-top:8px;">
-    <a href="https://testnet.bscscan.com/address/0x1d67Cf5CF69fe3E5706C33320E6b4E2301Dc9E34" target="_blank">查看合约 ↗</a>
+    <a id="aboutContractLink" href="#" target="_blank">查看合约 ↗</a>
   </p>
 </div>
 
@@ -1260,12 +1260,17 @@
 })();
 </script>
 
+<script src="config.js"></script>
 <script type="module">
-// 从链上读取 mint 价格
+// 从链上读取 mint 价格（地址和 RPC 从 config.js 读取）
 import { ethers } from 'https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.min.js';
 try {
-  const rpc = new ethers.JsonRpcProvider('https://bsc-testnet-rpc.publicnode.com');
-  const c = new ethers.Contract('0x1d67Cf5CF69fe3E5706C33320E6b4E2301Dc9E34', ['function mintPrice() view returns (uint256)'], rpc);
+  // 动态设置合约链接
+  const link = document.getElementById('aboutContractLink');
+  if (link) link.href = SBTI_CONFIG.contractUrl();
+
+  const rpc = new ethers.JsonRpcProvider(SBTI_CONFIG.RPC_URL);
+  const c = new ethers.Contract(SBTI_CONFIG.CONTRACT_ADDRESS, ['function mintPrice() view returns (uint256)'], rpc);
   const price = await c.mintPrice();
   const el = document.getElementById('aboutMintPrice');
   if (el) el.textContent = ethers.formatEther(price);

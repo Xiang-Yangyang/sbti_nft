@@ -274,7 +274,10 @@ contract SBTINft is ERC721, Ownable {
         // 渐变坐标
         (string memory gx1, string memory gy1, string memory gx2, string memory gy2) = _gradientCoords(seed);
 
-        string memory svg = _buildBlankSVG(tokenId, gold, colorOffset, gx1, gy1, gx2, gy2);
+        string memory svg = _blankPart1(gold);
+        svg = string(abi.encodePacked(svg, _blankPart2(gold, colorOffset, gx1, gy1, gx2, gy2)));
+        svg = string(abi.encodePacked(svg, _blankPart3(gold)));
+        svg = string(abi.encodePacked(svg, _blankPart4(tokenId, gold)));
 
         // metadata
         string memory rarity = gold ? "Gold" : "Normal";
@@ -294,45 +297,18 @@ contract SBTINft is ERC721, Ownable {
         return string(abi.encodePacked("data:application/json;base64,", Base64.encode(bytes(json))));
     }
 
-    function _buildBlankSVG(
-        uint256 tokenId,
-        bool gold,
-        uint256 colorOffset,
-        string memory gx1, string memory gy1, string memory gx2, string memory gy2
-    ) internal pure returns (string memory) {
-        string memory svg = _blankPart1(gold);
-        svg = string(abi.encodePacked(svg, _blankPart2(gold, colorOffset, gx1, gy1, gx2, gy2)));
-        svg = string(abi.encodePacked(svg, _blankPart3(gold)));
-        svg = string(abi.encodePacked(svg, _blankPart4(tokenId, gold)));
-        return svg;
-    }
-
     // Part1: SVG头 + defs（渐变定义）
-    function _blankPart1(
-        bool gold
-    ) internal pure returns (string memory) {
-        // g1: SBTI标题渐变（金卡→金色系，普通→青蓝紫）
+    function _blankPart1(bool gold) internal pure returns (string memory) {
         string memory g1c0 = gold ? "#ffd700" : "#72efdd";
         string memory g1c1 = gold ? "#ffb800" : "#4cc9f0";
         string memory g1c2 = gold ? "#ff8c00" : "#7209b7";
-        // glow: 背景光晕（金卡→暖金，普通→青蓝）
-        string memory glowColor = gold ? "#ffd700" : "#4cc9f0";
-        string memory glowOpacity = gold ? "0.15" : "0.15";
-
+        string memory gc = gold ? "#ffd700" : "#4cc9f0";
         return string(abi.encodePacked(
-            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">',
-            '<defs>',
-            // g1: 标题/五角星渐变
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><defs>'
             '<linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">'
-            '<stop offset="0%" style="stop-color:', g1c0, '"/>'
-            '<stop offset="50%" style="stop-color:', g1c1, '"/>'
-            '<stop offset="100%" style="stop-color:', g1c2, '"/>'
-            '</linearGradient>',
-            // glow: 背景径向光晕
+            '<stop offset="0%" stop-color="', g1c0, '"/><stop offset="50%" stop-color="', g1c1, '"/><stop offset="100%" stop-color="', g1c2, '"/></linearGradient>'
             '<radialGradient id="glow" cx="50%" cy="50%" r="50%">'
-            '<stop offset="0%" style="stop-color:', glowColor, ';stop-opacity:', glowOpacity, '"/>'
-            '<stop offset="100%" style="stop-color:#0e0e1a;stop-opacity:0"/>'
-            '</radialGradient>'
+            '<stop offset="0%" stop-color="', gc, '" stop-opacity=".15"/><stop offset="100%" stop-color="#0e0e1a" stop-opacity="0"/></radialGradient>'
         ));
     }
 
@@ -341,52 +317,36 @@ contract SBTINft is ERC721, Ownable {
         bool gold, uint256 colorOffset,
         string memory gx1, string memory gy1, string memory gx2, string memory gy2
     ) internal pure returns (string memory) {
-        // gold渐变（tokenId 编号用）
-        // divider 分隔线渐变
         string memory dc0 = gold ? "#ffd700" : "#4cc9f0";
         string memory dc1 = gold ? "#ffb800" : "#72efdd";
         string memory dc2 = gold ? "#ffe066" : "#4cc9f0";
-
-        // 8色边框/光晕 stop
-        string memory borderStops = _buildGradientStops(colorOffset, gold);
-
+        string memory bs = _buildGradientStops(colorOffset, gold);
         return string(abi.encodePacked(
-            // gold 渐变（编号用）
             '<linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="0%">'
-            '<stop offset="0%" style="stop-color:#f6d365"/><stop offset="50%" style="stop-color:#d4a843"/><stop offset="100%" style="stop-color:#fda085"/>'
-            '</linearGradient>',
-            // divider 分隔线渐变
-            '<linearGradient id="divider" x1="0%" y1="0%" x2="100%" y2="0%">'
-            '<stop offset="0%" style="stop-color:', dc0, ';stop-opacity:0"/>'
-            '<stop offset="25%" style="stop-color:', dc1, ';stop-opacity:0.6"/>'
-            '<stop offset="50%" style="stop-color:', dc2, ';stop-opacity:1"/>'
-            '<stop offset="75%" style="stop-color:', dc1, ';stop-opacity:0.6"/>'
-            '<stop offset="100%" style="stop-color:', dc0, ';stop-opacity:0"/>'
-            '</linearGradient>',
-            // cardbg 卡片背景
-            '<linearGradient id="cardbg" x1="30%" y1="0%" x2="70%" y2="100%">'
-            '<stop offset="0%" style="stop-color:#0e0e1a"/>'
-            '<stop offset="40%" style="stop-color:#161625"/>'
-            '<stop offset="100%" style="stop-color:#1a1a30"/>'
-            '</linearGradient>',
-            // border1: 多彩/金色边框渐变（随机角度 + 随机偏移色环）
-            '<linearGradient id="border1" x1="', gx1, '" y1="', gy1, '" x2="', gx2, '" y2="', gy2, '">',
-            borderStops,
-            '</linearGradient>'
+            '<stop offset="0%" stop-color="#f6d365"/><stop offset="50%" stop-color="#d4a843"/><stop offset="100%" stop-color="#fda085"/></linearGradient>'
+            '<linearGradient id="dv" x1="0%" y1="0%" x2="100%" y2="0%">'
+            '<stop offset="0%" stop-color="', dc0, '" stop-opacity="0"/>'
+            '<stop offset="25%" stop-color="', dc1, '" stop-opacity=".6"/>'
+            '<stop offset="50%" stop-color="', dc2, '" stop-opacity="1"/>'
+            '<stop offset="75%" stop-color="', dc1, '" stop-opacity=".6"/>'
+            '<stop offset="100%" stop-color="', dc0, '" stop-opacity="0"/></linearGradient>',
+            '<linearGradient id="cb" x1="30%" y1="0%" x2="70%" y2="100%">'
+            '<stop offset="0%" stop-color="#0e0e1a"/><stop offset="40%" stop-color="#161625"/><stop offset="100%" stop-color="#1a1a30"/></linearGradient>'
+            '<linearGradient id="b1" x1="', gx1, '" y1="', gy1, '" x2="', gx2, '" y2="', gy2, '">', bs, '</linearGradient>'
         ));
     }
 
     // 构建 8 色渐变 stops（边框和外围光晕共用）
     function _buildGradientStops(uint256 colorOffset, bool gold) internal pure returns (string memory) {
         return string(abi.encodePacked(
-            '<stop offset="0%" style="stop-color:', _getRingColor(colorOffset, 0, gold), '"/>'
-            '<stop offset="15%" style="stop-color:', _getRingColor(colorOffset, 1, gold), '"/>'
-            '<stop offset="30%" style="stop-color:', _getRingColor(colorOffset, 2, gold), '"/>'
-            '<stop offset="50%" style="stop-color:', _getRingColor(colorOffset, 3, gold), '"/>',
-            '<stop offset="65%" style="stop-color:', _getRingColor(colorOffset, 4, gold), '"/>'
-            '<stop offset="80%" style="stop-color:', _getRingColor(colorOffset, 5, gold), '"/>'
-            '<stop offset="90%" style="stop-color:', _getRingColor(colorOffset, 6, gold), '"/>'
-            '<stop offset="100%" style="stop-color:', _getRingColor(colorOffset, 0, gold), '"/>'
+            '<stop offset="0%" stop-color="', _getRingColor(colorOffset, 0, gold), '"/>'
+            '<stop offset="15%" stop-color="', _getRingColor(colorOffset, 1, gold), '"/>'
+            '<stop offset="30%" stop-color="', _getRingColor(colorOffset, 2, gold), '"/>'
+            '<stop offset="50%" stop-color="', _getRingColor(colorOffset, 3, gold), '"/>',
+            '<stop offset="65%" stop-color="', _getRingColor(colorOffset, 4, gold), '"/>'
+            '<stop offset="80%" stop-color="', _getRingColor(colorOffset, 5, gold), '"/>'
+            '<stop offset="90%" stop-color="', _getRingColor(colorOffset, 6, gold), '"/>'
+            '<stop offset="100%" stop-color="', _getRingColor(colorOffset, 0, gold), '"/>'
         ));
     }
 
@@ -402,32 +362,21 @@ contract SBTINft is ERC721, Ownable {
         string memory borderWidth = gold ? "2.5" : "2";
 
         return string(abi.encodePacked(
-            // 外围光晕滤镜 + 渐变（复用 border1 色彩）
-            '<filter id="glowBlur" x="-30%" y="-30%" width="160%" height="160%">'
-            '<feGaussianBlur stdDeviation="12" result="blur"/>'
-            '</filter>'
-            '</defs>',
-            // 外部底色
-            '<rect width="400" height="400" fill="#0a0a0f"/>',
-            // 外围光晕（用 border1 渐变 + blur）
-            '<rect x="26" y="26" width="348" height="348" rx="20" fill="none" stroke="url(#border1)" stroke-width="10" filter="url(#glowBlur)" opacity="0.9"/>',
-            // 卡片背景
-            '<rect x="30" y="30" width="340" height="340" rx="18" fill="url(#cardbg)"/>',
-            // 背景光晕
-            '<circle cx="200" cy="185" r="125" fill="url(#glow)"/>',
-            // 边框
-            '<rect x="30" y="30" width="340" height="340" rx="18" fill="none" stroke="url(#border1)" stroke-width="', borderWidth, '" opacity="0.7"/>',
-            // 五角星
+            '<filter id="gB"><feGaussianBlur stdDeviation="12"/></filter></defs>',
+            '<rect width="400" height="400" fill="#0a0a0f"/>'
+            '<rect x="26" y="26" width="348" height="348" rx="20" fill="none" stroke="url(#b1)" stroke-width="10" filter="url(#gB)" opacity=".9"/>'
+            '<rect x="30" y="30" width="340" height="340" rx="18" fill="url(#cb)"/>'
+            '<circle cx="200" cy="185" r="125" fill="url(#glow)"/>'
+            '<rect x="30" y="30" width="340" height="340" rx="18" fill="none" stroke="url(#b1)" stroke-width="', borderWidth, '" opacity=".7"/>'
             '<polygon points="200,65 214,105 258,105 222,130 234,170 200,148 166,170 178,130 142,105 186,105" fill="none" stroke="url(#g1)" stroke-width="2.5"/>'
-            '<circle cx="200" cy="125" r="23" fill="none" stroke="url(#g1)" stroke-width="1" opacity="0.6"/>'
-            '<circle cx="200" cy="125" r="6" fill="', centerDotColor, '" opacity="0.9"/>',
-            // 粒子光点
-            '<circle cx="85" cy="120" r="1.2" fill="', p1, '" opacity="0.5"/>'
-            '<circle cx="310" cy="135" r="1" fill="', p2, '" opacity="0.4"/>'
-            '<circle cx="120" cy="280" r="1.3" fill="', p3, '" opacity="0.5"/>'
-            '<circle cx="300" cy="290" r="1" fill="', p1, '" opacity="0.3"/>'
-            '<circle cx="150" cy="100" r="0.8" fill="', p2, '" opacity="0.6"/>'
-            '<circle cx="270" cy="310" r="1.1" fill="', p3, '" opacity="0.4"/>'
+            '<circle cx="200" cy="125" r="23" fill="none" stroke="url(#g1)" stroke-width="1" opacity=".6"/>'
+            '<circle cx="200" cy="125" r="6" fill="', centerDotColor, '" opacity=".9"/>',
+            '<circle cx="85" cy="120" r="1.2" fill="', p1, '" opacity=".5"/>'
+            '<circle cx="310" cy="135" r="1" fill="', p2, '" opacity=".4"/>'
+            '<circle cx="120" cy="280" r="1.3" fill="', p3, '" opacity=".5"/>'
+            '<circle cx="300" cy="290" r="1" fill="', p1, '" opacity=".3"/>'
+            '<circle cx="150" cy="100" r=".8" fill="', p2, '" opacity=".6"/>'
+            '<circle cx="270" cy="310" r="1.1" fill="', p3, '" opacity=".4"/>'
         ));
     }
 
@@ -436,24 +385,18 @@ contract SBTINft is ERC721, Ownable {
         string memory pulseColor = gold ? "#ffd700" : "#72efdd";
 
         return string(abi.encodePacked(
-            // SBTI 大标题
-            '<text x="200" y="220" text-anchor="middle" fill="url(#g1)" font-size="48" font-family="\'Courier New\',monospace" font-weight="800" letter-spacing="10">SBTI</text>',
-            // Soul Card 副标题
-            '<text x="200" y="246" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="14" font-family="sans-serif" font-weight="300" letter-spacing="4">Soul Card</text>',
-            // 分隔线
-            '<rect x="140" y="261" width="120" height="1.5" rx="1" fill="url(#divider)"/>',
-            // 脉冲圆点 + 状态文字
-            '<circle cx="155" cy="284" r="3" fill="', pulseColor, '" opacity="0.6">'
-            '<animate attributeName="opacity" values="0.4;1;0.4" dur="2s" repeatCount="indefinite"/>'
+            '<text x="200" y="220" text-anchor="middle" fill="url(#g1)" font-size="48" font-family="monospace" font-weight="800" letter-spacing="10">SBTI</text>'
+            '<text x="200" y="246" text-anchor="middle" fill="rgba(255,255,255,.35)" font-size="14" font-family="sans-serif" font-weight="300" letter-spacing="4">Soul Card</text>'
+            '<rect x="140" y="261" width="120" height="1.5" rx="1" fill="url(#dv)"/>',
+            '<circle cx="155" cy="284" r="3" fill="', pulseColor, '" opacity=".6">'
+            '<animate attributeName="opacity" values=".4;1;.4" dur="2s" repeatCount="indefinite"/>'
             '</circle>'
-            '<text x="210" y="288" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="12" font-family="sans-serif" letter-spacing="2">',
+            '<text x="210" y="288" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="12" font-family="sans-serif" letter-spacing="2">',
             unicode'等待灵魂铭刻',
             '</text>',
-            // 底部标签
-            '<rect x="155" y="306" width="90" height="22" rx="11" fill="none" stroke="rgba(85,85,102,0.5)" stroke-width="1"/>'
-            '<text x="200" y="321" text-anchor="middle" fill="rgba(114,239,221,0.5)" font-size="10" font-family="monospace" font-weight="600" letter-spacing="2">SBTI NFT</text>'
-            '<text x="200" y="344" text-anchor="middle" fill="url(#gold)" font-size="11" font-family="monospace" font-weight="bold">#', tokenId.toString(), '</text>'
-            '</svg>'
+            '<rect x="155" y="306" width="90" height="22" rx="11" fill="none" stroke="rgba(85,85,102,.5)" stroke-width="1"/>'
+            '<text x="200" y="321" text-anchor="middle" fill="rgba(114,239,221,.5)" font-size="10" font-family="monospace" font-weight="600" letter-spacing="2">SBTI NFT</text>'
+            '<text x="200" y="344" text-anchor="middle" fill="url(#gold)" font-size="11" font-family="monospace" font-weight="bold">#', tokenId.toString(), '</text></svg>'
         ));
     }
 
@@ -484,7 +427,9 @@ contract SBTINft is ERC721, Ownable {
         uint256 colorOffset = (seed >> 16) % 7;
         (string memory gx1, string memory gy1, string memory gx2, string memory gy2) = _gradientCoords(seed);
 
-        string memory svg = _buildSteleSVG(tokenId, pCode, pName, color1, color2, dims, matchPct, username, timeStr, gold, colorOffset, gx1, gy1, gx2, gy2);
+        string memory svg = _steleDefs(color1, color2, gold, colorOffset, gx1, gy1, gx2, gy2);
+        svg = string(abi.encodePacked(svg, _steleBody(pCode, pName, color1, username, matchPct)));
+        svg = string(abi.encodePacked(svg, _steleBars(dims, color1, timeStr, tokenId)));
 
         // 金碑: SBTI Golden Stele #xx | CODE, 普通碑: SBTI Stele #xx | CODE
         string memory inscribedName = gold
@@ -511,174 +456,80 @@ contract SBTINft is ERC721, Ownable {
         return string(abi.encodePacked("data:application/json;base64,", Base64.encode(bytes(json))));
     }
 
-    function _buildSteleSVG(
-        uint256 tokenId,
-        string memory pCode,
-        string memory pName,
-        string memory color1,
-        string memory color2,
-        uint8[15] memory dims,
-        uint8 matchPct,
-        string memory username,
-        string memory timeStr,
-        bool gold,
-        uint256 colorOffset,
+    // Stele defs: SVG头 + 所有渐变/滤镜 + 碑体结构 + 星尘粒子（合并原Part1+Part2）
+    function _steleDefs(
+        string memory c1, string memory c2,
+        bool gold, uint256 colorOffset,
         string memory gx1, string memory gy1, string memory gx2, string memory gy2
     ) internal pure returns (string memory) {
-        string memory svg = _stelePart1(color1, color2, gold, colorOffset, gx1, gy1, gx2, gy2);
-        svg = string(abi.encodePacked(svg, _stelePart2(color1, gold, colorOffset, gx1, gy1, gx2, gy2)));
-        svg = string(abi.encodePacked(svg, _stelePart3(pCode, pName, color1, username, matchPct)));
-        svg = string(abi.encodePacked(svg, _stelePart4(dims, color1, timeStr, tokenId)));
-        return svg;
-    }
-
-    // Stele Part1: SVG 头 + defs（人格渐变 + 光晕 + 分隔线 + cardbg）
-    function _stelePart1(
-        string memory color1,
-        string memory color2,
-        bool,            // gold (reserved)
-        uint256,         // colorOffset (reserved)
-        string memory,   // gx1 (reserved)
-        string memory,   // gy1 (reserved)
-        string memory,   // gx2 (reserved)
-        string memory    // gy2 (reserved)
-    ) internal pure returns (string memory) {
-        // 分隔线渐变
+        string memory bs = _buildGradientStops(colorOffset, gold);
         return string(abi.encodePacked(
-            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f">',
-            '<defs>'
-            // g1: 人格代号/文字渐变
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="background:#0a0a0f"><defs>'
             '<linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">'
-            '<stop offset="0%" style="stop-color:', color1, '"/><stop offset="100%" style="stop-color:', color2, '"/>'
-            '</linearGradient>'
-            // glow: 顶部径向光晕
-            '<radialGradient id="glow" cx="50%" cy="30%" r="45%">'
-            '<stop offset="0%" style="stop-color:', color1, ';stop-opacity:0.15"/><stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0"/>'
-            '</radialGradient>'
-            // divider: 分隔线渐变
-            '<linearGradient id="div" x1="0%" y1="0%" x2="100%" y2="0%">'
-            '<stop offset="0%" style="stop-color:', color1, ';stop-opacity:0"/><stop offset="50%" style="stop-color:', color1, ';stop-opacity:0.5"/><stop offset="100%" style="stop-color:', color1, ';stop-opacity:0"/>'
-            '</linearGradient>'
-            // cardbg: 碑体背景（与 Card 一致的三色对角线渐变）
-            '<linearGradient id="cardbg" x1="30%" y1="0%" x2="70%" y2="100%">'
-            '<stop offset="0%" style="stop-color:#0e0e1a"/>'
-            '<stop offset="40%" style="stop-color:#161625"/>'
-            '<stop offset="100%" style="stop-color:#1a1a30"/>'
-            '</linearGradient>'
+            '<stop offset="0%" stop-color="', c1, '"/><stop offset="100%" stop-color="', c2, '"/></linearGradient>'
+            '<radialGradient id="gw" cx="50%" cy="30%" r="45%">'
+            '<stop offset="0%" stop-color="', c1, '" stop-opacity=".15"/><stop offset="100%" stop-color="#0a0a0f" stop-opacity="0"/></radialGradient>'
+            '<linearGradient id="dv" x1="0%" y1="0%" x2="100%" y2="0%">'
+            '<stop offset="0%" stop-color="', c1, '" stop-opacity="0"/><stop offset="50%" stop-color="', c1, '" stop-opacity=".5"/><stop offset="100%" stop-color="', c1, '" stop-opacity="0"/></linearGradient>'
+            '<linearGradient id="cb" x1="30%" y1="0%" x2="70%" y2="100%">'
+            '<stop offset="0%" stop-color="#0e0e1a"/><stop offset="40%" stop-color="#161625"/><stop offset="100%" stop-color="#1a1a30"/></linearGradient>',
+            // bdr: 边框+外发光共用一个渐变
+            '<linearGradient id="bdr" x1="', gx1, '" y1="', gy1, '" x2="', gx2, '" y2="', gy2, '">', bs, '</linearGradient>'
+            '<filter id="gB"><feGaussianBlur stdDeviation="12"/></filter></defs>',
+            // 外发光 + 光晕 + 碑体 + 星尘粒子
+            '<path d="M26,85 L26,354 Q26,374 48,374 L352,374 Q374,374 374,354 L374,85 Q374,11 200,11 Q26,11 26,85Z" fill="none" stroke="url(#bdr)" stroke-width="10" filter="url(#gB)" opacity=".9"/>'
+            '<circle cx="200" cy="120" r="130" fill="url(#gw)"/>'
+            '<path d="M30,85 L30,352 Q30,370 48,370 L352,370 Q370,370 370,352 L370,85 Q370,15 200,15 Q30,15 30,85Z" fill="url(#cb)" stroke="url(#bdr)" stroke-width="2" opacity=".7"/>'
+            '<circle cx="90" cy="82" r="1" fill="', c1, '" opacity=".4"/>'
+            '<circle cx="310" cy="75" r=".8" fill="', c1, '" opacity=".5"/>'
+            '<circle cx="120" cy="52" r="1.2" fill="', c1, '" opacity=".3"/>'
+            '<circle cx="280" cy="60" r=".7" fill="', c1, '" opacity=".4"/>'
         ));
     }
 
-    // Stele Part2: 边框/外发光渐变 + 碑体结构
-    function _stelePart2(
-        string memory color1,
-        bool gold,
-        uint256 colorOffset,
-        string memory gx1, string memory gy1, string memory gx2, string memory gy2
+    // Stele body: 文字内容（标题+用户名+人格代号+名称+匹配度进度条+分隔线）
+    function _steleBody(
+        string memory pCode, string memory pName, string memory c1,
+        string memory username, uint8 matchPct
     ) internal pure returns (string memory) {
-        // 8色边框渐变（继承 Card 的色环 + 随机角度）
-        string memory borderStops = _buildGradientStops(colorOffset, gold);
-
-        return string(abi.encodePacked(
-            // outerGlow: 外发光渐变（同 border 色彩）
-            '<linearGradient id="oGlow" x1="', gx1, '" y1="', gy1, '" x2="', gx2, '" y2="', gy2, '">',
-            borderStops,
-            '</linearGradient>'
-            // border: 碑体边框渐变
-            '<linearGradient id="bdr" x1="', gx1, '" y1="', gy1, '" x2="', gx2, '" y2="', gy2, '">',
-            borderStops,
-            '</linearGradient>'
-            // glowBlur 滤镜
-            '<filter id="gBlur" x="-30%" y="-30%" width="160%" height="160%">'
-            '<feGaussianBlur stdDeviation="12" result="blur"/>'
-            '</filter>'
-            '</defs>',
-            // 外发光（碑形 path + 模糊）
-            '<path d="M26,85 L26,354 Q26,374 48,374 L352,374 Q374,374 374,354 L374,85 Q374,11 200,11 Q26,11 26,85Z" fill="none" stroke="url(#oGlow)" stroke-width="10" filter="url(#gBlur)" opacity="0.9"/>',
-            // 背景光晕
-            '<circle cx="200" cy="120" r="130" fill="url(#glow)"/>',
-            // 碑体主体（cardbg 填充 + 彩虹边框）
-            '<path d="M30,85 L30,352 Q30,370 48,370 L352,370 Q370,370 370,352 L370,85 Q370,15 200,15 Q30,15 30,85Z" fill="url(#cardbg)" stroke="url(#bdr)" stroke-width="2" opacity="0.7"/>',
-            // 星尘粒子
-            '<circle cx="90" cy="82" r="1" fill="', color1, '" opacity="0.4"/>'
-            '<circle cx="310" cy="75" r="0.8" fill="', color1, '" opacity="0.5"/>'
-            '<circle cx="120" cy="52" r="1.2" fill="', color1, '" opacity="0.3"/>'
-            '<circle cx="280" cy="60" r="0.7" fill="', color1, '" opacity="0.4"/>'
-        ));
-    }
-
-    // Stele Part3: 文字内容（标题 + 用户名 + 人格代号 + 名称 + 匹配度进度条 + 分隔线）
-    function _stelePart3(
-        string memory pCode,
-        string memory pName,
-        string memory color1,
-        string memory username,
-        uint8 matchPct
-    ) internal pure returns (string memory) {
-        // 进度条宽度: matchPct * 80 / 100
         uint256 barW = uint256(matchPct) * 80 / 100;
-
         return string(abi.encodePacked(
-            // SBTI STELE 标题
-            '<text x="200" y="60" text-anchor="middle" fill="', color1, '" font-size="11" font-family="monospace" letter-spacing="5" opacity="0.9">SBTI STELE</text>',
-            // username
-            '<text x="200" y="78" text-anchor="middle" fill="#6a6a88" font-size="9" font-family="monospace" letter-spacing="2">', username, '</text>',
-            // 人格代码（大字）
-            '<text x="200" y="118" text-anchor="middle" fill="url(#g1)" font-size="44" font-family="monospace" font-weight="800" letter-spacing="8">', pCode, '</text>',
-            // 人格名称
+            '<text x="200" y="60" text-anchor="middle" fill="', c1, '" font-size="11" font-family="monospace" letter-spacing="5" opacity=".9">SBTI STELE</text>'
+            '<text x="200" y="78" text-anchor="middle" fill="#6a6a88" font-size="9" font-family="monospace" letter-spacing="2">', username, '</text>'
+            '<text x="200" y="118" text-anchor="middle" fill="url(#g1)" font-size="44" font-family="monospace" font-weight="800" letter-spacing="8">', pCode, '</text>'
             '<text x="200" y="138" text-anchor="middle" fill="#8888aa" font-size="14" font-family="sans-serif" font-weight="300" letter-spacing="4">', pName, '</text>',
-            // 匹配度进度条
-            '<text x="155" y="155" text-anchor="end" fill="', color1, '" font-size="9" font-family="monospace" font-weight="bold">', uint256(matchPct).toString(), '%</text>'
+            '<text x="155" y="155" text-anchor="end" fill="', c1, '" font-size="9" font-family="monospace" font-weight="bold">', uint256(matchPct).toString(), '%</text>'
             '<rect x="160" y="149" width="80" height="5" rx="2.5" fill="#1a1a2e"/>'
-            '<rect x="160" y="149" width="', barW.toString(), '" height="5" rx="2.5" fill="', color1, '" opacity="0.8"/>',
-            // 分隔线
-            '<rect x="60" y="166" width="280" height="1" rx="0.5" fill="url(#div)"/>'
+            '<rect x="160" y="149" width="', barW.toString(), '" height="5" rx="2.5" fill="', c1, '" opacity=".8"/>'
+            '<rect x="60" y="166" width="280" height="1" rx=".5" fill="url(#dv)"/>'
         ));
     }
 
-    // Stele Part4: 维度柱状图 + 底部分隔 + 时间 + Token ID
-    function _stelePart4(
-        uint8[15] memory dims,
-        string memory color,
-        string memory timeStr,
-        uint256 tokenId
+    // Stele bars: 维度柱状图 + 底部分隔 + 时间 + Token ID
+    function _steleBars(
+        uint8[15] memory dims, string memory c,
+        string memory timeStr, uint256 tokenId
     ) internal pure returns (string memory) {
-        string memory bars = _buildDimensionBars(dims, color);
-        return string(abi.encodePacked(
-            bars,
-            // 底部分隔线
-            '<rect x="60" y="332" width="280" height="1" rx="0.5" fill="url(#div)"/>',
-            // 铭刻时间
-            '<text x="200" y="345" text-anchor="middle" fill="#444455" font-size="9" font-family="monospace" letter-spacing="1">', timeStr, '</text>',
-            // Token ID
-            '<text x="200" y="358" text-anchor="middle" fill="#555566" font-size="10" font-family="monospace" font-weight="bold">#', tokenId.toString(), '</text>',
-            '</svg>'
+        bytes memory r = _dimBars(dims, c);
+        return string(abi.encodePacked(r,
+            '<rect x="60" y="332" width="280" height="1" rx=".5" fill="url(#dv)"/>'
+            '<text x="200" y="345" text-anchor="middle" fill="#445" font-size="9" font-family="monospace" letter-spacing="1">', timeStr, '</text>'
+            '<text x="200" y="358" text-anchor="middle" fill="#556" font-size="10" font-family="monospace" font-weight="bold">#', tokenId.toString(), '</text></svg>'
         ));
     }
 
-    function _buildDimensionBars(uint8[15] memory dims, string memory color) internal pure returns (string memory) {
-        string[15] memory labels = [
-            "S1","S2","S3","E1","E2","E3","A1","A2","A3","Ac1","Ac2","Ac3","So1","So2","So3"
-        ];
-        
-        bytes memory result = "";
+    function _dimBars(uint8[15] memory dims, string memory c) internal pure returns (bytes memory) {
+        string[15] memory lb = ["S1","S2","S3","E1","E2","E3","A1","A2","A3","Ac1","Ac2","Ac3","So1","So2","So3"];
+        bytes memory r = "";
         for (uint8 i = 0; i < 15; i++) {
-            uint256 barWidth = uint256(dims[i]) * 26; // L=26, M=52, H=78
-            uint256 yPos = 178 + uint256(i) * 10;     // 起始 y=178（上移适配新布局），间隔 10px
-            
-            // 维度标签
-            result = abi.encodePacked(result,
-                '<text x="83" y="', (yPos + 7).toString(), '" text-anchor="end" fill="#555566" font-size="8" font-family="monospace">', labels[i], '</text>'
-            );
-            // 背景条
-            result = abi.encodePacked(result,
-                '<rect x="88" y="', yPos.toString(), '" width="78" height="7" rx="2" fill="#1a1a2e"/>'
-            );
-            // 数值条
-            result = abi.encodePacked(result,
-                '<rect x="88" y="', yPos.toString(), '" width="', barWidth.toString(), '" height="7" rx="2" fill="', color, '" opacity="0.7"/>'
+            uint256 yp = 178 + uint256(i) * 10;
+            r = abi.encodePacked(r,
+                '<text x="83" y="', (yp + 7).toString(), '" text-anchor="end" fill="#556" font-size="8" font-family="monospace">', lb[i], '</text>'
+                '<rect x="88" y="', yp.toString(), '" width="78" height="7" rx="2" fill="#1a1a2e"/>'
+                '<rect x="88" y="', yp.toString(), '" width="', (uint256(dims[i]) * 26).toString(), '" height="7" rx="2" fill="', c, '" opacity=".7"/>'
             );
         }
-        return string(result);
+        return r;
     }
 
     // ============ 时间戳格式化 ============
@@ -703,34 +554,29 @@ contract SBTINft is ERC721, Ownable {
     }
 
     function _getPersonalityColors(uint8 pIndex) internal pure returns (string memory, string memory) {
-        // 按人格类型分配不同的渐变色
-        if (pIndex == 0)  return ("#e94560", "#0f3460"); // CTRL 拿捏者 - 红蓝
-        if (pIndex == 1)  return ("#ffd700", "#ff6b35"); // ATM-er 送钱者 - 金橙
-        if (pIndex == 2)  return ("#888888", "#444444"); // Dior-s 屌丝 - 灰
-        if (pIndex == 3)  return ("#ffd700", "#b8860b"); // BOSS 领导者 - 金
-        if (pIndex == 4)  return ("#ff69b4", "#ff1493"); // THAN-K 感恩者 - 粉
-        if (pIndex == 5)  return ("#ff4444", "#cc0000"); // OH-NO 哦不人 - 红
-        if (pIndex == 6)  return ("#00ff88", "#009955"); // GOGO 行者 - 绿
-        if (pIndex == 7)  return ("#ff69b4", "#8b008b"); // SEXY 尤物 - 粉紫
-        if (pIndex == 8)  return ("#ff6b9d", "#c44569"); // LOVE-R 多情者 - 玫红
-        if (pIndex == 9)  return ("#ffb6c1", "#ff69b4"); // MUM 妈妈 - 浅粉
-        if (pIndex == 10) return ("#9b59b6", "#6c3483"); // FAKE 伪人 - 紫
-        if (pIndex == 11) return ("#95a5a6", "#7f8c8d"); // OJBK 无所谓人 - 灰蓝
-        if (pIndex == 12) return ("#8B4513", "#D2691E"); // MALO 吗喽 - 棕
-        if (pIndex == 13) return ("#ffff00", "#ff6600"); // JOKE-R 小丑 - 黄橙
-        if (pIndex == 14) return ("#00ffff", "#0099cc"); // WOC! 握草人 - 青
-        if (pIndex == 15) return ("#4169e1", "#1e3a8a"); // THIN-K 思考者 - 蓝
-        if (pIndex == 16) return ("#dc143c", "#8b0000"); // SHIT 愤世者 - 深红
-        if (pIndex == 17) return ("#708090", "#2f4f4f"); // ZZZZ 装死者 - 石灰
-        if (pIndex == 18) return ("#cd853f", "#8b7355"); // POOR 贫困者 - 土黄
-        if (pIndex == 19) return ("#daa520", "#b8860b"); // MONK 僧人 - 金棕
-        if (pIndex == 20) return ("#98fb98", "#66cdaa"); // IMSB 傻者 - 浅绿
-        if (pIndex == 21) return ("#4682b4", "#2c3e50"); // SOLO 孤儿 - 钢蓝
-        if (pIndex == 22) return ("#ff4500", "#cc3700"); // FUCK 草者 - 橙红
-        if (pIndex == 23) return ("#2c2c2c", "#111111"); // DEAD 死者 - 黑
-        if (pIndex == 24) return ("#696969", "#363636"); // IMFW 废物 - 深灰
-        if (pIndex == 25) return ("#ff00ff", "#ff69b4"); // HHHH 傻乐者 - 品红
-        return ("#00ff00", "#006600");                    // DRUNK 酒鬼 - 绿
+        // 紧凑查表：27对颜色 × 2 × 3字节(RGB) = 162字节
+        // 每行6字节: color1_RGB + color2_RGB
+        bytes memory tbl = hex"e945600f3460" hex"ffd700ff6b35" hex"888888444444" hex"ffd700b8860b"
+            hex"ff69b4ff1493" hex"ff4444cc0000" hex"00ff88009955" hex"ff69b48b008b"
+            hex"ff6b9dc44569" hex"ffb6c1ff69b4" hex"9b59b66c3483" hex"95a5a67f8c8d"
+            hex"8b4513d2691e" hex"ffff00ff6600" hex"00ffff0099cc" hex"4169e11e3a8a"
+            hex"dc143c8b0000" hex"7080902f4f4f" hex"cd853f8b7355" hex"daa520b8860b"
+            hex"98fb9866cdaa" hex"4682b42c3e50" hex"ff4500cc3700" hex"2c2c2c111111"
+            hex"696969363636" hex"ff00ffff69b4" hex"00ff00006600";
+        uint256 off = uint256(pIndex) * 6;
+        return (_hexColor(tbl, off), _hexColor(tbl, off + 3));
+    }
+
+    function _hexColor(bytes memory tbl, uint256 off) internal pure returns (string memory) {
+        bytes memory o = new bytes(7);
+        o[0] = "#";
+        bytes16 hex16 = "0123456789abcdef";
+        for (uint256 i = 0; i < 3; i++) {
+            uint8 b = uint8(tbl[off + i]);
+            o[1 + i * 2] = hex16[b >> 4];
+            o[2 + i * 2] = hex16[b & 0x0f];
+        }
+        return string(o);
     }
 
     // ============ 管理函数 ============
