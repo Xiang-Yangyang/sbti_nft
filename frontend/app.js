@@ -1354,22 +1354,33 @@ window.addEventListener('load', async () => {
   // 显示合约地址
   initContractAddressDisplay();
 
-  // 读取 supply 和 price（不需要钱包，用公共 RPC）
-  try {
-    const rpc = new ethers.JsonRpcProvider(SBTI_CONFIG.RPC_URL);
-    const readContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, rpc);
-    const [supply, maxSupply, price] = await Promise.all([
-      readContract.totalSupply(),
-      readContract.MAX_SUPPLY(),
-      readContract.mintPrice(),
-    ]);
-    document.getElementById('supplyInfo').textContent = `已铸造 ${supply} / ${Number(maxSupply).toLocaleString()}`;
-    // 更新价格显示
-    const priceEl = document.getElementById('mintPriceDisplay');
-    if (priceEl) {
-      priceEl.textContent = `${ethers.formatEther(price)} BNB`;
+  // 读取 supply 和 price（不需要钱包，用公共 RPC，自动 fallback）
+  const rpcUrls = SBTI_CONFIG.RPC_URLS || [SBTI_CONFIG.RPC_URL];
+  let rpcConnected = false;
+  for (const rpcUrl of rpcUrls) {
+    try {
+      debugLog(`尝试 RPC: ${rpcUrl}`);
+      const rpc = new ethers.JsonRpcProvider(rpcUrl);
+      const readContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, rpc);
+      const [supply, maxSupply, price] = await Promise.all([
+        readContract.totalSupply(),
+        readContract.MAX_SUPPLY(),
+        readContract.mintPrice(),
+      ]);
+      document.getElementById('supplyInfo').textContent = `已铸造 ${supply} / ${Number(maxSupply).toLocaleString()}`;
+      const priceEl = document.getElementById('mintPriceDisplay');
+      if (priceEl) {
+        priceEl.textContent = `${ethers.formatEther(price)} BNB`;
+      }
+      debugLog(`RPC 连接成功: ${rpcUrl}`);
+      rpcConnected = true;
+      break;
+    } catch (e) {
+      debugLog(`RPC 失败: ${rpcUrl}`, e.message);
     }
-  } catch (e) {
+  }
+  if (!rpcConnected) {
+    debugLog('所有 RPC 节点均不可用');
     document.getElementById('supplyInfo').textContent = '已铸造 0 / --';
   }
 

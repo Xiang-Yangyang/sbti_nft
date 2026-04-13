@@ -10,13 +10,13 @@ const SBTI_CONFIG = {
   // ============ 网络配置 ============
   CHAIN_ID: 97,                    // BSC Testnet
   CHAIN_NAME: 'BSC Testnet',
-  RPC_URL: 'https://bsc-testnet.public.blastapi.io',
+  RPC_URL: 'https://data-seed-prebsc-1-s1.binance.org:8545',
   // 备用 RPC（按优先级排序，自动切换）
   RPC_URLS: [
-    'https://bsc-testnet.public.blastapi.io',
     'https://data-seed-prebsc-1-s1.binance.org:8545',
     'https://bsc-testnet-rpc.publicnode.com',
-    'https://bsc-testnet.blockpi.network/v1/rpc/public',
+    'https://data-seed-prebsc-2-s1.binance.org:8545',
+    'https://data-seed-prebsc-1-s2.binance.org:8545',
   ],
   EXPLORER_URL: 'https://testnet.bscscan.com',
   CURRENCY_SYMBOL: 'tBNB',
