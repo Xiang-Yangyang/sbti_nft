@@ -1354,34 +1354,50 @@ window.addEventListener('load', async () => {
   // 显示合约地址
   initContractAddressDisplay();
 
-  // 读取 supply 和 price（不需要钱包，用公共 RPC，自动 fallback）
+  // 读取 supply 和 price（并发竞速，所有 RPC 同时请求，谁先返回用谁）
   const rpcUrls = SBTI_CONFIG.RPC_URLS || [SBTI_CONFIG.RPC_URL];
-  let rpcConnected = false;
-  for (const rpcUrl of rpcUrls) {
-    try {
-      debugLog(`尝试 RPC: ${rpcUrl}`);
-      const rpc = new ethers.JsonRpcProvider(rpcUrl);
-      const readContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, rpc);
-      const [supply, maxSupply, price] = await Promise.all([
-        readContract.totalSupply(),
-        readContract.MAX_SUPPLY(),
-        readContract.mintPrice(),
-      ]);
-      document.getElementById('supplyInfo').textContent = `已铸造 ${supply} / ${Number(maxSupply).toLocaleString()}`;
-      const priceEl = document.getElementById('mintPriceDisplay');
-      if (priceEl) {
-        priceEl.textContent = `${ethers.formatEther(price)} BNB`;
+  debugLog(`并发请求 ${rpcUrls.length} 个 RPC 节点...`);
+
+  // 每个 RPC 带超时控制（单个最多等 8 秒）
+  const RPC_TIMEOUT = 8000;
+  function fetchChainData(rpcUrl) {
+    return new Promise(async (resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error(`超时: ${rpcUrl}`)), RPC_TIMEOUT);
+      try {
+        const rpc = new ethers.JsonRpcProvider(rpcUrl);
+        const readContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, rpc);
+        const [supply, maxSupply, price] = await Promise.all([
+          readContract.totalSupply(),
+          readContract.MAX_SUPPLY(),
+          readContract.mintPrice(),
+        ]);
+        clearTimeout(timer);
+        debugLog(`RPC 成功: ${rpcUrl}`);
+        resolve({ supply, maxSupply, price, rpcUrl });
+      } catch (e) {
+        clearTimeout(timer);
+        debugLog(`RPC 失败: ${rpcUrl}`, e.message);
+        reject(e);
       }
-      debugLog(`RPC 连接成功: ${rpcUrl}`);
-      rpcConnected = true;
-      break;
-    } catch (e) {
-      debugLog(`RPC 失败: ${rpcUrl}`, e.message);
-    }
+    });
   }
-  if (!rpcConnected) {
-    debugLog('所有 RPC 节点均不可用');
-    document.getElementById('supplyInfo').textContent = '已铸造 0 / --';
+
+  try {
+    // Promise.any → 所有并发，第一个成功的立刻返回
+    const result = await Promise.any(rpcUrls.map(url => fetchChainData(url)));
+    document.getElementById('supplyInfo').textContent = `已铸造 ${result.supply} / ${Number(result.maxSupply).toLocaleString()}`;
+    const priceEl = document.getElementById('mintPriceDisplay');
+    if (priceEl) {
+      priceEl.textContent = `${ethers.formatEther(result.price)} BNB`;
+    }
+    debugLog(`链上数据加载完成，来源: ${result.rpcUrl}`);
+  } catch (e) {
+    debugLog('所有 RPC 节点均不可用:', e);
+    document.getElementById('supplyInfo').textContent = '⚠️ 网络不可用，请刷新重试';
+    const priceEl = document.getElementById('mintPriceDisplay');
+    if (priceEl) {
+      priceEl.textContent = '⚠️ 无法获取价格';
+    }
   }
 
   // 默认按钮
