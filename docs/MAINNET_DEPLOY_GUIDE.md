@@ -63,21 +63,15 @@ cast balance 你的地址 --rpc-url https://bsc-dataseed1.binance.org
 
 ## 第三步: 配置环境变量 ⚙️
 
-### 1. 复制主网配置文件模板
-
-```bash
-cd /Users/xiangyangyang/Programme/Projects/game_nft/sbti_nft
-cp .env.mainnet .env.mainnet.real
-```
-
-### 2. 编辑 `.env.mainnet.real` 文件
+### 编辑 `.env.mainnet` 配置文件
 
 用你喜欢的编辑器打开(VS Code/Sublime/vim 都行):
 
 ```bash
-code .env.mainnet.real
+cd /Users/xiangyangyang/Programme/Projects/game_nft/sbti_nft
+code .env.mainnet
 # 或者
-vim .env.mainnet.real
+vim .env.mainnet
 ```
 
 把文件内容改成这样:
@@ -101,84 +95,34 @@ MINT_PRICE=18000000000000000
 CHAIN_ID=56
 ```
 
-**保存文件后,检查一下:**
+**保存文件后,确认 .gitignore 已忽略 .env 文件:**
 ```bash
-# 确认文件存在
-ls -la .env.mainnet.real
-
-# 确认 .gitignore 已忽略这个文件 (避免误提交)
-grep "\.env\.mainnet\.real" .gitignore || echo ".env.mainnet.real" >> .gitignore
+# 确认 .env.mainnet 已被 gitignore（避免误提交私钥）
+grep "\.env\." .gitignore
 ```
 
 ---
 
 ## 第四步: 部署合约 🚀
 
-### 完整部署脚本
+### 部署命令
 
-把下面的命令**一次性全部执行**:
+项目已经有现成的部署脚本，只需要一行命令：
 
 ```bash
-#!/bin/bash
-# 进入项目目录
 cd /Users/xiangyangyang/Programme/Projects/game_nft/sbti_nft
-
-# 加载环境变量
-source .env.mainnet.real
-
-# 确认配置
-echo "========================================"
-echo "部署配置确认:"
-echo "========================================"
-echo "RPC: $RPC_URL"
-echo "钱包地址: $(cast wallet address --private-key $PRIVATE_KEY)"
-echo "当前余额: $(cast balance $(cast wallet address --private-key $PRIVATE_KEY) --rpc-url $RPC_URL | awk '{printf "%.6f BNB", $1/1e18}')"
-echo "Mint 价格: $MINT_PRICE wei ($(python3 -c "print($MINT_PRICE / 1e18)") BNB)"
-echo "========================================"
-read -p "确认无误按回车继续,按 Ctrl+C 取消..."
-
-# 部署合约 (Forge 会自动部署两个合约并设置关联)
-echo ""
-echo "🚀 开始部署..."
-forge script script/Deploy.s.sol:DeploySBTI \
-  --rpc-url $RPC_URL \
-  --private-key $PRIVATE_KEY \
-  --broadcast \
-  --verify \
-  --etherscan-api-key $ETHERSCAN_API_KEY \
-  -vvv
-
-# 部署完成
-echo ""
-echo "✅ 部署完成!"
-echo "📂 部署记录保存在: broadcast/Deploy.s.sol/56/run-latest.json"
+./deploy.sh mainnet
 ```
 
----
+脚本会自动：
+1. 加载 `.env.mainnet` 配置
+2. 显示配置摘要并要求你确认（主网会额外提示）
+3. 编译合约
+4. 部署 Renderer + NFT 主合约
+5. 输出合约地址
 
-### 如何执行部署
-
-**方式 1: 复制粘贴到终端(推荐新手)**
-
-1. 打开终端
-2. 把上面的整段代码全部复制
-3. 粘贴到终端
-4. 按回车
-
-**方式 2: 保存为脚本执行**
-
-```bash
-# 1. 把上面的代码保存为 deploy_mainnet.sh
-cat > deploy_mainnet.sh << 'SCRIPT'
-# (把上面的完整脚本粘贴到这里)
-SCRIPT
-
-# 2. 给脚本执行权限
-chmod +x deploy_mainnet.sh
-
-# 3. 运行
-./deploy_mainnet.sh
-```
+> **注意**: 如果 RPC 超时，可以尝试更换 `.env.mainnet` 中的 `RPC_URL`。
+> 备选节点：`https://bsc-dataseed2.binance.org` 或 `https://bsc.drpc.org`
 
 ---
 
@@ -271,7 +215,7 @@ https://你的用户名.github.io/game_nft/
 - ✅ 定期 `withdraw()` 提取合约余额
 
 ### ❌ 不要做:
-- ❌ 不要把 `.env.mainnet.real` 提交到 git
+- ❌ 不要把 `.env.mainnet` 提交到 git（已在 .gitignore 中）
 - ❌ 不要在公开聊天/截图里暴露私钥
 - ❌ 不要用交易所钱包部署(可能不支持合约)
 - ❌ 不要在部署钱包里存大量 BNB
@@ -357,7 +301,7 @@ forge verify-contract \
 
 1. **生成钱包** → 保护好私钥
 2. **充值 0.02 BNB** → 够部署了
-3. **配置 `.env.mainnet.real`** → 填入私钥和 RPC
+3. **配置 `.env.mainnet`** → 填入私钥和 RPC
 4. **运行部署脚本** → 一行命令搞定
 5. **记录合约地址** → 更新前端配置
 6. **推送代码** → GitHub Pages 自动部署
