@@ -10,11 +10,11 @@ const SBTI_CONFIG = {
   // ============ 网络配置 ============
   CHAIN_ID: 97,                    // BSC Testnet
   CHAIN_NAME: 'BSC Testnet',
-  RPC_URL: 'https://data-seed-prebsc-1-s1.binance.org:8545',
-  // 备用 RPC（按优先级排序，自动切换）
+  RPC_URL: 'https://bsc-testnet-rpc.publicnode.com',
+  // 备用 RPC（按优先级排序，国内可用的优先）
   RPC_URLS: [
-    'https://data-seed-prebsc-1-s1.binance.org:8545',
     'https://bsc-testnet-rpc.publicnode.com',
+    'https://data-seed-prebsc-1-s1.binance.org:8545',
     'https://data-seed-prebsc-2-s1.binance.org:8545',
     'https://data-seed-prebsc-1-s2.binance.org:8545',
   ],
