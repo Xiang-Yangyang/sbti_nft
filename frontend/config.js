@@ -4,27 +4,27 @@
  */
 const SBTI_CONFIG = {
   // ============ 合约地址 ============
-  CONTRACT_ADDRESS: '0x64648b1d2f8c2fAD7D1C61887fFdB53056fe0029',
-  RENDERER_ADDRESS: '0x579C352Af6D351e7EB31Fc3eD6bda243576bC181',
+  CONTRACT_ADDRESS: '0x4263f3996e5eaF7a98cA210Aa5749353d898Faf4',
+  RENDERER_ADDRESS: '0x3536F55238fb9Dac3781Bf81631e3b927051099A',
 
   // ============ 网络配置 ============
-  CHAIN_ID: 97,                    // BSC Testnet
-  CHAIN_NAME: 'BSC Testnet',
-  RPC_URL: 'https://bsc-testnet-rpc.publicnode.com',
+  CHAIN_ID: 56,                    // BSC Mainnet
+  CHAIN_NAME: 'BNB Smart Chain',
+  RPC_URL: 'https://bsc-dataseed1.binance.org',
   // 备用 RPC（并发竞速，谁先返回用谁）
   RPC_URLS: [
-    'https://bsc-testnet-rpc.publicnode.com',
-    'https://data-seed-prebsc-1-s1.binance.org:8545',
-    'https://data-seed-prebsc-2-s1.binance.org:8545',
-    'https://data-seed-prebsc-1-s2.binance.org:8545',
-    'https://data-seed-prebsc-2-s2.binance.org:8545',
-    'https://data-seed-prebsc-1-s3.binance.org:8545',
-    'https://data-seed-prebsc-2-s3.binance.org:8545',
-    'https://bsc-testnet.blockpi.network/v1/rpc/public',
-    'https://endpoints.omniatech.io/v1/bsc/testnet/public',
+    'https://bsc-dataseed1.binance.org',
+    'https://bsc-dataseed2.binance.org',
+    'https://bsc-dataseed3.binance.org',
+    'https://bsc-dataseed4.binance.org',
+    'https://bsc-dataseed1.defibit.io',
+    'https://bsc-dataseed2.defibit.io',
+    'https://bsc-dataseed1.ninicoin.io',
+    'https://bsc-dataseed2.ninicoin.io',
+    'https://bsc.drpc.org',
   ],
-  EXPLORER_URL: 'https://testnet.bscscan.com',
-  CURRENCY_SYMBOL: 'tBNB',
+  EXPLORER_URL: 'https://bscscan.com',
+  CURRENCY_SYMBOL: 'BNB',
 
   // ============ 合约 ABI ============
   CONTRACT_ABI: [

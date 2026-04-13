@@ -50,9 +50,9 @@ let userBlankNFTs = [];
 let userInscribedNFTs = [];
 
 // ============ 网络配置（从 config.js 读取） ============
-const BSC_TESTNET_CHAIN_ID = '0x' + SBTI_CONFIG.CHAIN_ID.toString(16); // 97 → '0x61'
-const BSC_TESTNET_CONFIG = {
-  chainId: BSC_TESTNET_CHAIN_ID,
+const BSC_CHAIN_ID = '0x' + SBTI_CONFIG.CHAIN_ID.toString(16);
+const BSC_CHAIN_CONFIG = {
+  chainId: BSC_CHAIN_ID,
   chainName: SBTI_CONFIG.CHAIN_NAME,
   nativeCurrency: { name: SBTI_CONFIG.CURRENCY_SYMBOL, symbol: SBTI_CONFIG.CURRENCY_SYMBOL, decimals: 18 },
   rpcUrls: [SBTI_CONFIG.RPC_URL],
@@ -196,19 +196,19 @@ async function connectWithWallet(walletType) {
 
     userAddress = accounts[0];
 
-    // 检查并切换网络到 BSC Testnet
+    // 检查并切换网络到 BSC
     const chainId = await walletProvider.request({ method: 'eth_chainId' });
-    if (chainId !== BSC_TESTNET_CHAIN_ID) {
+    if (chainId !== BSC_CHAIN_ID) {
       try {
         await walletProvider.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: BSC_TESTNET_CHAIN_ID }],
+          params: [{ chainId: BSC_CHAIN_ID }],
         });
       } catch (switchErr) {
         if (switchErr.code === 4902 || switchErr.code === -32603) {
           await walletProvider.request({
             method: 'wallet_addEthereumChain',
-            params: [BSC_TESTNET_CONFIG],
+            params: [BSC_CHAIN_CONFIG],
           });
         } else {
           throw switchErr;
