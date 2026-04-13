@@ -10,7 +10,7 @@ const SBTI_CONFIG = {
   // ============ 网络配置 ============
   CHAIN_ID: 97,                    // BSC Testnet
   CHAIN_NAME: 'BSC Testnet',
-  RPC_URL: 'https://bsc-testnet-rpc.publicnode.com',
+  RPC_URL: 'https://bsc-testnet.public.blastapi.io',
   EXPLORER_URL: 'https://testnet.bscscan.com',
   CURRENCY_SYMBOL: 'tBNB',
 
