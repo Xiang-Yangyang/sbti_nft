@@ -10,18 +10,21 @@ const SBTI_CONFIG = {
   // ============ 网络配置 ============
   CHAIN_ID: 56,                    // BSC Mainnet
   CHAIN_NAME: 'BNB Smart Chain',
-  RPC_URL: 'https://bsc-dataseed1.binance.org',
+  RPC_URL: 'https://bsc.drpc.org',
   // 备用 RPC（并发竞速，谁先返回用谁）
   RPC_URLS: [
+    // 第一梯队（稳定快速）
+    'https://bsc.drpc.org',
+    'https://bsc.publicnode.com',
+    'https://bsc-mainnet.public.blastapi.io',
+    'https://bsc-mainnet.nodereal.io/v1/64a9df0874fb4a93b9d0a3849de012d3',
+    // 第二梯队（备用）
+    'https://bsc-dataseed2.defibit.io',
+    'https://bsc-dataseed3.defibit.io',
+    'https://binance.llamarpc.com',
+    // 第三梯队（Binance 官方，保底）
     'https://bsc-dataseed1.binance.org',
     'https://bsc-dataseed2.binance.org',
-    'https://bsc-dataseed3.binance.org',
-    'https://bsc-dataseed4.binance.org',
-    'https://bsc-dataseed1.defibit.io',
-    'https://bsc-dataseed2.defibit.io',
-    'https://bsc-dataseed1.ninicoin.io',
-    'https://bsc-dataseed2.ninicoin.io',
-    'https://bsc.drpc.org',
   ],
   EXPLORER_URL: 'https://bscscan.com',
   CURRENCY_SYMBOL: 'BNB',
