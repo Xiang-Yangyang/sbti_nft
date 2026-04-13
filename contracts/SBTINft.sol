@@ -20,7 +20,7 @@ contract SBTINft is ERC721, Ownable {
 
     // ============ 常量 ============
     uint256 public constant MAX_SUPPLY = 16384; // 2^14
-    uint256 public mintPrice = 0.015 ether;
+    uint256 public mintPrice = 0.018 ether;
 
     // ============ 状态 ============
     uint256 private _nextTokenId;

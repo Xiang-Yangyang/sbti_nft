@@ -1311,7 +1311,7 @@ function initContractAddressDisplay() {
   if (addrText && link) {
     // 显示完整地址
     addrText.textContent = CONTRACT_ADDRESS;
-    link.href = `https://testnet.bscscan.com/address/${CONTRACT_ADDRESS}`;
+    link.href = `${SBTI_CONFIG.EXPLORER_URL}/address/${CONTRACT_ADDRESS}`;
   }
 }
 

@@ -18,7 +18,7 @@ contract DeploySBTI is Script {
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
 
-        uint256 mintPrice = vm.envOr("MINT_PRICE", uint256(0.015 ether));
+        uint256 mintPrice = vm.envOr("MINT_PRICE", uint256(0.018 ether));
         bool autoSetPrice = vm.envOr("AUTO_SET_PRICE", false);
 
         console.log("=== SBTI NFT Deployment (Split Architecture) ===");
@@ -37,7 +37,7 @@ contract DeploySBTI is Script {
         console.log("SBTINft deployed at:", address(nft));
 
         // 3. 如果配置了自动设置价格且价格与默认值不同
-        if (autoSetPrice && mintPrice != 0.015 ether) {
+        if (autoSetPrice && mintPrice != 0.018 ether) {
             nft.setMintPrice(mintPrice);
             console.log("Mint price updated to:", mintPrice);
         }

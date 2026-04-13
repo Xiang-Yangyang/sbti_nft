@@ -10,8 +10,8 @@
 #   ./deploy.sh             # 默认 = testnet
 #
 # 环境差异:
-#   testnet: mintPrice = 0.0001 BNB, BSC Testnet (ChainID 97)
-#   mainnet: mintPrice = 0.015 BNB,  BSC Mainnet (ChainID 56)
+#   testnet: mintPrice = 0.018 BNB, BSC Testnet (ChainID 97)
+#   mainnet: mintPrice = 0.018 BNB, BSC Mainnet (ChainID 56)
 #
 
 set -e
