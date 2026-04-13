@@ -53,7 +53,7 @@ cast wallet new
 **验证到账:**
 ```bash
 # 查询余额
-cast balance 你的地址 --rpc-url https://bsc-dataseed.binance.org
+cast balance 你的地址 --rpc-url https://bsc-dataseed1.binance.org
 
 # 或者去 BscScan 查看
 # https://bscscan.com/address/你的地址
@@ -84,7 +84,7 @@ vim .env.mainnet.real
 
 ```bash
 # BSC 主网 RPC
-RPC_URL=https://bsc-dataseed.binance.org
+RPC_URL=https://bsc-dataseed1.binance.org
 
 # 你的主网钱包私钥 (第一步生成的那个 0x 开头的 64 位十六进制)
 PRIVATE_KEY=0x你的私钥粘贴到这里
@@ -140,7 +140,7 @@ read -p "确认无误按回车继续,按 Ctrl+C 取消..."
 # 部署合约 (Forge 会自动部署两个合约并设置关联)
 echo ""
 echo "🚀 开始部署..."
-forge script script/Deploy.s.sol:DeployScript \
+forge script script/Deploy.s.sol:DeploySBTI \
   --rpc-url $RPC_URL \
   --private-key $PRIVATE_KEY \
   --broadcast \
@@ -235,7 +235,7 @@ const CONTRACT_ADDRESS = '0xDEF456...'; // 👈 改成你的 SBTINft 地址
 cast send 你的SBTINft地址 \
   "mint()" \
   --value 0.018ether \
-  --rpc-url https://bsc-dataseed.binance.org \
+  --rpc-url https://bsc-dataseed1.binance.org \
   --private-key 测试钱包私钥
 ```
 
@@ -282,12 +282,23 @@ https://你的用户名.github.io/game_nft/
 
 部署后你可能需要的操作:
 
+### 给自己免费铸造 NFT（Owner 专用）
+```bash
+# 部署后给自己铸造 10 个 NFT（免费，只需 gas 费）
+cast send 你的SBTINft地址 \
+  "ownerMint(address,uint256)" \
+  你的地址 \
+  10 \
+  --rpc-url https://bsc-dataseed1.binance.org \
+  --private-key $PRIVATE_KEY
+```
+
 ### 改 mint 价格
 ```bash
 cast send 你的SBTINft地址 \
   "setMintPrice(uint256)" \
   新价格(单位wei) \
-  --rpc-url https://bsc-dataseed.binance.org \
+  --rpc-url https://bsc-dataseed1.binance.org \
   --private-key $PRIVATE_KEY
 ```
 
@@ -295,7 +306,7 @@ cast send 你的SBTINft地址 \
 ```bash
 cast send 你的SBTINft地址 \
   "withdraw()" \
-  --rpc-url https://bsc-dataseed.binance.org \
+  --rpc-url https://bsc-dataseed1.binance.org \
   --private-key $PRIVATE_KEY
 ```
 
@@ -304,7 +315,7 @@ cast send 你的SBTINft地址 \
 cast send 你的SBTINft地址 \
   "setRenderer(address)" \
   新渲染器地址 \
-  --rpc-url https://bsc-dataseed.binance.org \
+  --rpc-url https://bsc-dataseed1.binance.org \
   --private-key $PRIVATE_KEY
 ```
 
