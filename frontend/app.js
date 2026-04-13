@@ -68,7 +68,7 @@ let connectedWalletProvider = null; // 连接时选择的原始钱包 provider�
 const WALLET_CONFIG = {
   metamask: {
     name: 'MetaMask',
-    icon: 'https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg',
+    icon: 'images/metamask.svg',
     getProvider: () => {
       // MetaMask 注入 window.ethereum 并设置 isMetaMask
       if (window.ethereum?.providers) {
